@@ -4,6 +4,29 @@
 
 **A colorful browser activity hub with an expanded Art Studio for drawing, storytelling, and creative exploration.** Open one HTML file, choose Art Studio, and start making something imaginative. The application is self-contained HTML, CSS, and JavaScript; there is no build step or application server.
 
+## 🧰 KidHub Plus — 80 tools, 80 features, 10 badges, 80 improvements
+
+Open **🧰 Toolbox** from the hub (or press **T**, or link straight to a tool with `#tool=<id>`, e.g. `studio.html#tool=piano`).
+
+| Category | Tools |
+|---|---|
+| ➗ Math | Addition, Subtraction, Multiplication and Division quizzes, Times Table Viewer, Number Line Jumper, Even or Odd, Skip Counter, Fraction Pizza, Place Value |
+| 🔤 Words | Rhyme Finder, Syllable Clapper, Word Scramble, Alphabet Explorer, Sight Word Cards, Word Mirror, Story Starter, Compound Builder, Opposites Quiz, Vowel Counter |
+| 🔬 Science | Planet Facts, Animal Habitats, Solid/Liquid/Gas, My Body, Plant Grower, Weather Wardrobe, Magnet Sorter, Moon Phases, Sink or Float, Five Senses |
+| ⏰ Time & Money | Clock Reader, Stopwatch, Countdown, What Day Was It, Coin Counter, Change Maker, Age Calculator, Days Until, Seasons, Piggy Bank Goal |
+| 🎨 Art & Music | Color Mixer, Palette Generator, Pattern Maker, Metronome, Mini Piano, Drum Pads, Emoji Mosaic, Spiral Art, Shape Namer, Rhythm Echo |
+| 🎲 Games | Dice, Coin Flip, Choice Spinner, Rock Paper Scissors, Number Guess, Color Echo, Tic-Tac-Toe, Whack-a-Mole, Reaction Timer, Guess the Word |
+| 💚 Feel Good | Breathing Bubble, Feelings Check-in, Gratitude Jar, Kindness Ideas, Stretch Break, Water Tracker, Bedtime Routine, Calm Sounds, Brave Words, Chore Chart |
+| 🧭 Helpers | Length, Temperature and Weight converters, Team Picker, Name Picker, Tally Counter, To-Do List, Secret Code, Morse Code, Binary Numbers |
+
+**10 activities are now fully playable.** They used to show "Loading activity…": Code Logic (robot programming, 5 levels), Space Explorer, Dino Dig, Shapes Puzzle (sliding 8-puzzle), Farm Friends, Coloring Book, Word Spelling, Telling Time, Music Maker (8-step sequencer) and Storybook Creator.
+
+**10 new badges:** 🧰 Tool Tinkerer · 🧭 Tool Explorer · 🛠️ Master Maker · 👑 Toolbox Legend · 🔥 Brain Blaze · 🤖 Robot Coder · 🧩 Puzzle Pro · 🦴 Fossil Finder · ✍️ Storybook Author · 🧘 Calm Champion.
+
+The full lists of the 80 features and 80 improvements are in the app under **Toolbox → ✨ What's new**. Toolbox progress is stored locally under `kidHubPlus`. You can export and import it from **Toolbox settings**.
+
+Tests: `node test.cjs` (Art Studio) and `node test-plus.cjs` (all 80 tools, 10 activities, badges, mobile overflow). Both need Playwright with Microsoft Edge.
+
 ## ✨🎨 The 16 new Art Studio features
 
 | # | Feature | What you can do |

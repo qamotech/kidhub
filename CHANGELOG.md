@@ -1,5 +1,11 @@
 # 🗓️ Changelog
 
+## 2026-09-28 — KidHub Plus
+- Added Toolbox with 80 tools across 8 categories.
+- Added 80 features, including 10 activities that replace the loading placeholders.
+- Added 10 badges, integrated with the existing badge shelf and certificate.
+- 80 improvements (listed in-app): accessibility, performance, robustness, and validation.
+
 ## Art Studio expansion — 2026-09-28
 
 ### ✨ Added
