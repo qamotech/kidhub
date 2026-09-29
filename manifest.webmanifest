@@ -1,0 +1,14 @@
+{
+  "name": "KidHub — Play, Make & Learn",
+  "short_name": "KidHub",
+  "start_url": "./studio.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F3E8FF",
+  "theme_color": "#F472B6",
+  "description": "Art Studio, Music Lab, Arcade, 80 tools and more — a colorful creative hub for kids.",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,39 @@
+<style id="themes-css">
+html[data-theme="space"]{--bg:#141233;--bg2:#1d1a4a;--card:rgba(34,30,78,.88);--soft:#26225a;--ink:#EEF0FF;--muted:#C4C8E8;--line:rgba(255,255,255,.12);--shadow:0 10px 40px rgba(0,0,0,.45);color-scheme:dark}
+html[data-theme="midnight"]{--bg:#0d1420;--bg2:#132033;--card:rgba(22,34,52,.9);--soft:#1a2a40;--ink:#E8F1FF;--muted:#AFC3DA;--line:rgba(255,255,255,.1);--shadow:0 10px 40px rgba(0,0,0,.5);--pink:#5eead4;color-scheme:dark}
+html[data-theme="ocean"]{--bg:#DDF4FF;--bg2:#C7F0EA;--card:rgba(255,255,255,.86);--soft:#EFFBFF;--ink:#0B2B40;--muted:#244B63;--pink:#1FA7C9;--shadow:0 10px 40px rgba(31,167,201,.18)}
+html[data-theme="candy"]{--bg:#FFE4F2;--bg2:#FFF0C7;--card:rgba(255,255,255,.88);--soft:#FFF5FB;--ink:#4A1036;--muted:#6B2A55;--pink:#FF4FA3;--shadow:0 10px 40px rgba(255,79,163,.18)}
+html[data-theme="forest"]{--bg:#E3F4DD;--bg2:#FFF4D6;--card:rgba(255,255,250,.88);--soft:#F4FBEF;--ink:#16311B;--muted:#34523A;--pink:#2E9E5B;--shadow:0 10px 40px rgba(46,158,91,.16)}
+html[data-theme="sunset"]{--bg:#FFE3D1;--bg2:#F4D9FF;--card:rgba(255,255,255,.86);--soft:#FFF4EC;--ink:#3E1530;--muted:#6A3350;--pink:#FF6B4A;--shadow:0 10px 40px rgba(255,107,74,.18)}
+html[data-theme="arctic"]{--bg:#EEF6FF;--bg2:#F7FBFF;--card:rgba(255,255,255,.92);--soft:#F8FCFF;--ink:#132238;--muted:#3C5470;--pink:#4C7DFF;--shadow:0 10px 40px rgba(76,125,255,.14)}
+html[data-theme] body{background-color:var(--bg);background-image:radial-gradient(circle at 15% 25%,color-mix(in srgb,var(--pink) 30%,transparent) 0%,transparent 45%),radial-gradient(circle at 85% 75%,color-mix(in srgb,var(--bg2) 90%,transparent) 0%,transparent 50%)}
+html[data-theme="space"] body{background-image:radial-gradient(circle at 20% 20%,rgba(124,92,255,.35),transparent 45%),radial-gradient(circle at 80% 80%,rgba(56,189,248,.18),transparent 45%),radial-gradient(1px 1px at 10% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 15%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 60%,#fff,transparent),radial-gradient(1px 1px at 85% 45%,#fff,transparent)}
+html[data-theme="midnight"] body{background-image:radial-gradient(circle at 25% 15%,rgba(94,234,212,.18),transparent 45%),radial-gradient(circle at 75% 85%,rgba(76,125,255,.2),transparent 45%)}
+/* Dark themes: dim the whole page a little */
+html[data-theme="space"] body::after,html[data-theme="midnight"] body::after{content:"";position:fixed;inset:0;background:rgba(0,0,6,.14);pointer-events:none;z-index:2147483000}
+html[data-theme="space"],html[data-theme="midnight"]{--kp-bg:#221e4e;--kp-ink:#EEF0FF;--kp-mut:#C4C8E8;--kp-line:#3a3570}
+html[data-theme="space"] .app,html[data-theme="midnight"] .app,html[data-theme="space"] .modal,html[data-theme="midnight"] .modal{background:var(--card);color:var(--ink)}
+html[data-theme="space"] :is(.panel,.side,.card,.setting,.hero,.kp-tile,.kp button,.kp select,.kp input,.pp,.pp button,.ar-bar input,.prompt-box),html[data-theme="midnight"] :is(.panel,.side,.card,.setting,.hero,.kp-tile,.kp button,.kp select,.kp input,.pp,.pp button,.ar-bar input,.prompt-box){background-color:var(--soft);color:var(--ink);border-color:var(--line)}
+html[data-theme="space"] :is(select,input:not([type=range]):not([type=checkbox]):not([type=color]),textarea),html[data-theme="midnight"] :is(select,input:not([type=range]):not([type=checkbox]):not([type=color]),textarea){background-color:#1c1947;color:var(--ink);border-color:var(--line)}
+html[data-theme="space"] :is(p,small,label,.tip,.kp-muted),html[data-theme="midnight"] :is(p,small,label,.tip,.kp-muted){color:var(--muted)}
+html[data-theme="space"] :is(h1,h2,h3,h4,b,strong),html[data-theme="midnight"] :is(h1,h2,h3,h4,b,strong){color:var(--ink)}
+html[data-theme="space"] .act-head h2,html[data-theme="midnight"] .act-head h2{color:transparent}
+html[data-theme="space"] #canvas,html[data-theme="midnight"] #canvas{filter:none}
+.themes{display:flex;flex-wrap:wrap;gap:6px}
+.theme-sw{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:4px;vertical-align:-2px;border:1px solid rgba(0,0,0,.15)}
+</style>
+<script id="themes-js">
+(()=>{"use strict";
+const LIGHT=["sunny","ocean","candy","forest","sunset","arctic"],DARK=["space","midnight"];
+const NEW=[["candy","🍭 Candy","#FF4FA3"],["forest","🌲 Forest","#2E9E5B"],["sunset","🌅 Sunset","#FF6B4A"],["midnight","🌙 Midnight","#132033"],["arctic","🧊 Arctic","#4C7DFF"]];
+const box=document.querySelector(".themes");
+if(box)NEW.forEach(([id,label,c])=>{if(box.querySelector(`[data-theme="${id}"]`))return;const b=document.createElement("button");b.className="theme";b.dataset.theme=id;b.innerHTML=`<span class="theme-sw" style="background:${c}" aria-hidden="true"></span>${label}`;box.appendChild(b)});
+const meta=document.querySelector('meta[name="theme-color"]');
+const sync=()=>{const t=document.documentElement.dataset.theme||"sunny",dark=DARK.includes(t),btn=document.getElementById("themeToggle");if(btn){btn.textContent=dark?"☀️":"🌙";btn.setAttribute("aria-label",dark?"Switch to light theme":"Switch to dark theme")}if(meta)meta.content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#ff6580"};
+new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});sync();
+if(typeof app!=="undefined"&&typeof prefs!=="undefined"&&typeof state!=="undefined"){
+ app.toggleDarkMode=()=>{const cur=state.theme||"sunny";if(DARK.includes(cur)){prefs.theme(state.lastLight&&LIGHT.includes(state.lastLight)?state.lastLight:"sunny")}else{state.lastLight=cur;prefs.theme(state.lastDark&&DARK.includes(state.lastDark)?state.lastDark:"space")}if(DARK.includes(state.theme))state.lastDark=state.theme;try{ui.toast(DARK.includes(state.theme)?"🌙 Dark mode on":"☀️ Light mode on")}catch(e){}};
+ try{prefs.render()}catch(e){}}
+window.kidThemes={LIGHT,DARK};
+})();
+</script>

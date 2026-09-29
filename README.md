@@ -27,6 +27,19 @@ The full lists of the 80 features and 80 improvements are in the app under **Too
 
 Tests: `node test.cjs` (Art Studio) and `node test-plus.cjs` (all 80 tools, 10 activities, badges, mobile overflow). Both need Playwright with Microsoft Edge.
 
+## 🆕 Latest release
+
+- 🕹️ **Arcade:** 13 full-screen games in `games/`. Each game keeps only the game, plus one ⬅️ KidHub link and a ⛶ Fullscreen button (`python tools/import_games.py` regenerates them).
+- 🎹 **KidsBeat instruments:** 24 mastered instruments (drums, world percussion, piano, guitar, brass, flute, synths, fun sounds) power the whole Music Lab.
+- 🧑‍🏫 **Beat Coach:** auto-fix groove, 7 smart genre grooves, fills, remix, undo, live drum recording (keys 1–6), accents, humanize, auto-bass, kit and mix, a 16-step melody lane that stays in key, "Make it cohesive" melody tuning, auto-tune, a 2–4 octave keyboard (octaves 0–7), and a star rating with tips.
+- 🖌️ **Paint Pro:** 48 Paint-style tools and a full color editor. 🧰 **Toolbox:** 80 tools. 🌄 **Parallax worlds** on the hub.
+- ☁️ **Cloud widget** (bottom-left): parent-configured webhook messages (Discord, Slack, ntfy or generic JSON over https), reminders, voice typing, SOS, offline outbox, quiet hours and a PIN lock. Nothing is sent until a grown-up adds a webhook.
+- 🎨 **8 themes** (Sunny, Space, Ocean, Candy, Forest, Sunset, Midnight, Arctic). Dark themes gently dim the page.
+- 🗣️ **Friendly voice:** natural female or cartoon-style read-aloud with a picker in Settings.
+- ✨ **40 improvements:** deep links and Back button, offline service worker with an update prompt, installable app, accessibility and performance polish (full list in Settings → What's new).
+
+**Develop:** `npm install`, `npm run build`, then `npm test` (12 Playwright suites, Edge). Edit `src/*.html` modules; `build.py` injects them into `studio.html` and the dashboard.
+
 ## ✨🎨 The 16 new Art Studio features
 
 | # | Feature | What you can do |

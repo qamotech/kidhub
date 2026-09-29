@@ -1,0 +1,98 @@
+<style id="polish-css">
+.kh-skip{position:fixed;left:12px;top:-60px;z-index:2147483600;background:#25304a;color:#fff;padding:10px 16px;border-radius:12px;font-weight:800;text-decoration:none;transition:top .15s}
+.kh-skip:focus{top:12px}
+.kh-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:880;width:48px;height:48px;border-radius:50%;border:0;cursor:pointer;font-size:22px;background:var(--card,#fff);color:var(--ink,#25304a);box-shadow:0 8px 20px rgba(40,20,90,.25);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}
+.kh-top.on{opacity:1;transform:none;pointer-events:auto}
+.kh-top:focus-visible{outline:3px solid var(--pink,#6d4aff);outline-offset:3px}
+.kh-update{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483500;display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:16px;background:#25304a;color:#fff;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.kh-update button{font:inherit;border:0;border-radius:10px;padding:6px 12px;cursor:pointer;background:#ffe066;color:#25304a;font-weight:900;min-height:36px}
+html[data-theme="space"] .top,html[data-theme="midnight"] .top{background:rgba(24,21,60,.9)!important;border-bottom-color:var(--line)!important}
+html[data-theme="space"] :is(.pill,.round),html[data-theme="midnight"] :is(.pill,.round){background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important}
+html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:var(--ink)}
+:is(button,a,[role=button],[tabindex]):focus-visible{outline:3px solid var(--pink,#6d4aff);outline-offset:2px}
+.cw-btn.kh-typing{opacity:0;pointer-events:none;transform:scale(.6)}
+.ar-tile .plays{font-size:12px;opacity:.9}
+@media (prefers-reduced-motion:reduce){.kh-top,.kh-skip{transition:none}}
+</style>
+<script id="polish-js">
+(()=>{"use strict";if(typeof app==="undefined")return;
+const BUILD="__BUILD__";
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
+"🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
+"📶 Offline support (keeps working during site updates)","✨ “Update ready” prompt after new releases","📲 Installable app (manifest + icons)","😴 Audio engine sleeps in background tabs","🤫 Read-aloud stops when you switch screens","🍞 Toasts de-duplicated and capped at 3","🩹 Friendly one-time error message instead of silent failures","⚡ Arcade games prefetch on hover for instant start","📱 Lighter parallax on phones","⚠️ Warning before leaving while recording music","🏅 Certificate now says KidHub",
+"🔢 Arcade play counts","▶️ Continue-last-game button","☁️ Cloud button tucks away while you type","📳 Drum pads buzz when haptics are on","⏱️ Live BPM readout on the Beats tab","🎼 Melody lane re-tunes when you change key or scale","🕹️ Emoji icons for every game page","🎛️ Theme-aware scrollbars & form controls","🆕 What's new lists every improvement","🏷️ Build/version info in settings"];
+
+/* 8 · first visit follows device dark mode */
+try{if(!localStorage.getItem("kidHubV3")&&matchMedia("(prefers-color-scheme: dark)").matches&&typeof prefs!=="undefined"){prefs.theme("space")}}catch(e){}
+/* 9 · auto day/night uses favorite themes */
+if(typeof prefs!=="undefined"){const ap=prefs.apply.bind(prefs);prefs.apply=()=>{ap();if(state.autoTheme){const h=new Date().getHours(),night=h<7||h>=18,dark=["space","midnight"].includes(state.lastDark)?state.lastDark:"space",light=state.lastLight&&state.lastLight!=="space"?state.lastLight:"sunny";document.documentElement.dataset.theme=night?dark:light==="sunny"?"":light}};try{prefs.apply()}catch(e){}}
+
+/* 15 · skip link + live region */
+const main=$("main");if(main&&!main.id)main.id="main";
+const skip=document.createElement("a");skip.className="kh-skip";skip.href="#main";skip.textContent="⏭️ Skip to content";skip.onclick=e=>{e.preventDefault();const h=$(".screen.active h2");(h||main).setAttribute("tabindex","-1");(h||main).focus()};document.body.prepend(skip);
+const live=document.createElement("div");live.className="kp-sr";live.setAttribute("aria-live","polite");live.id="khLive";document.body.appendChild(live);
+
+/* 10–14, 19, 23, 24 · screen routing, titles, focus, scroll restore */
+const BASE_TITLE=document.title;let hubY=0,fromPop=false;
+const nameOf=id=>{const h=$(`#s-${id} .act-head h2`);return h?h.textContent.trim():""};
+const orig=app.show.bind(app);
+app.show=(id,opts)=>{const prev=app.current;if(prev==="hub")hubY=scrollY;try{speechSynthesis.cancel()}catch(e){}orig(id,opts);if(app.current!==id)return;
+ const n=id==="hub"?"":nameOf(id);document.title=n?`${n} · KidHub`:BASE_TITLE;live.textContent=n?`Opened ${n}`:"Back at the hub";
+ if(!fromPop&&prev!==id){try{const h=id==="hub"?location.pathname+location.search:`#${id}`;history.pushState({kh:id},"",h)}catch(e){}}
+ if(id==="hub"){requestAnimationFrame(()=>scrollTo({top:hubY,behavior:"auto"}))}else{const h=$(`#s-${id} .act-head h2`);if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true})}}};
+addEventListener("popstate",e=>{const id=(e.state&&e.state.kh)||(location.hash.match(/^#([\w-]+)$/)||[])[1]||"hub";if(document.getElementById("s-"+id)){fromPop=true;app.show(id);fromPop=false}});
+const h0=(location.hash.match(/^#([\w-]+)$/)||[])[1];if(h0&&h0!=="tools"&&h0!=="arcade"&&document.getElementById("s-"+h0)){fromPop=true;app.show(h0);fromPop=false}
+try{history.replaceState({kh:app.current},"")}catch(e){}
+
+/* 16 · Esc only goes to the hub when nothing else is being closed */
+addEventListener("keydown",e=>{if(e.key!=="Escape")return;const busy=(app.current==="draw"&&window.paintPro&&(paintPro.sel||$(".pp-tool.on")))||(app.current==="tools"&&$("#kpTool")&&!$("#kpTool").hidden)||($("#cwPanel.open"))||$(".modal-bg.open");if(busy)e.__khKeep=true},true);
+const origShow2=app.show;app.show=(id,o)=>{if(id==="hub"&&window.event&&window.event.__khKeep)return;origShow2(id,o)};
+
+/* 17 · accurate activity count */
+if(typeof ui!=="undefined"){const hub=ui.hub.bind(ui);ui.hub=(...a)=>{const r=hub(...a);const c=$("#count"),cards=$$("#cards .card").filter(x=>!x.hidden&&x.style.display!=="none");if(c)c.textContent=`${cards.length} adventure${cards.length===1?"":"s"}`;return r};try{ui.hub()}catch(e){}
+/* 25 · toast de-dupe & cap */
+ const t0=ui.toast.bind(ui);let last="",lastT=0;ui.toast=m=>{const n=Date.now();if(m===last&&n-lastT<1500)return;last=m;lastT=n;t0(m);const box=document.getElementById("toasts");if(box)while(box.children.length>3)box.firstElementChild.remove()}}
+
+/* 18 · back to top */
+const top=document.createElement("button");top.type="button";top.className="kh-top";top.setAttribute("aria-label","Back to top");top.textContent="⬆️";top.onclick=()=>scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});document.body.appendChild(top);
+let tk=0;addEventListener("scroll",()=>{if(tk)return;tk=requestAnimationFrame(()=>{tk=0;top.classList.toggle("on",scrollY>1200)})},{passive:true});
+
+/* 23 · audio sleeps in background (unless recording) */
+document.addEventListener("visibilitychange",()=>{try{const c=window.KBI&&KBI.active;if(!c)return;if(document.hidden){const rec=window.musicDeck&&(musicDeck.loop.armed||musicDeck.seq.on);if(!rec)c.suspend()}else c.resume()}catch(e){}});
+
+/* 26 · friendly error once */
+let errShown=false;addEventListener("error",e=>{if(errShown||!e.message)return;errShown=true;try{ui.toast("🙈 Oops, something hiccuped — keep playing!")}catch(_){}});
+
+/* 29 · warn before leaving while recording */
+addEventListener("beforeunload",e=>{if(window.musicDeck&&musicDeck.loop.armed){e.preventDefault();e.returnValue=""}});
+
+/* 27, 31, 32 · arcade prefetch, play counts, continue */
+const grid=$("#arGrid");if(grid){let plays={};try{plays=JSON.parse(localStorage.getItem("kidHubPlays")||"{}")}catch(e){}const pre=new Set();
+ const deco=()=>{$$("#arGrid .ar-tile").forEach(t=>{const s=t.dataset.slug,n=+plays[s]||0;let el=t.querySelector(".plays");if(n){if(!el){el=document.createElement("small");el.className="plays";t.querySelector(".go").before(el)}el.textContent=`🔢 Played ${n}×`}})};
+ new MutationObserver(deco).observe(grid,{childList:true});deco();
+ grid.addEventListener("pointerover",e=>{const t=e.target.closest(".ar-tile");if(!t||pre.has(t.href))return;pre.add(t.href);const l=document.createElement("link");l.rel="prefetch";l.href=t.getAttribute("href");document.head.appendChild(l)},{passive:true});
+ grid.addEventListener("click",e=>{const t=e.target.closest(".ar-tile");if(!t)return;plays[t.dataset.slug]=(+plays[t.dataset.slug]||0)+1;try{localStorage.setItem("kidHubPlays",JSON.stringify(plays))}catch(_){}});
+ let lastG=null;try{lastG=JSON.parse(localStorage.getItem("kidHubArcade")||"[]")[0]}catch(e){}const bar=$(".ar-bar");const tile=lastG&&$(`#arGrid [data-slug="${lastG}"]`);if(bar&&tile){const b=document.createElement("a");b.href=tile.getAttribute("href");b.target="_top";b.textContent=`▶️ Continue ${tile.querySelector("b").textContent}`;b.style.cssText="font-weight:800;min-height:44px;display:inline-flex;align-items:center;padding:8px 16px;border-radius:14px;background:#2bc678;color:#fff;text-decoration:none";b.onclick=()=>{plays[lastG]=(+plays[lastG]||0)+1;try{localStorage.setItem("kidHubPlays",JSON.stringify(plays))}catch(_){}};bar.appendChild(b)}}
+
+/* 33 · cloud hides while typing on phones */
+document.addEventListener("focusin",e=>{const b=$("#cwBtn");if(!b)return;const typing=e.target.matches&&e.target.matches("input,textarea,select")&&!e.target.closest("#cwPanel");b.classList.toggle("kh-typing",typing)});
+document.addEventListener("focusout",()=>{setTimeout(()=>{const b=$("#cwBtn"),a=document.activeElement;if(b&&!(a&&a.matches&&a.matches("input,textarea,select")))b.classList.remove("kh-typing")},50)});
+
+/* 34 · haptics on drum pads */
+document.addEventListener("pointerdown",e=>{if(e.target.closest&&e.target.closest("[data-hit],.drum,.md-k")&&typeof state!=="undefined"&&state.haptic&&navigator.vibrate)navigator.vibrate(12)},{passive:true});
+
+/* 35 · live BPM on beats tab */
+const beats=$('#musicDeck [data-p="beats"] .md-row'),bpmIn=$("#bpm");if(beats&&bpmIn){const s=document.createElement("b");s.id="mdBpmLive";const up=()=>s.textContent=`⏱️ ${bpmIn.value} BPM`;up();bpmIn.addEventListener("input",up);beats.appendChild(s)}
+
+/* 39, 40 · what's new + version */
+const modal=$("#settings .modal");if(modal&&!$("#khNew")){const s=document.createElement("section");s.className="setting";s.id="khNew";s.style.marginTop="11px";s.innerHTML=`<h3>🆕 What's new</h3><details><summary>40 improvements in this release</summary><ol style="font-size:13px">${IMPROVEMENTS.map(x=>`<li>${x}</li>`).join("")}</ol></details><p style="font-size:12px;opacity:.75">KidHub build ${BUILD}</p>`;modal.appendChild(s)}
+
+/* 20–22 · service worker, update prompt, manifest */
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)&&window.top===window){
+ navigator.serviceWorker.register("sw.js").then(reg=>{const ask=w=>{if(!w||$(".kh-update"))return;const d=document.createElement("div");d.className="kh-update";d.setAttribute("role","status");d.innerHTML='✨ A new KidHub is ready! <button type="button">Refresh</button>';d.querySelector("button").onclick=()=>{window.__khWantReload=true;w.postMessage("skip")};document.body.appendChild(d)};
+  if(reg.waiting&&navigator.serviceWorker.controller)ask(reg.waiting);reg.addEventListener("updatefound",()=>{const w=reg.installing;w&&w.addEventListener("statechange",()=>{if(w.state==="installed"&&navigator.serviceWorker.controller)ask(w)})});setInterval(()=>reg.update().catch(()=>{}),30*60*1000)}).catch(()=>{});
+ let reloaded=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded||!window.__khWantReload)return;reloaded=true;location.reload()})}
+window.kidPolish={improvements:IMPROVEMENTS.length,build:BUILD};
+})();
+</script>

@@ -1,5 +1,11 @@
 # 🗓️ Changelog
 
+## 2026-09-29 — Beats, themes & polish
+- Beat Coach: auto-fix sequencer, cohesive melody tuning, auto-tune, live drum recording, 2–4 octave keyboard, octaves 0–7.
+- 8 working themes with dark-mode dimming; the cloud widget menu now fits every screen.
+- 40 improvements: routing, offline service worker, manifest, a11y, performance.
+- Arcade (13 games), KidsBeat 24-instrument engine, Cloud widget, friendly voice, KidHub rename.
+
 ## 2026-09-28 — KidHub Plus
 - Added Toolbox with 80 tools across 8 categories.
 - Added 80 features, including 10 activities that replace the loading placeholders.

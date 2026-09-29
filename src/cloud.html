@@ -1,5 +1,5 @@
 <style id="cloud-css">
-.cw-btn{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:900;width:78px;height:56px;border:0;padding:0;cursor:pointer;background:none;animation:cwFloat 4.5s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(40,20,90,.3))}
+.cw-btn{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:2147482000;width:78px;height:56px;border:0;padding:0;cursor:pointer;background:none;animation:cwFloat 4.5s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(40,20,90,.3))}
 .cw-btn svg{width:100%;height:100%;display:block}
 .cw-btn .cw-ic{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;padding-top:6px}
 .cw-btn:focus-visible{outline:4px solid #6d4aff;outline-offset:4px;border-radius:30px}
@@ -7,14 +7,14 @@
 .cw-badge[hidden]{display:none}
 .cw-badge{position:absolute;top:-4px;right:-2px;min-width:22px;height:22px;border-radius:11px;background:#ff3b5c;color:#fff;font:800 12px system-ui;display:grid;place-items:center;padding:0 5px}
 @keyframes cwFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
-.cw-panel{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:901;width:min(380px,calc(100vw - 28px));max-height:min(620px,calc(100vh - 120px));display:flex;flex-direction:column;border-radius:26px;overflow:hidden;background:#fff;color:#25304a;box-shadow:0 24px 60px rgba(40,20,90,.35);transform-origin:bottom left;transform:scale(.6) translateY(20px);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.2,1.3,.4,1),opacity .25s}
+.cw-panel{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:2147482001;width:min(400px,calc(100vw - 28px));max-height:min(640px,calc(100vh - 110px));max-height:min(640px,calc(100dvh - 110px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px)));display:flex;flex-direction:column;border-radius:26px;overflow:hidden;background:#fff;color:#25304a;box-shadow:0 24px 60px rgba(40,20,90,.35);transform-origin:bottom left;transform:scale(.6) translateY(20px);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.2,1.3,.4,1),opacity .25s}
 .cw-panel.open{transform:none;opacity:1;pointer-events:auto}
-.cw-head{padding:14px 16px 10px;color:#fff;background:var(--cw-sky)}
+.cw-head{flex:0 0 auto;padding:14px 16px 10px;color:#fff;background:var(--cw-sky)}
 .cw-head h2{margin:0;font-size:1.15rem}.cw-head p{margin:2px 0 0;font-size:12px;opacity:.95}
-.cw-tabs{display:flex;gap:4px;padding:8px;background:#f6f3ff;overflow-x:auto}
-.cw-tabs button{flex:1 0 auto;font:700 13px system-ui;border:0;border-radius:999px;padding:8px 10px;min-height:38px;background:transparent;color:#4b3f8f;cursor:pointer}
+.cw-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px;background:#f6f3ff;flex:0 0 auto}
+.cw-tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;font:700 11px system-ui;border:0;border-radius:12px;padding:6px 2px;min-height:48px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:transparent;color:#4b3f8f;cursor:pointer}
 .cw-tabs button.on{background:#fff;box-shadow:0 2px 8px rgba(80,50,160,.18)}
-.cw-body{padding:12px 14px 16px;overflow:auto;flex:1;font:14px system-ui}
+.cw-body{padding:12px 14px 16px;overflow:auto;flex:1 1 auto;min-height:0;overscroll-behavior:contain;font:14px system-ui}
 .cw-body button{font:700 13px system-ui;min-height:40px;border-radius:12px;border:2px solid #e3dcf2;background:#fff;color:#25304a;padding:6px 10px;cursor:pointer}
 .cw-body button.pri{background:linear-gradient(135deg,#6d4aff,#ff5fa2);border:0;color:#fff}
 .cw-body button.sos{background:#ff3b5c;border:0;color:#fff}
@@ -29,7 +29,8 @@
 .cw-st{font-size:12px;font-weight:800;white-space:nowrap}
 .cw-note{font-size:12px;color:#6b7280;margin:6px 0}
 .cw-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-@media (max-width:760px){.cw-btn{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.cw-panel{bottom:calc(150px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 180px)}}
+@media (max-width:760px){.cw-btn{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.cw-panel{bottom:calc(146px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 160px);max-height:calc(100dvh - 160px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px))}}
+@media (max-height:520px){.cw-panel{bottom:10px;left:100px;max-height:calc(100dvh - 20px)}}
 @media (prefers-reduced-motion:reduce){.cw-btn{animation:none}.cw-panel{transition:opacity .15s}}
 </style>
 <script id="cloud-js">
@@ -123,7 +124,7 @@ function open(v){const p=$("#cwPanel"),b=$("#cwBtn"),o=v==null?!p.classList.cont
 function build(){const b=document.createElement("button");b.type="button";b.className="cw-btn";b.id="cwBtn";b.setAttribute("aria-label","Open Cloud messages and reminders");b.setAttribute("aria-expanded","false");b.setAttribute("aria-controls","cwPanel");
  b.innerHTML=`<svg viewBox="0 0 78 56" aria-hidden="true"><path id="cwFill" d="M20 50h40a16 16 0 0 0 1-32 20 20 0 0 0-38-2 17 17 0 0 0-3 34z" fill="#fff" stroke="#6d4aff" stroke-width="2.5"/></svg><span class="cw-ic" aria-hidden="true">💬</span><span class="cw-badge" id="cwBadge" hidden></span>`;
  const p=document.createElement("div");p.className="cw-panel";p.id="cwPanel";p.setAttribute("role","dialog");p.setAttribute("aria-label","Cloud messages");p.setAttribute("aria-hidden","true");
- p.innerHTML=`<div class="cw-head"><h2>☁️ Cloud</h2><p>💬 Message your grown-ups · ⏰ reminders</p></div><div class="cw-tabs" role="tablist">${[["msg","💬 Send"],["rem","⏰ Remind"],["out","📬 Outbox"],["set","⚙️ Grown-ups"],["new","✨ New"]].map(([k,l])=>`<button type="button" role="tab" data-t="${k}">${l}</button>`).join("")}</div><div class="cw-body" id="cwBody"></div>`;
+ p.innerHTML=`<div class="cw-head"><h2>☁️ Cloud</h2><p>💬 Message your grown-ups · ⏰ reminders</p></div><div class="cw-tabs" role="tablist">${[["msg","💬","Send"],["rem","⏰","Remind"],["out","📬","Outbox"],["set","⚙️","Grown-ups"],["new","✨","New"]].map(([k,e,l])=>`<button type="button" role="tab" data-t="${k}"><span style="font-size:18px" aria-hidden="true">${e}</span>${l}</button>`).join("")}</div><div class="cw-body" id="cwBody"></div>`;
  document.body.append(b,p);b.onclick=()=>open();$$(".cw-tabs button",p).forEach(x=>x.onclick=()=>{tab=x.dataset.t;render()});
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&p.classList.contains("open"))open(false)});
  document.addEventListener("pointerdown",e=>{if(p.classList.contains("open")&&!p.contains(e.target)&&!b.contains(e.target))open(false)},{passive:true});

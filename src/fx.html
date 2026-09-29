@@ -65,7 +65,7 @@ function buildParallax(){const hub=$("#s-hub");if(!hub||$(".px",hub))return;cons
  const scenes=$$(".px-scene",px),layers=scenes.map(s=>$$(".px-l,.px-e",s)),cards=scenes.map(s=>$(".px-card",s)),bar=$(".px-bar i",px),dots=$$("[data-d]",px),hint=$(".px-hint",px);let vis=false,ticking=false;
  const frame=()=>{ticking=false;if(RM.matches)return;const r=px.getBoundingClientRect(),span=px.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-r.top/span)),f=p*SCENES.length;bar.style.width=p*100+"%";hint.style.opacity=p>.02?0:1;
   scenes.forEach((s,i)=>{const local=f-i;const o=local<-.15||local>1.15?0:local<.12?Math.max(0,(local+.15)/.27):local>.88?Math.max(0,(1.15-local)/.27):1;s.style.opacity=o.toFixed(3);s.style.visibility=o>0?"visible":"hidden";if(!o)return;const t=local-.5;
-   layers[i].forEach(el=>{const sp=+el.dataset.s,rot=+(el.dataset.r||0);el.style.transform=`translate3d(0,${(-t*sp*innerHeight*.45).toFixed(1)}px,0)${rot?` rotate(${(t*rot).toFixed(1)}deg)`:""}${el.classList.contains("px-e")?` scale(${(1+Math.max(0,.5-Math.abs(t))*.25).toFixed(3)})`:""}`});
+   layers[i].forEach(el=>{const sp=+el.dataset.s,rot=+(el.dataset.r||0);el.style.transform=`translate3d(0,${(-t*sp*innerHeight*.45).toFixed(1)}px,0)${rot?` rotate(${(t*rot).toFixed(1)}deg)`:""}${el.classList.contains("px-e")&&innerWidth>=600?` scale(${(1+Math.max(0,.5-Math.abs(t))*.25).toFixed(3)})`:""}`});
    cards[i].style.transform=`translate(-50%,calc(-50% + ${(t*-120).toFixed(1)}px)) scale(${(1-Math.abs(t)*.15).toFixed(3)})`;cards[i].style.opacity=Math.max(0,1-Math.abs(t)*1.6).toFixed(3)});
   dots.forEach((d,i)=>d.classList.toggle("on",Math.min(SCENES.length-1,Math.floor(f))===i))};
  const req=()=>{if(vis&&!ticking){ticking=true;requestAnimationFrame(frame)}};

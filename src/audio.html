@@ -64,7 +64,7 @@ function play(id,freq=C4,o={}){const inst=BY[id]||BY.piano,c=o.ctx||ctx(),dest=o
  case"arcadeboing":{const o1=osc("sine",f),g=gn(.8);o1.frequency.linearRampToValueAtTime(f*2.5,t+.08);o1.frequency.linearRampToValueAtTime(f*1.2,t+.2);g.gain.exponentialRampToValueAtTime(.001,t+.25);o1.connect(g).connect(out);end=t+.26;break}}
  srcs.forEach(s=>{if(s.start&&!s._started){s._started=1;s.start(t);try{s.stop(end+rel+.05)}catch(e){}}});
  let stopped=false;return{inst,stop(t2){if(stopped||!hold)return;stopped=true;const tt=Math.max(t2==null?c.currentTime:t2,t+.01);out.gain.cancelScheduledValues(tt);out.gain.setValueAtTime(out.gain.value||vel,tt);out.gain.setTargetAtTime(0,tt,rel/3);srcs.forEach(s=>{try{s.stop(tt+rel+.1)}catch(e){}})}}}
-return{LIST,BY,ctx,play,get limiter(){ctx();return limiter},C4};
+return{LIST,BY,ctx,play,get limiter(){ctx();return limiter},get active(){return shared},C4};
 })();
 </script>
 <script id="kbi-ui">
