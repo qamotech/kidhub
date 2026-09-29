@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://qamotech.github.io/kidhub/sitemap.xml

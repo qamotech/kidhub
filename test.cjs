@@ -1,12 +1,12 @@
 const { chromium } = require('playwright');
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const html=fs.readFileSync('index.html','utf8');
+const html=fs.readFileSync('studio.html','utf8');
 for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(m[1]);
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- await page.goto('file:///'+process.cwd().replace(/\\/g,'/')+'/index.html');
+ await page.goto(process.env.STUDIO_URL || 'file:///'+process.cwd().replace(/\\/g,'/')+'/studio.html');
  await page.locator('[onclick="app.show(\'draw\')"]').first().click();
  await page.locator('#canvas').waitFor({state:'visible'});
  const snap=()=>page.locator('#canvas').evaluate(c=>c.toDataURL());
@@ -25,7 +25,8 @@ for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Scri
  await stroke();let before=await snap();await page.evaluate(()=>{drawing.flip();drawing.flip();});assert.equal(await snap(),before);await page.evaluate(()=>{drawing.rotate();drawing.rotate();});assert.equal(await snap(),before);
  const png=Buffer.from(initial.split(',')[1],'base64');await page.setInputFiles('#artImport',{name:'sample.png',mimeType:'image/png',buffer:png});await page.waitForFunction(()=>document.querySelector('#artStatus').textContent.includes('imported'));assert.equal(await snap(),initial);
  const downloadPromise=page.waitForEvent('download');await page.evaluate(()=>drawing.download());const download=await downloadPromise;assert(download.suggestedFilename().endsWith('.png'));
- await page.selectOption('#artTemplate','hills');await page.evaluate(()=>drawing.template());await page.locator('#canvas').scrollIntoViewIfNeeded();await page.screenshot({path:'studio-desktop.png',fullPage:true});
+ await page.selectOption('#artTemplate','hills');await page.evaluate(()=>drawing.template());await page.locator('#canvas').scrollIntoViewIfNeeded();await page.locator('#s-draw .controls').evaluate(e=>e.scrollTop=0);await page.screenshot({path:'studio-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.locator('#artText').scrollIntoViewIfNeeded();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile overflow');await page.screenshot({path:'studio-mobile.png',fullPage:true});
- assert.deepEqual(errors,[]);console.log('PASS: syntax, all 16 additions, undo/redo, import, PNG download, transforms, desktop/mobile, no page errors');await browser.close();
+ await page.emulateMedia({reducedMotion:'reduce'});await page.waitForTimeout(100);assert.equal(await page.locator('#bubbles-canvas').evaluate(c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v!==0)),false);
+ assert.deepEqual(errors,[]);console.log('PASS: syntax, all 16 additions, undo/redo, import, PNG download, transforms, desktop/mobile, reduced motion, no page errors');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

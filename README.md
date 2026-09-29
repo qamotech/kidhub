@@ -1,5 +1,7 @@
 # 🚀🎨 KidHub — Play, Make & Learn
 
+🌐 **[Open KidHub](https://qamotech.github.io/kidhub/)** · 🎨 **[Open the studio directly](https://qamotech.github.io/kidhub/studio.html)**
+
 **A colorful browser activity hub with an expanded Art Studio for drawing, storytelling, and creative exploration.** Open one HTML file, choose Art Studio, and start making something imaginative. The application is self-contained HTML, CSS, and JavaScript; there is no build step or application server.
 
 ## ✨🎨 The 16 new Art Studio features
@@ -30,7 +32,7 @@ Brush, eraser, stamps, lines, rectangles, ellipses, mirror drawing, brush sizes,
 ## 🚀 Quick start
 
 1. Download or clone this repository.
-2. Open `index.html` in a current desktop browser.
+2. Open `index.html` for the full dashboard, or `studio.html` for the direct KidHub activity hub.
 3. Choose **🎨 Art Studio** from the activity hub.
 4. Pick a tool and drag on the canvas. Text and stickers are placed with a click.
 5. Use **↓ PNG** to save your full-resolution artwork.
@@ -72,7 +74,8 @@ See [PRIVACY.md](PRIVACY.md) for details.
 
 | File | Purpose |
 |---|---|
-| `index.html` | Standalone KidHub app, styles, content, and application logic |
+| `index.html` | Multi-app dashboard with the enhanced KidHub app embedded |
+| `studio.html` | Direct standalone KidHub activity hub and Art Studio |
 | `test.cjs` | Playwright regression checks for the expanded Art Studio |
 | `studio-desktop.png` / `studio-mobile.png` | Screenshots captured during browser verification |
 | `CHANGELOG.md` | Release scope and behavior changes |
@@ -98,3 +101,11 @@ The canvas is a raster image rather than a layered editor. Text and stickers bec
 ## 🤝 Contributing & support
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md). Reports should include browser version, screen size, reproducible steps, and expected versus actual behavior. Avoid including children's personal information or private artwork in public reports.
+
+## 🌐 GitHub Pages & optimization
+
+The public repository publishes from `main` at `/` with HTTPS enforced. `.nojekyll` keeps the site a direct static deployment. The canonical URL, social preview metadata, sitemap, and robots file identify the public entry points. The full dashboard preserves the additional embedded apps from the upstream update; `studio.html` avoids loading those extra apps when you only need KidHub.
+
+Art Studio history now stores bounded pixel snapshots instead of PNG-encoding the canvas before every stroke. Undo/redo restores synchronously, avoiding asynchronous image-load races. Decorative studio animation pauses in hidden tabs and respects the operating system's reduced-motion preference. Mobile controls stay within the available width; desktop controls scroll beside the canvas.
+
+The Pages deployment and the Art Studio are verified separately. Other apps embedded in the dashboard remain inherited functionality rather than newly audited features.
