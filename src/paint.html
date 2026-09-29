@@ -1,0 +1,250 @@
+<style id="paint-css">
+.pp{margin:0 0 10px;background:linear-gradient(135deg,#fff,#f6f1ff);border:2px solid #e8def8;border-radius:18px;padding:8px;box-shadow:0 6px 18px rgba(80,50,160,.08)}
+.pp *{box-sizing:border-box}
+.pp,.pp label,.pp input,.pp select,.pp output,.pp small{font-size:13px!important;line-height:1.3}
+.pp label{display:inline-flex!important;align-items:center;gap:4px;margin:0!important;font-weight:700;width:auto!important}
+.pp input[type=number],.pp input:not([type]),.pp input[type=text]{min-height:32px!important;padding:2px 6px!important;border:2px solid #e3dcf2!important;border-radius:8px!important;background:#fff!important;width:auto}
+#s-draw .pp-ed canvas#ppSV{width:220px!important;height:140px!important;max-width:100%;aspect-ratio:auto!important;flex:0 0 auto}
+.pp button{font:inherit;cursor:pointer;min-height:40px;min-width:40px;border-radius:10px;border:2px solid #e3dcf2;background:#fff;color:#25304a;font-weight:700;padding:4px 8px;transition:transform .15s,box-shadow .15s,border-color .15s}
+.pp button:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(109,74,255,.18);border-color:#b9a6ff}
+.pp button:focus-visible,.pp input:focus-visible,.pp select:focus-visible{outline:3px solid #6d4aff;outline-offset:2px}
+.pp button.on{background:linear-gradient(135deg,#6d4aff,#ff5fa2);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(109,74,255,.35)}
+.pp-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.pp-tabs button{border-radius:999px;font-size:13px}
+.pp-tools{display:flex;flex-wrap:wrap;gap:4px;max-height:132px;overflow:auto;padding:2px}
+.pp-tool{display:inline-flex;align-items:center;gap:4px;font-size:13px}
+.pp-tool .e{font-size:17px}
+.pp-opts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px;font-size:13px}
+.pp-opts select,.pp-opts input[type=number]{font:inherit;min-height:36px;border-radius:9px;border:2px solid #e3dcf2;padding:2px 6px;max-width:100%}
+.pp-colors{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.pp-well{width:40px;height:40px;border-radius:12px!important;border:3px solid #fff!important;box-shadow:0 0 0 2px #6d4aff,0 3px 8px rgba(0,0,0,.2)}
+.pp-well.c2{width:32px;height:32px;min-width:32px;min-height:32px;box-shadow:0 0 0 2px #ff5fa2}
+.pp-pal{display:grid;grid-template-columns:repeat(14,22px);gap:3px}
+.pp-pal button{min-width:22px;min-height:22px;width:22px;height:22px;padding:0;border-radius:6px;border:1px solid rgba(0,0,0,.25)}
+.pp-pal button.empty{background:repeating-linear-gradient(45deg,#fff 0 4px,#eee 4px 8px)}
+.pp-ed{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;padding:8px;border-radius:14px;background:#fff;border:2px dashed #d9ccff}
+.pp-ed canvas{border-radius:10px;cursor:crosshair;touch-action:none;border:1px solid #ccc;max-width:100%}
+.pp-hue{width:100%;accent-color:#6d4aff;height:18px;background:linear-gradient(90deg,red,#ff0,lime,cyan,blue,#f0f,red);border-radius:9px;-webkit-appearance:none;appearance:none}
+.pp-ed .fields{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;font-size:13px;min-width:170px}
+.pp-ed .fields input{width:90px;font:inherit;border:2px solid #e3dcf2;border-radius:8px;padding:3px 6px}
+.pp-prev{width:56px;height:40px;border-radius:10px;border:2px solid #ccc}
+.pp-status{font-size:12px;color:#5b6478;margin-top:4px;min-height:1.4em}
+.pp-stage{position:relative;overflow:auto;max-height:78vh;border-radius:16px}
+.pp-inner{position:relative;width:100%}
+.pp-inner #canvas{display:block;width:100%!important;height:auto!important}
+.pp-over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pp-skew{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+@media (max-width:600px){.pp-pal{grid-template-columns:repeat(10,22px)}.pp-tools{max-height:180px}}
+@media (prefers-reduced-motion:reduce){.pp button{transition:none}.pp button:hover{transform:none}}
+</style>
+<script id="paint-js">
+(()=>{"use strict";
+const c=document.getElementById("canvas");if(!c||typeof drawing==="undefined")return;
+const x=c.getContext("2d",{willReadFrequently:true}),W=c.width,H=c.height;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia("(prefers-reduced-motion: reduce)");
+const G={brush:"🖌️ Brushes",fill:"🪣 Fill & Color",shape:"🔷 Shapes",select:"✂️ Select",image:"🧰 Image",view:"🔍 View & Effects"};
+const TOOLS=[
+["pencil","✏️","Pencil","brush"],["callig1","🖋️","Calligraphy ╱","brush"],["callig2","✒️","Calligraphy ╲","brush"],["airbrush","💨","Airbrush","brush"],["oil","🛢️","Oil brush","brush"],["crayon","🖍️","Crayon","brush"],["marker","🖊️","Marker","brush"],["npencil","📝","Natural pencil","brush"],["watercolor","💧","Watercolor","brush"],["neon","💡","Neon glow","brush"],["sparkle","✨","Sparkle brush","brush"],["emojitrail","🌟","Emoji trail","brush"],["smudge","👆","Smudge","brush"],["sketchy","🕸️","Sketchy web","brush"],
+["bucket","🪣","Fill bucket","fill"],["dropper","💉","Color dropper","fill"],["gradient","🌅","Gradient fill","fill"],["replace","🔄","Color replacer","fill"],
+["curve","〰️","Curve","shape"],["polygon","⬟","Polygon","shape"],["rrect","▢","Rounded rectangle","shape"],["rtri","◣","Right triangle","shape"],["diamond","🔶","Diamond","shape"],["pentagon","⬠","Pentagon","shape"],["hexagon","⬡","Hexagon","shape"],["arrowR","➡️","Right arrow","shape"],["arrowL","⬅️","Left arrow","shape"],["arrowU","⬆️","Up arrow","shape"],["arrowD","⬇️","Down arrow","shape"],["star4","✦","4-point star","shape"],["star5","⭐","5-point star","shape"],["star6","🔯","6-point star","shape"],["callR","💬","Rounded callout","shape"],["callO","🗨️","Oval callout","shape"],["callC","💭","Cloud callout","shape"],["heart","❤️","Heart","shape"],["bolt","⚡","Lightning","shape"],
+["rsel","⬚","Rectangle select","select"],["fsel","➰","Free-form select","select"],["selall","🔲","Select all","select",1],["crop","✂️","Crop to selection","select",1],["del","🗑️","Delete selection","select",1],["copy","📋","Copy","select",1],["paste","📥","Paste","select",1],
+["rotR","↻","Rotate 90° right","image",1],["rotL","↺","Rotate 90° left","image",1],["flipV","↕️","Flip vertical","image",1],["skew","📐","Resize & skew","image",1]];
+const EXTRAS=[["invert","🔀","Invert colors"],["gray","🌫️","Grayscale"],["sepia","📜","Sepia"],["flipH","↔️","Flip horizontal"]];
+const PAL=["#000000","#7f7f7f","#880015","#ed1c24","#ff7f27","#fff200","#22b14c","#00a2e8","#3f48cc","#a349a4","#ff5f7e","#ff914d","#ffc63c","#2bc678","#ffffff","#c3c3c3","#b97a57","#ffaec9","#ffc90e","#efe4b0","#b5e61d","#99d9ea","#7092be","#c8bfe7","#20a9ec","#8a6ee7","#273654","#f5f5dc"];
+let store={custom:[],c2:"#ffffff",mode:"outline",tol:20,tab:"brush"};try{store={...store,...JSON.parse(localStorage.getItem("kidHubPaint")||"{}")}}catch(e){}
+const HX=/^#[0-9a-f]{6}$/i;store.custom=(Array.isArray(store.custom)?store.custom:[]).filter(h=>HX.test(h)).slice(0,14);if(!HX.test(store.c2))store.c2="#ffffff";store.tol=Math.max(0,Math.min(100,+store.tol||0));if(!["outline","fill","both"].includes(store.mode))store.mode="outline";if(!["brush","fill","shape","select","image","view"].includes(store.tab))store.tab="brush";
+const persist=()=>{try{localStorage.setItem("kidHubPaint",JSON.stringify(store))}catch(e){}};
+let tool=null,down=false,ink="#000",alt="#fff",last=null,start=null,base=null,pts=[],timer=0,zoom=1,grid=false,transparent=false;
+let sel=null,drag=null,dragOff=null,tmpSel=null,clip=null,curve=null,poly=null,smudge=null,oil=null,hover=null,antsOff=0,antsRAF=0;
+const status=m=>{const s=$("#ppStatus");if(s)s.textContent=m};
+const c1=()=>drawing.getColor(),c2=()=>store.c2,sz=()=>+drawing.getSize()||10,alpha=()=>+(($("#artOpacity")||{}).value||100)/100;
+const dash=()=>{const v=($("#artDash")||{}).value;return v==="dash"?[sz()*2,sz()]:v==="dot"?[1,sz()*2]:[]};
+const rgb=h=>{h=(h||"#000").replace("#","");if(h.length===3)h=h.split("").map(v=>v+v).join("");const n=parseInt(h,16)||0;return[n>>16&255,n>>8&255,n&255]};
+const hex=(r,g,b)=>"#"+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0")).join("");
+const mk=(w,h)=>{const o=document.createElement("canvas");o.width=Math.max(1,Math.round(w));o.height=Math.max(1,Math.round(h));return o};
+const copyOf=src=>{const o=mk(src.width,src.height);o.getContext("2d").drawImage(src,0,0);return o};
+const pt=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}};
+const reset=()=>{x.globalAlpha=1;x.globalCompositeOperation="source-over";x.shadowBlur=0;x.shadowColor="transparent";x.setLineDash([]);x.lineJoin="round";x.lineCap="round";x.filter="none"};
+const each=(a,b,step,fn)=>{const d=Math.hypot(b.x-a.x,b.y-a.y),n=Math.max(1,Math.ceil(d/Math.max(.5,step)));for(let i=1;i<=n;i++)fn({x:a.x+(b.x-a.x)*i/n,y:a.y+(b.y-a.y)*i/n})};
+const rnd=(r)=>{const a=Math.random()*Math.PI*2,d=Math.sqrt(Math.random())*r;return[Math.cos(a)*d,Math.sin(a)*d]};
+const snap=()=>drawing.snapshot();
+
+/* ---------- Brushes ---------- */
+const pathBrush=(stroke)=>({down(p){base=x.getImageData(0,0,W,H);pts=[p];this.move(p,p)},move(a,b){if(b!==a)pts.push(b);x.putImageData(base,0,0);reset();x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));if(pts.length===1)x.lineTo(pts[0].x+.1,pts[0].y);stroke()}});
+const BR={
+pencil:{move(a,b){reset();x.globalAlpha=alpha();x.lineCap="square";x.lineWidth=Math.max(1,Math.round(sz()/8));x.strokeStyle=ink;x.setLineDash(dash());x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}},
+callig1:{ang:-Math.PI/4},callig2:{ang:Math.PI/4},
+airbrush:{down(p){this.spray(p);clearInterval(timer);timer=setInterval(()=>last&&this.spray(last),30)},move(a,b){this.spray(b)},spray(p){reset();x.globalAlpha=alpha();x.fillStyle=ink;const r=sz()*1.5;for(let i=0;i<sz()*1.4;i++){const[dx,dy]=rnd(r);x.fillRect(p.x+dx,p.y+dy,1.2,1.2)}}},
+oil:{down(){const r=sz()/2;oil=[...Array(Math.max(6,Math.round(sz()/1.5)))].map(()=>({o:rnd(r),a:.35+Math.random()*.5,w:1+Math.random()*2.5}))},move(a,b){reset();x.strokeStyle=ink;for(const s of oil){x.globalAlpha=alpha()*s.a;x.lineWidth=s.w;x.beginPath();x.moveTo(a.x+s.o[0],a.y+s.o[1]);x.lineTo(b.x+s.o[0],b.y+s.o[1]);x.stroke()}}},
+crayon:{move(a,b){reset();x.fillStyle=ink;const r=sz()/2;each(a,b,2,q=>{for(let i=0;i<sz()*1.2;i++){if(Math.random()<.35)continue;x.globalAlpha=alpha()*(.3+Math.random()*.5);const[dx,dy]=rnd(r);x.fillRect(q.x+dx,q.y+dy,1.5,1.5)}})}},
+marker:pathBrush(()=>{x.globalCompositeOperation="multiply";x.globalAlpha=alpha()*.45;x.lineCap="square";x.lineJoin="miter";x.lineWidth=sz()*1.3;x.strokeStyle=ink;x.stroke()}),
+npencil:{move(a,b){reset();x.strokeStyle=ink;x.lineWidth=Math.max(1,sz()/7);for(let k=0;k<2;k++){x.globalAlpha=alpha()*(.35+Math.random()*.3);x.beginPath();x.moveTo(a.x+Math.random()-.5,a.y+Math.random()-.5);x.lineTo(b.x+Math.random()-.5,b.y+Math.random()-.5);x.stroke()}}},
+watercolor:pathBrush(()=>{x.globalCompositeOperation="multiply";x.globalAlpha=alpha()*.3;x.shadowBlur=sz();x.shadowColor=ink;x.lineWidth=sz()*1.6;x.strokeStyle=ink;x.stroke()}),
+neon:pathBrush(()=>{x.globalAlpha=alpha();x.shadowBlur=sz()*1.6;x.shadowColor=ink;x.lineWidth=sz();x.strokeStyle=ink;x.stroke();x.shadowBlur=0;x.lineWidth=Math.max(1,sz()/3);x.strokeStyle="rgba(255,255,255,.9)";x.stroke()}),
+sparkle:{move(a,b){reset();each(a,b,Math.max(4,sz()),q=>{const[dx,dy]=rnd(sz()*1.2),s=2+Math.random()*sz()*.7;x.globalAlpha=alpha();x.fillStyle=Math.random()<.3?"#fff":ink;x.beginPath();for(let i=0;i<8;i++){const r=i%2?s*.3:s,an=i*Math.PI/4;x.lineTo(q.x+dx+Math.cos(an)*r,q.y+dy+Math.sin(an)*r)}x.closePath();x.fill()})}},
+emojitrail:{down(p){this.stamp(p);this.acc=0},move(a,b){const step=sz()*2.5;each(a,b,step,q=>this.stamp(q))},stamp(p){reset();x.globalAlpha=alpha();x.font=`${Math.max(16,sz()*2.5)}px sans-serif`;x.textAlign="center";x.textBaseline="middle";x.fillText(drawing.getStamp()||"⭐",p.x,p.y)}},
+smudge:{down(p){const r=Math.max(4,sz());smudge={r,cv:mk(r*2,r*2)};this.grab(p)},grab(p){const g=smudge.cv.getContext("2d"),r=smudge.r;g.clearRect(0,0,r*2,r*2);g.save();g.beginPath();g.arc(r,r,r,0,Math.PI*2);g.clip();g.drawImage(c,p.x-r,p.y-r,r*2,r*2,0,0,r*2,r*2);g.restore()},move(a,b){reset();each(a,b,Math.max(1,smudge.r/4),q=>{x.globalAlpha=.5;x.drawImage(smudge.cv,q.x-smudge.r,q.y-smudge.r);this.grab(q)})}},
+sketchy:{down(p){pts=[p]},move(a,b){reset();x.strokeStyle=ink;x.lineWidth=1;x.globalAlpha=alpha();x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();x.globalAlpha=alpha()*.12;const lim=(sz()*6)**2;for(let i=Math.max(0,pts.length-300);i<pts.length;i++){const q=pts[i],dx=q.x-b.x,dy=q.y-b.y,d=dx*dx+dy*dy;if(d<lim&&Math.random()>d/lim){x.beginPath();x.moveTo(b.x+dx*.3,b.y+dy*.3);x.lineTo(q.x-dx*.3,q.y-dy*.3);x.stroke()}}pts.push(b)}},
+replace:{down(p){this.move(p,p)},move(a,b){const r=Math.max(2,sz()),[tr,tg,tb]=rgb(c1()),[nr,ng,nb]=rgb(c2()),t=store.tol*2.55;each(a,b,r/2,q=>{const x0=Math.max(0,Math.floor(q.x-r)),y0=Math.max(0,Math.floor(q.y-r)),w=Math.min(W,Math.ceil(q.x+r))-x0,h=Math.min(H,Math.ceil(q.y+r))-y0;if(w<1||h<1)return;const im=x.getImageData(x0,y0,w,h),d=im.data;for(let j=0;j<h;j++)for(let i=0;i<w;i++){if((x0+i-q.x)**2+(y0+j-q.y)**2>r*r)continue;const k=(j*w+i)*4;if(Math.abs(d[k]-tr)<=t&&Math.abs(d[k+1]-tg)<=t&&Math.abs(d[k+2]-tb)<=t){d[k]=nr;d[k+1]=ng;d[k+2]=nb;d[k+3]=255}}x.putImageData(im,x0,y0)})}}};
+for(const k of["callig1","callig2"]){const an=BR[k].ang;BR[k].move=(a,b)=>{reset();x.globalAlpha=alpha();x.fillStyle=ink;const h=sz()/2,vx=Math.cos(an)*h,vy=Math.sin(an)*h;x.beginPath();x.moveTo(a.x+vx,a.y+vy);x.lineTo(a.x-vx,a.y-vy);x.lineTo(b.x-vx,b.y-vy);x.lineTo(b.x+vx,b.y+vy);x.closePath();x.fill()}}
+
+/* ---------- Shapes ---------- */
+const reg=(n,rot=-Math.PI/2)=>[...Array(n)].map((_,i)=>{const a=rot+i*2*Math.PI/n;return[.5+.5*Math.cos(a),.5+.5*Math.sin(a)]});
+const star=(n,inner)=>[...Array(n*2)].map((_,i)=>{const a=-Math.PI/2+i*Math.PI/n,r=i%2?inner*.5:.5;return[.5+r*Math.cos(a),.5+r*Math.sin(a)]});
+const AR=[[0,.3],[.6,.3],[.6,0],[1,.5],[.6,1],[.6,.7],[0,.7]];
+const POLY={rtri:[[0,0],[0,1],[1,1]],diamond:[[.5,0],[1,.5],[.5,1],[0,.5]],pentagon:reg(5),hexagon:reg(6,0),arrowR:AR,arrowL:AR.map(([u,v])=>[1-u,v]),arrowU:AR.map(([u,v])=>[v,1-u]),arrowD:AR.map(([u,v])=>[v,u]),star4:star(4,.38),star5:star(5,.45),star6:star(6,.58),bolt:[[.55,0],[.12,.56],[.45,.56],[.3,1],[.88,.4],[.55,.4],[.78,0]]};
+function shapePath(id,x0,y0,w,h){const X=u=>x0+u*w,Y=v=>y0+v*h;x.beginPath();
+ if(POLY[id]){POLY[id].forEach(([u,v],i)=>i?x.lineTo(X(u),Y(v)):x.moveTo(X(u),Y(v)));x.closePath();return}
+ if(id==="rrect"){const r=Math.min(w,h)*.2;rr(x0,y0,w,h,r);return}
+ if(id==="heart"){x.moveTo(X(.5),Y(.28));x.bezierCurveTo(X(.5),Y(0),X(0),Y(0),X(0),Y(.3));x.bezierCurveTo(X(0),Y(.62),X(.5),Y(.8),X(.5),Y(1));x.bezierCurveTo(X(.5),Y(.8),X(1),Y(.62),X(1),Y(.3));x.bezierCurveTo(X(1),Y(0),X(.5),Y(0),X(.5),Y(.28));x.closePath();return}
+ if(id==="callR"){const bh=h*.78,r=Math.min(w,bh)*.18,b=y0+bh;x.moveTo(x0+r,y0);x.arcTo(x0+w,y0,x0+w,b,r);x.arcTo(x0+w,b,x0,b,r);x.lineTo(X(.42),b);x.lineTo(X(.18),Y(1));x.lineTo(X(.26),b);x.arcTo(x0,b,x0,y0,r);x.arcTo(x0,y0,x0+w,y0,r);x.closePath();return}
+ if(id==="callO"){const cx=X(.5),cy=Y(.39),rx=Math.max(1,w/2),ry=Math.max(1,h*.39);x.ellipse(cx,cy,rx,ry,0,.72*Math.PI,2.55*Math.PI);x.lineTo(X(.12),Y(1));x.closePath();return}
+ if(id==="callC"){const cx=X(.5),cy=Y(.38),rx=w*.46,ry=h*.33,n=10,P=i=>{const a=i*2*Math.PI/n;return[cx+rx*Math.cos(a),cy+ry*Math.sin(a)]};let [px,py]=P(0);x.moveTo(px,py);for(let i=0;i<n;i++){const a=(i+.5)*2*Math.PI/n,[qx,qy]=P(i+1);x.quadraticCurveTo(cx+rx*1.38*Math.cos(a),cy+ry*1.38*Math.sin(a),qx,qy)}x.closePath();const s=Math.min(w,h);x.moveTo(X(.24)+s*.06,Y(.84));x.arc(X(.24),Y(.84),s*.06,0,Math.PI*2);x.moveTo(X(.12)+s*.035,Y(.96));x.arc(X(.12),Y(.96),s*.035,0,Math.PI*2);return}}
+function rr(x0,y0,w,h,r){x.moveTo(x0+r,y0);x.arcTo(x0+w,y0,x0+w,y0+h,r);x.arcTo(x0+w,y0+h,x0,y0+h,r);x.arcTo(x0,y0+h,x0,y0,r);x.arcTo(x0,y0,x0+w,y0,r);x.closePath()}
+function paint(fillOnly){reset();x.globalAlpha=alpha();x.setLineDash(dash());x.lineWidth=sz();x.strokeStyle=ink;x.fillStyle=store.mode==="fill"?ink:alt;if(fillOnly!==false&&store.mode!=="outline")x.fill();if(store.mode!=="fill"||fillOnly===false)x.stroke()}
+const box=(a,b,sq)=>{let w=b.x-a.x,h=b.y-a.y;if(sq){const m=Math.max(Math.abs(w),Math.abs(h));w=Math.sign(w||1)*m;h=Math.sign(h||1)*m}return[Math.min(a.x,a.x+w),Math.min(a.y,a.y+h),Math.abs(w),Math.abs(h)]};
+
+/* ---------- Fill ---------- */
+function flood(p,col){const px=p.x|0,py=p.y|0;if(px<0||py<0||px>=W||py>=H)return;snap();const im=x.getImageData(0,0,W,H),d=im.data,i0=(py*W+px)*4,t0=d[i0],t1=d[i0+1],t2=d[i0+2],t3=d[i0+3],[r,g,b]=rgb(col),a=alpha(),tol=store.tol*2.55,seen=new Uint8Array(W*H);
+ const m=k=>{const j=k*4;return!seen[k]&&Math.abs(d[j]-t0)<=tol&&Math.abs(d[j+1]-t1)<=tol&&Math.abs(d[j+2]-t2)<=tol&&Math.abs(d[j+3]-t3)<=tol};
+ const put=k=>{seen[k]=1;const j=k*4;if(a>=1){d[j]=r;d[j+1]=g;d[j+2]=b;d[j+3]=255}else{d[j]+=(r-d[j])*a;d[j+1]+=(g-d[j+1])*a;d[j+2]+=(b-d[j+2])*a;d[j+3]+=(255-d[j+3])*a}};
+ const st=[px,py];let n=0;while(st.length){const y=st.pop();let xx=st.pop(),k=y*W+xx;while(xx>=0&&m(k)){xx--;k--}xx++;k++;let up=false,dn=false;while(xx<W&&m(k)){put(k);n++;if(y>0){const u=k-W;if(m(u)){if(!up){st.push(xx,y-1);up=true}}else up=false}if(y<H-1){const v=k+W;if(m(v)){if(!dn){st.push(xx,y+1);dn=true}}else dn=false}xx++;k++}}
+ x.putImageData(im,0,0);status(`🪣 Filled ${n.toLocaleString()} pixels`)}
+function pick(p,second){const d=x.getImageData(Math.max(0,Math.min(W-1,p.x|0)),Math.max(0,Math.min(H-1,p.y|0)),1,1).data,h=hex(d[0],d[1],d[2]);if(second)setC2(h);else setC1(h);status(`💉 Picked ${h} as color ${second?2:1}`)}
+
+/* ---------- Selection ---------- */
+const selBox=()=>sel.float?[sel.fx,sel.fy,sel.float.width,sel.float.height]:[sel.x,sel.y,sel.w,sel.h];
+const inside=(p)=>{if(!sel)return false;const[a,b,w,h]=selBox();return p.x>=a&&p.y>=b&&p.x<=a+w&&p.y<=b+h};
+function region(){const[a,b,w,h]=selBox();if(sel.float)return copyOf(sel.float);const o=mk(w,h),g=o.getContext("2d");if(sel.type==="free"){g.beginPath();sel.pts.forEach((q,i)=>i?g.lineTo(q.x-a,q.y-b):g.moveTo(q.x-a,q.y-b));g.closePath();g.clip()}g.drawImage(c,a,b,w,h,0,0,w,h);return o}
+function clearArea(){reset();x.fillStyle=c2();if(sel.type==="free"){x.beginPath();sel.pts.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.closePath();x.fill()}else x.fillRect(sel.x,sel.y,sel.w,sel.h)}
+function lift(){if(!sel||sel.float)return;snap();const f=region();if(transparent){const g=f.getContext("2d"),im=g.getImageData(0,0,f.width,f.height),d=im.data,[r,gg,b]=rgb(c2());for(let k=0;k<d.length;k+=4)if(Math.abs(d[k]-r)<24&&Math.abs(d[k+1]-gg)<24&&Math.abs(d[k+2]-b)<24)d[k+3]=0;g.putImageData(im,0,0)}clearArea();sel.float=f;sel.fx=sel.x;sel.fy=sel.y;sel.base=x.getImageData(0,0,W,H)}
+function renderFloat(){if(!sel||!sel.float)return;x.putImageData(sel.base,0,0);reset();x.drawImage(sel.float,sel.fx,sel.fy);overlay()}
+function commit(){sel=null;tmpSel=null;overlay()}
+function needSel(){if(!sel){status("✂️ Make a selection first (Rectangle or Free-form select)");return false}return true}
+
+/* ---------- Overlay (selection ants, grid, previews) ---------- */
+let ov,og;
+function overlay(){if(!og)return;og.clearRect(0,0,W,H);
+ if(grid){og.strokeStyle="rgba(80,90,120,.25)";og.lineWidth=1;og.beginPath();for(let i=20;i<W;i+=20){og.moveTo(i+.5,0);og.lineTo(i+.5,H)}for(let j=20;j<H;j+=20){og.moveTo(0,j+.5);og.lineTo(W,j+.5)}og.stroke()}
+ const ants=draw=>{og.lineWidth=1.5;og.setLineDash([6,5]);og.lineDashOffset=-antsOff;og.strokeStyle="#000";draw();og.stroke();og.lineDashOffset=-antsOff+5.5;og.strokeStyle="#fff";draw();og.stroke();og.setLineDash([])};
+ const shape=s=>{og.beginPath();if(s.type==="free"&&!s.float){s.pts.forEach((q,i)=>i?og.lineTo(q.x,q.y):og.moveTo(q.x,q.y));og.closePath()}else{const[a,b,w,h]=s===sel?selBox():[s.x,s.y,s.w,s.h];og.rect(a+.5,b+.5,w,h)}};
+ if(tmpSel)ants(()=>shape(tmpSel));if(sel)ants(()=>shape(sel));
+ if(poly&&hover){og.setLineDash([4,4]);og.strokeStyle="#6d4aff";og.lineWidth=2;og.beginPath();const l=poly.pts[poly.pts.length-1];og.moveTo(l.x,l.y);og.lineTo(hover.x,hover.y);og.stroke();og.setLineDash([])}
+ if((sel||tmpSel)&&!RM.matches&&!antsRAF)antsRAF=requestAnimationFrame(()=>{antsRAF=0;antsOff=(antsOff+.6)%22;if(document.getElementById("s-draw").classList.contains("active"))overlay();else antsRAF=0})}
+
+/* ---------- Transforms & effects ---------- */
+function xform(make,fit){if(sel){lift();const f=make(sel.float);sel.float=f;sel.type="rect";renderFloat();return}snap();const f=make(copyOf(c));reset();x.fillStyle=c2();x.fillRect(0,0,W,H);const s=fit?Math.min(1,W/f.width,H/f.height):1;x.drawImage(f,(W-f.width*s)/2,(H-f.height*s)/2,f.width*s,f.height*s)}
+const rot=dir=>src=>{const o=mk(src.height,src.width),g=o.getContext("2d");g.translate(o.width/2,o.height/2);g.rotate(dir*Math.PI/2);g.drawImage(src,-src.width/2,-src.height/2);return o};
+const flip=v=>src=>{const o=mk(src.width,src.height),g=o.getContext("2d");v?(g.translate(0,o.height),g.scale(1,-1)):(g.translate(o.width,0),g.scale(-1,1));g.drawImage(src,0,0);return o};
+function skew(){const n=(id,lo,hi,d)=>Math.max(lo,Math.min(hi,parseFloat($(id).value)||d)),hp=n("#ppRH",1,500,100),vp=n("#ppRV",1,500,100),sh=n("#ppSH",-89,89,0),sv=n("#ppSV2",-89,89,0);
+ xform(src=>{const w2=src.width*hp/100,h2=src.height*vp/100,tx=Math.tan(sh*Math.PI/180),ty=Math.tan(sv*Math.PI/180);let ow=w2+Math.abs(tx)*h2,oh=h2+Math.abs(ty)*w2;const k=Math.min(1,4000/ow,4000/oh);const o=mk(ow*k,oh*k),g=o.getContext("2d");g.scale(k,k);g.transform(1,ty,tx,1,tx<0?-tx*h2:0,ty<0?-ty*w2:0);g.drawImage(src,0,0,w2,h2);return o},false);status(`📐 Resized ${hp}%×${vp}%, skewed ${sh}°/${sv}°`)}
+function effect(fn){const apply=(g,w,h)=>{const im=g.getImageData(0,0,w,h),d=im.data;for(let k=0;k<d.length;k+=4){const o=fn(d[k],d[k+1],d[k+2]);d[k]=o[0];d[k+1]=o[1];d[k+2]=o[2]}g.putImageData(im,0,0)};if(sel){lift();apply(sel.float.getContext("2d"),sel.float.width,sel.float.height);renderFloat()}else{snap();apply(x,W,H)}}
+const FX={invert:(r,g,b)=>[255-r,255-g,255-b],gray:(r,g,b)=>{const l=.299*r+.587*g+.114*b;return[l,l,l]},sepia:(r,g,b)=>[.393*r+.769*g+.189*b,.349*r+.686*g+.168*b,.272*r+.534*g+.131*b]};
+
+/* ---------- Actions ---------- */
+const ACT={
+selall(){finish();setTool("rsel",true);sel={type:"rect",x:0,y:0,w:W,h:H};overlay();status("🔲 Everything selected — drag to move")},
+crop(){if(!needSel())return;const r=region();snap();reset();x.fillStyle=c2();x.fillRect(0,0,W,H);const s=Math.min(W/r.width,H/r.height);x.drawImage(r,(W-r.width*s)/2,(H-r.height*s)/2,r.width*s,r.height*s);commit();status("✂️ Cropped — selection now fills the canvas")},
+del(){if(!needSel())return;if(sel.float)x.putImageData(sel.base,0,0);else{snap();clearArea()}commit();status("🗑️ Selection deleted")},
+copy(){if(!needSel())return;clip=region();try{clip.toBlob(b=>{if(b&&navigator.clipboard&&window.ClipboardItem)navigator.clipboard.write([new ClipboardItem({"image/png":b})]).catch(()=>{})})}catch(e){}status(`📋 Copied ${clip.width}×${clip.height}`)},
+paste(){if(!clip){status("📥 Nothing to paste yet — copy a selection or paste an image");return}finish();snap();setTool("rsel",true);sel={type:"rect",x:0,y:0,w:clip.width,h:clip.height,float:copyOf(clip),fx:0,fy:0,base:x.getImageData(0,0,W,H)};renderFloat();status("📥 Pasted — drag it into place")},
+rotR(){xform(rot(1),true);status("↻ Rotated right")},rotL(){xform(rot(-1),true);status("↺ Rotated left")},flipV(){xform(flip(true));status("↕️ Flipped vertically")},flipH(){xform(flip(false));status("↔️ Flipped horizontally")},
+skew(){const p=$("#ppSkew");p.hidden=!p.hidden;if(!p.hidden)$("#ppRH").focus()},
+invert(){effect(FX.invert);status("🔀 Colors inverted")},gray(){effect(FX.gray);status("🌫️ Grayscale")},sepia(){effect(FX.sepia);status("📜 Sepia")}};
+
+/* ---------- Tool state ---------- */
+function finish(){clearInterval(timer);if(poly)closePoly(false);curve=null;poly=null;hover=null;down=false;drag=null;tmpSel=null;overlay()}
+function setTool(id,keepSel){if(!keepSel||!["rsel","fsel"].includes(id))commit();finish();tool=id;drawing.set("pro");$$(".pp-tool").forEach(b=>b.classList.toggle("on",b.dataset.ptool===id));c.style.cursor={bucket:"cell",dropper:"copy",rsel:"crosshair",fsel:"crosshair"}[id]||"crosshair";const t=TOOLS.find(t=>t[0]===id);status(`${t[1]} ${t[2]} ${hint(id)}`)}
+const hint=id=>({bucket:"— click to fill; right-click fills with color 2",dropper:"— left-click: color 1, right-click: color 2",gradient:"— drag to blend color 1 → color 2 (inside a selection if you have one)",replace:"— paint to swap color 1 for color 2",curve:"— drag a line, then click-drag twice to bend it",polygon:"— click points; double-click, Enter or click the first point to close",rsel:"— drag to select, drag inside to move",fsel:"— draw around an area, drag inside to move"})[id]||(TOOLS.find(t=>t[0]===id)[3]==="shape"?"— drag to draw; hold Shift for even sides":"— drag on the canvas");
+function release(){commit();finish();tool=null;$$(".pp-tool").forEach(b=>b.classList.remove("on"));c.style.cursor=""}
+function closePoly(done=true){if(!poly)return;x.putImageData(poly.base,0,0);if(poly.pts.length>1){x.beginPath();poly.pts.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));if(done&&poly.pts.length>2){x.closePath();paint()}else paint(false)}poly=null;hover=null;overlay()}
+function drawCurve(){x.putImageData(curve.base,0,0);x.beginPath();x.moveTo(curve.a.x,curve.a.y);if(curve.phase===0)x.lineTo(curve.b.x,curve.b.y);else if(curve.phase===1||!curve.k2)x.quadraticCurveTo(curve.k1.x,curve.k1.y,curve.b.x,curve.b.y);else x.bezierCurveTo(curve.k1.x,curve.k1.y,curve.k2.x,curve.k2.y,curve.b.x,curve.b.y);paint(false)}
+
+/* ---------- Pointer ---------- */
+function onDown(e){if(!tool)return;e.preventDefault();const p=pt(e),second=e.button===2;ink=second?c2():c1();alt=second?c1():c2();
+ try{c.setPointerCapture(e.pointerId)}catch(_){}
+ const kind=(TOOLS.find(t=>t[0]===tool)||[])[3];
+ if(tool==="dropper")return pick(p,second);
+ if(tool==="bucket"){if(sel)commit();return flood(p,ink)}
+ if(tool==="rsel"||tool==="fsel"){if(inside(p)){lift();drag="move";dragOff={x:p.x-sel.fx,y:p.y-sel.fy};down=true;return}commit();drag="new";start=p;tmpSel=tool==="rsel"?{type:"rect",x:p.x,y:p.y,w:0,h:0}:{type:"free",pts:[p]};down=true;overlay();return}
+ if(tool==="curve"){if(!curve){snap();curve={a:p,b:p,phase:0,base:x.getImageData(0,0,W,H)}}else if(curve.phase===1){curve.k1=p}else curve.k2=p;down=true;drawCurve();return}
+ if(tool==="polygon"){if(!poly){snap();poly={pts:[p],base:x.getImageData(0,0,W,H)};status("⬟ Keep clicking points…");return}const f=poly.pts[0];if(e.detail>1||Math.hypot(p.x-f.x,p.y-f.y)<10){closePoly(true);return}poly.pts.push(p);x.putImageData(poly.base,0,0);x.beginPath();poly.pts.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));paint(false);overlay();return}
+ if(tool==="gradient"){snap();base=x.getImageData(0,0,W,H);start=p;down=true;return}
+ snap();down=true;last=start=p;
+ if(kind==="shape"){base=x.getImageData(0,0,W,H);return}
+ const b=BR[tool];if(b.down)b.down(p);else b.move(p,{x:p.x+.01,y:p.y})}
+function onMove(e){const p=pt(e);const s=$("#ppPos");if(s)s.textContent=`📍 ${Math.round(p.x)}, ${Math.round(p.y)}px`;
+ if(poly&&!down){hover=p;overlay();return}
+ if(!down||!tool)return;e.preventDefault();
+ if(drag==="move"){sel.fx=Math.round(p.x-dragOff.x);sel.fy=Math.round(p.y-dragOff.y);renderFloat();return}
+ if(drag==="new"){if(tmpSel.type==="rect"){const[a,b,w,h]=box(start,p,e.shiftKey);Object.assign(tmpSel,{x:a,y:b,w,h})}else tmpSel.pts.push(p);overlay();status(tmpSel.type==="rect"?`⬚ ${Math.round(tmpSel.w)}×${Math.round(tmpSel.h)}`:"➰ Drawing selection…");return}
+ if(tool==="curve"){curve.phase===0?curve.b=p:curve.phase===1?curve.k1=p:curve.k2=p;drawCurve();return}
+ if(tool==="gradient"){x.putImageData(base,0,0);reset();x.globalAlpha=alpha();const g=x.createLinearGradient(start.x,start.y,p.x,p.y);g.addColorStop(0,ink);g.addColorStop(1,alt);x.fillStyle=g;if(sel&&!sel.float){x.save();x.beginPath();if(sel.type==="free"){sel.pts.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.closePath()}else x.rect(sel.x,sel.y,sel.w,sel.h);x.clip();x.fillRect(0,0,W,H);x.restore()}else x.fillRect(0,0,W,H);return}
+ const kind=(TOOLS.find(t=>t[0]===tool)||[])[3];
+ if(kind==="shape"){x.putImageData(base,0,0);const[a,b,w,h]=box(start,p,e.shiftKey);shapePath(tool,a,b,Math.max(1,w),Math.max(1,h));paint();return}
+ BR[tool].move(last,p);last=p}
+function onUp(){if(!down)return;down=false;clearInterval(timer);
+ if(drag==="new"){const t=tmpSel;tmpSel=null;drag=null;if(t.type==="rect"){const a=Math.max(0,Math.floor(t.x)),b=Math.max(0,Math.floor(t.y)),w=Math.min(W,Math.ceil(t.x+t.w))-a,h=Math.min(H,Math.ceil(t.y+t.h))-b;sel=w>2&&h>2?{type:"rect",x:a,y:b,w,h}:null}else if(t.pts.length>2){const xs=t.pts.map(q=>q.x),ys=t.pts.map(q=>q.y),a=Math.max(0,Math.floor(Math.min(...xs))),b=Math.max(0,Math.floor(Math.min(...ys))),w=Math.min(W,Math.ceil(Math.max(...xs)))-a,h=Math.min(H,Math.ceil(Math.max(...ys)))-b;sel=w>2&&h>2?{type:"free",pts:t.pts,x:a,y:b,w,h}:null}overlay();if(sel)status(`✂️ Selected ${sel.w}×${sel.h} — drag inside to move, Delete to erase, Ctrl+C to copy`);return}
+ if(drag==="move"){drag=null;return}
+ if(tool==="curve"&&curve){curve.phase++;if(curve.phase>2){curve=null;status("〰️ Curve done!")}else status(curve.phase===1?"〰️ Click-drag to bend (1/2)":"〰️ Click-drag to bend again (2/2)");return}
+ last=start=base=null;pts=[];smudge=null;oil=null}
+
+/* ---------- Colors ---------- */
+function wells(){const a=$("#ppC1"),b=$("#ppC2");if(a){a.style.background=c1();a.setAttribute("aria-label","Color 1: "+c1())}if(b){b.style.background=c2();b.setAttribute("aria-label","Color 2: "+c2())}}
+function setC1(h){drawing.setColor(h);wells();edLoad(h)}
+function setC2(h){store.c2=h;persist();wells()}
+function palette(){$("#ppPal").innerHTML=PAL.concat([...Array(14)].map((_,i)=>store.custom[i]||"")).map((h,i)=>h?`<button type="button" data-h="${h}" style="background:${h}" title="${h}${i>=PAL.length?" (custom)":""}" aria-label="Color ${h}"></button>`:`<button type="button" class="empty" disabled aria-label="Empty custom color slot"></button>`).join("");
+ $$("#ppPal [data-h]").forEach(b=>{b.onclick=()=>setC1(b.dataset.h);b.oncontextmenu=e=>{e.preventDefault();setC2(b.dataset.h)}})}
+const hsv2rgb=(h,s,v)=>{const f=n=>{const k=(n+h/60)%6;return v-v*s*Math.max(0,Math.min(k,4-k,1))};return[f(5)*255,f(3)*255,f(1)*255]};
+const rgb2hsv=(r,g,b)=>{r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;let h=0;if(d){h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,M?d/M:0,M]};
+let ed={h:0,s:1,v:1};
+function edLoad(h){const[r,g,b]=rgb(h);[ed.h,ed.s,ed.v]=rgb2hsv(r,g,b);edDraw(false)}
+function edHex(){return hex(...hsv2rgb(ed.h,ed.s,ed.v))}
+function edDraw(fromInput){const cv=$("#ppSV");if(!cv||$("#ppEd").hidden)return;const g=cv.getContext("2d"),w=cv.width,h=cv.height;g.fillStyle=`hsl(${ed.h} 100% 50%)`;g.fillRect(0,0,w,h);let gr=g.createLinearGradient(0,0,w,0);gr.addColorStop(0,"#fff");gr.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=gr;g.fillRect(0,0,w,h);gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(0,0,0,0)");gr.addColorStop(1,"#000");g.fillStyle=gr;g.fillRect(0,0,w,h);g.beginPath();g.arc(ed.s*w,(1-ed.v)*h,6,0,Math.PI*2);g.lineWidth=2;g.strokeStyle=ed.v>.5?"#000":"#fff";g.stroke();
+ const hx=edHex(),[r,gg,b]=rgb(hx);$("#ppHue").value=Math.round(ed.h);$("#ppPrev").style.background=hx;if(fromInput!=="hex")$("#ppHex").value=hx;if(fromInput!=="rgb"){$("#ppR").value=r;$("#ppG").value=gg;$("#ppB").value=b}$("#ppHSV").textContent=`H ${Math.round(ed.h)}° · S ${Math.round(ed.s*100)}% · V ${Math.round(ed.v*100)}%`}
+
+/* ---------- Build UI ---------- */
+function build(){const panel=c.parentElement;const stage=document.createElement("div");stage.className="pp-stage";stage.innerHTML='<div class="pp-inner"></div>';panel.insertBefore(stage,c);const inner=stage.firstChild;inner.appendChild(c);ov=document.createElement("canvas");ov.width=W;ov.height=H;ov.className="pp-over";ov.setAttribute("aria-hidden","true");inner.appendChild(ov);og=ov.getContext("2d");
+ const rib=document.createElement("div");rib.className="pp";rib.setAttribute("role","toolbar");rib.setAttribute("aria-label","Paint Pro tools");
+ rib.innerHTML=`<div class="pp-tabs" role="tablist">${Object.entries(G).map(([k,v])=>`<button type="button" role="tab" data-tab="${k}" aria-selected="${k===store.tab}" class="${k===store.tab?"on":""}">${v}</button>`).join("")}<span style="margin-left:auto;font-weight:800;align-self:center;font-size:13px">🖌️ Paint Pro · 48 tools</span></div>
+ <div class="pp-tools" id="ppTools"></div>
+ <div class="pp-skew" id="ppSkew" hidden><b>📐</b><label>Width % <input type="number" id="ppRH" value="100" min="1" max="500" style="width:70px"></label><label>Height % <input type="number" id="ppRV" value="100" min="1" max="500" style="width:70px"></label><label>Skew ↔ ° <input type="number" id="ppSH" value="0" min="-89" max="89" style="width:64px"></label><label>Skew ↕ ° <input type="number" id="ppSV2" value="0" min="-89" max="89" style="width:64px"></label><button type="button" id="ppSkewGo">✅ Apply</button></div>
+ <div class="pp-colors"><button type="button" class="pp-well" id="ppC1" title="Color 1 (left click)"></button><button type="button" class="pp-well c2" id="ppC2" title="Color 2 (right click)"></button><button type="button" id="ppSwap" title="Swap colors (X)" aria-label="Swap colors">⇄</button><div class="pp-pal" id="ppPal"></div><button type="button" id="ppEditBtn" aria-expanded="false">🌈 Edit colors</button></div>
+ <div class="pp-ed" id="ppEd" hidden><canvas id="ppSV" width="220" height="140" aria-label="Saturation and brightness picker"></canvas><div style="flex:1 1 180px;display:flex;flex-direction:column;gap:6px"><label>🌈 Hue <input type="range" id="ppHue" class="pp-hue" min="0" max="360"></label><div class="fields"><span>Hex</span><input id="ppHex" aria-label="Hex color" maxlength="7" spellcheck="false"><span>🔴 R</span><input id="ppR" aria-label="Red 0 to 255" type="number" min="0" max="255"><span>🟢 G</span><input id="ppG" aria-label="Green 0 to 255" type="number" min="0" max="255"><span>🔵 B</span><input id="ppB" aria-label="Blue 0 to 255" type="number" min="0" max="255"></div><small id="ppHSV"></small><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><div class="pp-prev" id="ppPrev"></div><button type="button" id="ppSet1">🎯 Color 1</button><button type="button" id="ppSet2">🎯 Color 2</button><button type="button" id="ppAdd">➕ Custom</button><button type="button" id="ppNative" title="System color picker">🖥️</button></div></div></div>
+ <div class="pp-opts"><label>🎨 Shape style <select id="ppMode"><option value="outline">Outline</option><option value="fill">Solid fill</option><option value="both">Outline + color 2 fill</option></select></label><label>🎯 Tolerance <input type="range" id="ppTol" min="0" max="100" value="${store.tol}"> <output id="ppTolV">${store.tol}%</output></label><label><input type="checkbox" id="ppTrans"> 🫥 Transparent selection</label><label>🔍 Zoom <select id="ppZoom"><option value="1">100%</option><option value="1.5">150%</option><option value="2">200%</option><option value="4">400%</option><option value="8">800%</option></select></label><label><input type="checkbox" id="ppGrid"> #️⃣ Gridlines</label><span id="ppPos" class="pp-status"></span></div>
+ <div class="pp-status" id="ppStatus" role="status" aria-live="polite">🖌️ Pick a Paint Pro tool — or keep using the classic tools on the right.</div>`;
+ panel.insertBefore(rib,stage);
+ const tabs=()=>{const k=store.tab;$$("[data-tab]",rib).forEach(b=>{const on=b.dataset.tab===k;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)});const list=k==="view"?EXTRAS.map(e=>[e[0],e[1],e[2],"view",1]):TOOLS.filter(t=>t[3]===k);$("#ppTools").innerHTML=list.map(t=>`<button type="button" class="pp-tool ${t[0]===tool?"on":""}" ${t[4]?`data-pact="${t[0]}"`:`data-ptool="${t[0]}"`} title="${t[2]}"><span class="e" aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join("");$$("[data-ptool]",rib).forEach(b=>b.onclick=()=>setTool(b.dataset.ptool));$$("[data-pact]",rib).forEach(b=>b.onclick=()=>{ACT[b.dataset.pact]();b.animate&&!RM.matches&&b.animate([{transform:"scale(1)"},{transform:"scale(1.15)"},{transform:"scale(1)"}],{duration:250})})};
+ $$("[data-tab]",rib).forEach(b=>b.onclick=()=>{store.tab=b.dataset.tab;persist();tabs()});tabs();
+ $("#ppSkewGo").onclick=skew;$("#ppSwap").onclick=()=>{const a=c1();setC1(c2());setC2(a)};$("#ppC1").onclick=()=>openEd(true);$("#ppC2").onclick=()=>{edLoad(c2());openEd(true)};
+ const openEd=f=>{const e=$("#ppEd");e.hidden=f===undefined?!e.hidden:!f;$("#ppEditBtn").setAttribute("aria-expanded",!e.hidden);edDraw()};$("#ppEditBtn").onclick=()=>{edLoad(c1());openEd()};
+ const sv=$("#ppSV");let svd=false;const svp=e=>{const r=sv.getBoundingClientRect();ed.s=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));ed.v=1-Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));edDraw()};sv.onpointerdown=e=>{svd=true;sv.setPointerCapture(e.pointerId);svp(e)};sv.onpointermove=e=>svd&&svp(e);sv.onpointerup=()=>{svd=false;setC1(edHex())};
+ $("#ppHue").oninput=e=>{ed.h=+e.target.value;edDraw()};$("#ppHue").onchange=()=>setC1(edHex());
+ $("#ppHex").oninput=e=>{const v=e.target.value.trim();if(/^#?[0-9a-f]{6}$/i.test(v)){const[r,g,b]=rgb(v);[ed.h,ed.s,ed.v]=rgb2hsv(r,g,b);edDraw("hex")}};
+ ["#ppR","#ppG","#ppB"].forEach(id=>$(id).oninput=()=>{const r=+$("#ppR").value,g=+$("#ppG").value,b=+$("#ppB").value;if([r,g,b].every(v=>v>=0&&v<=255)){[ed.h,ed.s,ed.v]=rgb2hsv(r,g,b);edDraw("rgb")}});
+ $("#ppSet1").onclick=()=>setC1(edHex());$("#ppSet2").onclick=()=>setC2(edHex());$("#ppAdd").onclick=()=>{store.custom=[edHex(),...store.custom.filter(h=>h!==edHex())].slice(0,14);persist();palette();status("➕ Saved to custom colors")};
+ $("#ppNative").onclick=()=>{const a=$("#artColor");a&&a.click()};
+ $("#ppMode").value=store.mode;$("#ppMode").onchange=e=>{store.mode=e.target.value;persist()};
+ $("#ppTol").oninput=e=>{store.tol=+e.target.value;$("#ppTolV").textContent=store.tol+"%";persist()};
+ $("#ppTrans").onchange=e=>transparent=e.target.checked;
+ $("#ppZoom").onchange=e=>{zoom=+e.target.value;inner.style.width=zoom*100+"%";status(`🔍 Zoom ${zoom*100}%`)};
+ $("#ppGrid").onchange=e=>{grid=e.target.checked;overlay()};
+ palette();wells();
+ c.addEventListener("pointerdown",onDown);c.addEventListener("pointermove",onMove);window.addEventListener("pointerup",onUp);window.addEventListener("pointercancel",onUp);
+ c.addEventListener("contextmenu",e=>{if(tool)e.preventDefault()});
+ c.addEventListener("dblclick",()=>{if(poly)closePoly(true)});
+ const sync=()=>wells();$("#artColor")&&$("#artColor").addEventListener("input",sync);document.getElementById("swatches")&&document.getElementById("swatches").addEventListener("click",()=>setTimeout(sync));
+ const u=drawing.undo.bind(drawing),r=drawing.redo.bind(drawing);drawing.undo=()=>{commit();finish();u()};drawing.redo=()=>{commit();finish();r()};
+ document.addEventListener("keydown",e=>{if(typeof app==="undefined"||app.current!=="draw")return;const t=(e.target.tagName||"").toLowerCase();if(t==="input"||t==="textarea"||t==="select"||e.target.isContentEditable)return;const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
+  const go=f=>{e.preventDefault();f()};
+  if(mod&&k==="z")return go(()=>e.shiftKey?drawing.redo():drawing.undo());if(mod&&k==="y")return go(()=>drawing.redo());if(mod&&k==="a")return go(ACT.selall);if(mod&&k==="c")return go(ACT.copy);if(mod&&k==="x")return go(()=>{if(!needSel())return;ACT.copy();ACT.del()});
+  if(mod)return;if(k==="delete"||k==="backspace"){if(sel)go(ACT.del);return}if(k==="escape"){if(poly){x.putImageData(poly.base,0,0);poly=null}commit();finish();status("⎋ Cancelled");return}if(k==="enter"&&poly)return go(()=>closePoly(true));if(k==="x")return go(()=>$("#ppSwap").click());
+  if(k==="+"||k==="="||k==="-"){const Z=[1,1.5,2,4,8],i=Z.indexOf(zoom),n=Z[Math.max(0,Math.min(Z.length-1,i+(k==="-"?-1:1)))];$("#ppZoom").value=n;return go(()=>$("#ppZoom").onchange({target:{value:n}}))}
+  if(k==="g"){$("#ppGrid").checked=!grid;return go(()=>$("#ppGrid").onchange({target:$("#ppGrid")}))}});
+ document.addEventListener("paste",e=>{if(typeof app==="undefined"||app.current!=="draw")return;const t=(e.target.tagName||"").toLowerCase();if(t==="input"||t==="textarea")return;const it=[...(e.clipboardData||{}).items||[]].find(i=>i.type.startsWith("image/"));if(!it){if(clip){e.preventDefault();ACT.paste()}return}e.preventDefault();const f=it.getAsFile();if(!f||f.size>1e7)return;const url=URL.createObjectURL(f),im=new Image();im.onload=()=>{const s=Math.min(1,W/im.width,H/im.height);clip=mk(im.width*s,im.height*s);clip.getContext("2d").drawImage(im,0,0,clip.width,clip.height);URL.revokeObjectURL(url);ACT.paste()};im.onerror=()=>URL.revokeObjectURL(url);im.src=url});
+}
+window.paintPro={release,setTool,act:n=>ACT[n]&&ACT[n](),tools:TOOLS.length,list:()=>TOOLS.map(t=>t[0]),get sel(){return sel},setC2,edLoad};
+build();
+})();
+</script>

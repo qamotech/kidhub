@@ -1,0 +1,5 @@
+const { chromium } = require('playwright');const { AxeBuilder } = require('@axe-core/playwright');
+(async()=>{const b=await chromium.launch({channel:'msedge'});const page=await (await b.newContext()).newPage();await page.goto('file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html');
+let bad=0;for(const [screen,sel] of [['tools','#s-tools'],['draw','.pp'],['music','#musicDeck'],['hub','.px']]){await page.evaluate(s=>app.show(s),screen);await page.waitForTimeout(200);
+ const r=await new AxeBuilder({page}).include(sel).withTags(['wcag2a','wcag2aa']).disableRules(['color-contrast']).analyze();const v=r.violations.filter(v=>['serious','critical'].includes(v.impact));bad+=v.length;console.log(screen,v.length?v.map(x=>`${x.id}(${x.nodes.length})`).join(', '):'clean')}
+await b.close();if(bad){console.error('A11Y: serious/critical issues found');process.exit(1)}console.log('PASS a11y: new modules have no serious/critical WCAG A/AA violations')})().catch(e=>{console.error(e);process.exit(1)});

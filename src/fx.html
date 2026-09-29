@@ -1,0 +1,92 @@
+<style id="fx-css">
+@supports (overflow:clip){body{overflow-x:clip!important;overflow-y:visible!important}.app{overflow:clip!important}}
+.px{grid-column:1/-1;position:relative;height:520vh;margin:28px -4px 10px;border-radius:32px;isolation:isolate}
+.px-stage{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;border-radius:32px;box-shadow:0 20px 60px rgba(40,20,90,.25)}
+.px-scene{position:absolute;inset:0;opacity:0;will-change:opacity}
+.px-l{position:absolute;left:-10%;width:120%;will-change:transform;pointer-events:none}
+.px-l svg{display:block;width:100%;height:auto}
+.px-e{position:absolute;will-change:transform;pointer-events:none;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25));line-height:1}
+.px-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.45);width:min(90%,640px);will-change:transform,opacity;z-index:5}
+.px-card h2{font-size:clamp(28px,6vw,64px);margin:0 0 8px;line-height:1.05}
+.px-card p{font-size:clamp(15px,2.2vw,22px);margin:0 0 14px;font-weight:700}
+.px-card button{font:inherit;font-weight:900;font-size:18px;border:0;border-radius:999px;padding:12px 22px;min-height:48px;cursor:pointer;background:#fff;color:#2b1b5e;box-shadow:0 10px 24px rgba(0,0,0,.25);pointer-events:auto}
+.px-bar{position:absolute;left:16px;right:16px;bottom:14px;height:8px;border-radius:9px;background:rgba(255,255,255,.25);z-index:6;overflow:hidden}
+.px-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe066,#ff5fa2,#6d4aff)}
+.px-dots{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:6}
+.px-dots button{width:14px;height:14px;min-width:14px;min-height:14px;border-radius:50%;border:2px solid #fff;background:transparent;padding:0;cursor:pointer}
+.px-dots button.on{background:#fff}
+.px-hint{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);color:#fff;font-weight:800;z-index:6;animation:pxBob 1.6s ease-in-out infinite;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+@keyframes pxBob{50%{transform:translate(-50%,8px)}}
+.fx-reveal{opacity:0;transform:translateY(26px) scale(.98);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.fx-reveal.fx-in{opacity:1;transform:none}
+.card{transform-style:preserve-3d;transition:transform .25s ease,box-shadow .25s ease}
+.card.fx-tilt{transform:perspective(700px) rotateX(var(--rx,0)) rotateY(var(--ry,0)) translateY(-4px);box-shadow:0 18px 36px rgba(60,30,140,.22)}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 45%);opacity:0;transition:opacity .25s}
+.card.fx-tilt::after{opacity:1}
+.card .card-icon{transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.card:hover .card-icon{transform:scale(1.25) rotate(-8deg)}
+.act-head h2{background:linear-gradient(90deg,#ff5fa2,#6d4aff,#20a9ec,#2bc678,#ff5fa2);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fxHue 8s linear infinite}
+@keyframes fxHue{to{background-position:300% 0}}
+.fx-ripple{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.55);transform:scale(0);animation:fxRip .55s ease-out forwards}
+@keyframes fxRip{to{transform:scale(3.2);opacity:0}}
+.fx-spark{position:fixed;pointer-events:none;z-index:9999;font-size:14px;animation:fxSpark .8s ease-out forwards}
+@keyframes fxSpark{to{transform:translate(var(--dx),var(--dy)) scale(.2) rotate(180deg);opacity:0}}
+.fx-drift{position:fixed;z-index:0;pointer-events:none;font-size:28px;opacity:.18;animation:fxDrift linear infinite}
+@keyframes fxDrift{from{transform:translate(0,110vh) rotate(0)}to{transform:translate(var(--dx),-20vh) rotate(360deg)}}
+.screen.active{animation:fxScreen .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes fxScreen{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+ .px{height:auto}.px-stage{position:relative;height:auto;overflow:visible;box-shadow:none;display:grid;gap:14px}.px-scene{position:relative;opacity:1!important;height:70vh;border-radius:24px;overflow:hidden}.px-l,.px-e,.px-card{transform:none!important}.px-card{transform:translate(-50%,-50%)!important}.px-bar,.px-dots,.px-hint{display:none}
+ .fx-reveal{opacity:1;transform:none;transition:none}.act-head h2{animation:none}.fx-drift,.fx-spark,.fx-ripple{display:none}.screen.active{animation:none}.card,.card.fx-tilt{transform:none;transition:none}}
+</style>
+<script id="fx-js">
+(()=>{"use strict";
+const RM=matchMedia("(prefers-reduced-motion: reduce)"),fine=matchMedia("(hover:hover) and (pointer:fine)");
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const EMOJI=/\p{Extended_Pictographic}/u;
+
+/* ---------- SVG image layers ---------- */
+const mtn=(c1,c2,pts,h=300)=>`<svg viewBox="0 0 1200 ${h}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g${c1.slice(1)}${pts.length}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><path d="M0 ${h} ${pts.map(([x,y])=>`L${x} ${y}`).join(" ")} L1200 ${h}Z" fill="url(#g${c1.slice(1)}${pts.length})"/></svg>`;
+const hills=(c,amp,y0,n=4,h=260)=>{let d=`M0 ${h} L0 ${y0}`;for(let i=0;i<n;i++){const x0=i*1200/n,x1=(i+1)*1200/n;d+=` Q${(x0+x1)/2} ${y0-amp*(i%2?.6:1)} ${x1} ${y0}`}return`<svg viewBox="0 0 1200 ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L1200 ${h}Z" fill="${c}"/></svg>`};
+const waves=(c,y0,amp,n=8,h=220)=>{let d=`M0 ${h} L0 ${y0}`;for(let i=0;i<n;i++){const x0=i*1200/n,x1=(i+1)*1200/n;d+=` C${x0+50} ${y0-amp} ${x1-50} ${y0+amp} ${x1} ${y0}`}return`<svg viewBox="0 0 1200 ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L1200 ${h}Z" fill="${c}"/></svg>`};
+const stars=(n,seed)=>{let s=seed,r=()=>(s=(s*9301+49297)%233280)/233280;return`<svg viewBox="0 0 1200 800" aria-hidden="true">${[...Array(n)].map(()=>`<circle cx="${r()*1200}" cy="${r()*800}" r="${.6+r()*2.2}" fill="#fff" opacity="${.4+r()*.6}"/>`).join("")}</svg>`};
+const trees=(c,n,y,h=260)=>`<svg viewBox="0 0 1200 ${h}" preserveAspectRatio="none" aria-hidden="true">${[...Array(n)].map((_,i)=>{const x=i*1200/n+((i*37)%40),s=.7+((i*13)%10)/20;return`<path d="M${x} ${y} l${30*s} ${-120*s} l${30*s} ${120*s}Z" fill="${c}"/><rect x="${x+26*s}" y="${y}" width="${8*s}" height="${h-y}" fill="${c}"/>`}).join("")}<rect y="${y+10}" width="1200" height="${h}" fill="${c}"/></svg>`;
+/* scene: [bg, layers:[html, top%, speed, extra style], emoji:[char, left%, top%, size, speed, spin], card] */
+const SCENES=[
+{bg:"linear-gradient(#070b2e,#1b1464 60%,#4a1f7a)",L:[[stars(160,7),0,.15],[stars(90,3),0,.35],[mtn("#3b2a8f","#1b1464",[[0,210],[160,120],[330,190],[520,90],[700,200],[880,110],[1050,180],[1200,140]]),62,.55],[hills("#2a1b6b",90,170),74,.8]],E:[["🪐",72,14,110,.5,0],["🌙",14,10,90,.3,0],["🚀",20,60,90,1.4,-20],["🛸",78,48,70,1.1,10],["☄️",46,20,60,1.8,0],["👩‍🚀",58,66,70,.9,15],["⭐",86,26,40,.7,0],["🌍",32,34,64,.6,0]],C:["🚀 Blast off!","Explore planets, stars and rockets in Space Explorer.","space","🪐 Go to space"]},
+{bg:"linear-gradient(#5ec8ff,#aee6ff 55%,#ffe7f3)",L:[[mtn("#ffffff","#e0f3ff",[[0,200],[200,170],[420,200],[640,160],[860,205],[1060,170],[1200,190]]),30,.3],[mtn("#9ad0ff","#6fb4f0",[[0,220],[180,110],[380,200],[560,80],[760,190],[960,100],[1200,200]]),58,.5],[hills("#8fe08a",70,160),72,.75],[hills("#54c46a",90,190),82,1]],E:[["🎈",12,30,80,1.2,-8],["🎈",82,42,70,1.5,8],["☁️",30,12,120,.4,0],["☁️",70,18,90,.55,0],["🌈",50,24,140,.35,0],["🪁",64,34,70,1.3,12],["🦅",20,18,50,.9,0],["☀️",88,8,100,.2,0]],C:["🎈 Up in the sky","Create colorful art in the Art Studio with 48 new Paint Pro tools.","draw","🎨 Start painting"]},
+{bg:"linear-gradient(#ffe6a7,#ffc57d 45%,#9fdc8f)",L:[[mtn("#a7c7a0","#88b384",[[0,200],[240,120],[480,190],[720,100],[960,180],[1200,130]]),40,.3],[trees("#3f8f4f",14,200),52,.55],[trees("#2e6e3c",10,210),66,.8],[hills("#245c30",60,120,5,200),84,1.05]],E:[["🦊",18,72,80,1.1,0],["🦉",76,40,70,.8,0],["🍄",40,80,60,1.2,0],["🦋",60,30,56,1.6,15],["🌻",86,76,70,1.1,0],["🐿️",30,60,56,.9,0],["🦕",64,64,110,.95,0],["🌳",6,54,120,.7,0]],C:["🌳 Into the forest","Dig for fossils, meet farm friends and play in 80 toolbox tools.","dino","🦖 Dig for fossils"]},
+{bg:"linear-gradient(#3fc1ff,#0a6fb8 45%,#062a5e)",L:[[waves("rgba(255,255,255,.35)",60,16),30,.35],[waves("#1a8ad4",80,22),42,.55],[waves("#0f5fa8",90,26,6),60,.8],[hills("#e9d49a",50,150,6,200),86,1.05]],E:[["🐳",62,40,130,.6,0],["🐠",20,54,60,1.3,0],["🐙",80,72,80,1.0,-10],["🐢",36,66,70,.9,0],["🦈",12,34,80,1.1,0],["🪸",10,82,80,1.2,0],["🐚",56,86,50,1.25,0],["🫧",46,24,50,1.8,0]],C:["🌊 Deep ocean","Make music with 8 instruments, beats, loops and effects in the Music Lab.","music","🎵 Make music"]}];
+function buildParallax(){const hub=$("#s-hub");if(!hub||$(".px",hub))return;const host=hub.querySelector(".activity,.hub")||hub;const px=document.createElement("section");px.className="px";px.setAttribute("aria-label","KidHub Worlds scrolling journey");
+ px.innerHTML=`<div class="px-stage">${SCENES.map((s,i)=>`<div class="px-scene" data-i="${i}" style="background:${s.bg}">${s.L.map(([h,top,sp],j)=>`<div class="px-l" data-s="${sp}" style="top:${top}%;z-index:${j+1}">${h}</div>`).join("")}${s.E.map(([e,l,t,z,sp,rot])=>`<div class="px-e" data-s="${sp}" data-r="${rot}" style="left:${l}%;top:${t}%;font-size:${z}px;z-index:4" aria-hidden="true">${e}</div>`).join("")}<div class="px-card"><h2>${s.C[0]}</h2><p>${s.C[1]}</p><button type="button" data-go="${s.C[2]}">${s.C[3]} ➜</button></div></div>`).join("")}<div class="px-dots">${SCENES.map((s,i)=>`<button type="button" data-d="${i}" aria-label="Jump to ${s.C[0]}"></button>`).join("")}</div><div class="px-hint" aria-hidden="true">⬇️ Scroll to travel ⬇️</div><div class="px-bar" aria-hidden="true"><i></i></div></div>`;
+ host.appendChild(px);
+ $$("[data-go]",px).forEach(b=>b.onclick=()=>app.show(b.dataset.go));
+ $$("[data-d]",px).forEach(b=>b.onclick=()=>{const r=px.getBoundingClientRect(),top=scrollY+r.top+(+b.dataset.d+.5)/SCENES.length*(px.offsetHeight-innerHeight);scrollTo({top,behavior:RM.matches?"auto":"smooth"})});
+ const scenes=$$(".px-scene",px),layers=scenes.map(s=>$$(".px-l,.px-e",s)),cards=scenes.map(s=>$(".px-card",s)),bar=$(".px-bar i",px),dots=$$("[data-d]",px),hint=$(".px-hint",px);let vis=false,ticking=false;
+ const frame=()=>{ticking=false;if(RM.matches)return;const r=px.getBoundingClientRect(),span=px.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-r.top/span)),f=p*SCENES.length;bar.style.width=p*100+"%";hint.style.opacity=p>.02?0:1;
+  scenes.forEach((s,i)=>{const local=f-i;const o=local<-.15||local>1.15?0:local<.12?Math.max(0,(local+.15)/.27):local>.88?Math.max(0,(1.15-local)/.27):1;s.style.opacity=o.toFixed(3);s.style.visibility=o>0?"visible":"hidden";if(!o)return;const t=local-.5;
+   layers[i].forEach(el=>{const sp=+el.dataset.s,rot=+(el.dataset.r||0);el.style.transform=`translate3d(0,${(-t*sp*innerHeight*.45).toFixed(1)}px,0)${rot?` rotate(${(t*rot).toFixed(1)}deg)`:""}${el.classList.contains("px-e")?` scale(${(1+Math.max(0,.5-Math.abs(t))*.25).toFixed(3)})`:""}`});
+   cards[i].style.transform=`translate(-50%,calc(-50% + ${(t*-120).toFixed(1)}px)) scale(${(1-Math.abs(t)*.15).toFixed(3)})`;cards[i].style.opacity=Math.max(0,1-Math.abs(t)*1.6).toFixed(3)});
+  dots.forEach((d,i)=>d.classList.toggle("on",Math.min(SCENES.length-1,Math.floor(f))===i))};
+ const req=()=>{if(vis&&!ticking){ticking=true;requestAnimationFrame(frame)}};
+ new IntersectionObserver(es=>{vis=es[0].isIntersecting;req()},{rootMargin:"100px"}).observe(px);
+ addEventListener("scroll",req,{passive:true});addEventListener("resize",req,{passive:true});RM.addEventListener("change",()=>{scenes.forEach(s=>{s.style.opacity="";s.style.visibility=""});$$(".px-l,.px-e,.px-card",px).forEach(e=>{e.style.transform="";e.style.opacity=""});req()});
+ scenes[0].style.opacity=1;req()}
+
+/* ---------- Reveal, tilt, ripple, sparkles, drift ---------- */
+function reveal(){if(RM.matches||!("IntersectionObserver" in window))return;const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("fx-in");io.unobserve(e.target)}}),{rootMargin:"0px 0px -5% 0px"});
+ const watch=()=>$$(".card:not(.fx-reveal),.side:not(.fx-reveal)").forEach((el,i)=>{el.classList.add("fx-reveal");el.style.transitionDelay=Math.min(i%8*60,420)+"ms";io.observe(el)});watch();new MutationObserver(()=>watch()).observe($("#cards")||document.body,{childList:true})}
+function tilt(){document.addEventListener("pointermove",e=>{if(!fine.matches||RM.matches)return;const c=e.target.closest&&e.target.closest(".card");$$(".card.fx-tilt").forEach(x=>{if(x!==c)x.classList.remove("fx-tilt")});if(!c)return;const r=c.getBoundingClientRect(),u=(e.clientX-r.left)/r.width,v=(e.clientY-r.top)/r.height;c.style.setProperty("--ry",((u-.5)*14).toFixed(1)+"deg");c.style.setProperty("--rx",((.5-v)*14).toFixed(1)+"deg");c.style.setProperty("--mx",u*100+"%");c.style.setProperty("--my",v*100+"%");c.classList.add("fx-tilt")},{passive:true})}
+function ripple(){document.addEventListener("pointerdown",e=>{if(RM.matches)return;const b=e.target.closest&&e.target.closest(".btn,.tool,.card,.kp button,.pp button,.md button:not(.md-k):not(.md-step)");if(!b)return;const cs=getComputedStyle(b);if(cs.position==="static")b.style.position="relative";if(cs.overflow!=="hidden")b.style.overflow="hidden";const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),sp=document.createElement("span");sp.className="fx-ripple";sp.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(sp);setTimeout(()=>sp.remove(),600)},{passive:true})}
+function sparkles(){let last=0,live=0;const E=["✨","⭐","💫","🌟"];document.addEventListener("pointermove",e=>{if(RM.matches||!fine.matches||typeof app==="undefined"||app.current!=="hub")return;const n=performance.now();if(n-last<45||live>24)return;last=n;live++;const s=document.createElement("span");s.className="fx-spark";s.textContent=E[(n|0)%4];s.style.left=e.clientX+"px";s.style.top=e.clientY+"px";s.style.setProperty("--dx",(Math.random()*40-20)+"px");s.style.setProperty("--dy",(Math.random()*30+10)+"px");document.body.appendChild(s);setTimeout(()=>{s.remove();live--},800)},{passive:true})}
+function drift(){if(RM.matches)return;const E=["🎨","🎵","🚀","⭐","🌈","🦄","🧩","📚","🎈","🦖","🐬","🌸"];for(let i=0;i<12;i++){const d=document.createElement("span");d.className="fx-drift";d.setAttribute("aria-hidden","true");d.textContent=E[i];d.style.left=(i*8.3+Math.random()*4)+"vw";d.style.setProperty("--dx",(Math.random()*120-60)+"px");d.style.animationDuration=(28+Math.random()*30)+"s";d.style.animationDelay=(-Math.random()*50)+"s";document.body.appendChild(d)}document.addEventListener("visibilitychange",()=>$$(".fx-drift").forEach(d=>d.style.animationPlayState=document.hidden?"paused":"running"))}
+
+/* ---------- Emojis everywhere ---------- */
+const MAP=[[/^undo/i,"↩️"],[/^redo/i,"↪️"],[/^clear/i,"🧹"],[/^play/i,"▶️"],[/^record/i,"⏺️"],[/^save/i,"💾"],[/^download|png/i,"⬇️"],[/^reset/i,"♻️"],[/^close/i,"❌"],[/^start/i,"🏁"],[/^stop/i,"⏹️"],[/^pause/i,"⏸️"],[/^next/i,"➡️"],[/^back/i,"⬅️"],[/^new/i,"🆕"],[/^apply/i,"✅"],[/^use starter/i,"🏞️"],[/^tool/i,"🛠️"],[/^brush size/i,"📏"],[/^color/i,"🎨"],[/^custom color/i,"🎨"],[/^palette/i,"🌈"],[/^opacity/i,"🫧"],[/^brush tip/i,"🖌️"],[/^stroke/i,"➖"],[/^text/i,"🔤"],[/^letter/i,"📚"],[/^sticker/i,"🐬"],[/^paper/i,"📄"],[/^scene/i,"🏞️"],[/^import/i,"🖼️"],[/^stamp/i,"✨"],[/^canvas/i,"🖼️"],[/^my gallery/i,"🖼️"],[/^instrument/i,"🎺"],[/^volume/i,"🔊"],[/^beat/i,"🥁"],[/^melody/i,"🎯"],[/^choose an activity/i,"🧭"],[/^badge/i,"🏅"],[/^daily/i,"📅"],[/^recent/i,"🕘"],[/^profile/i,"🙂"],[/^theme/i,"🎨"],[/^sound/i,"🔊"],[/^reading/i,"📖"],[/^mission/i,"🎯"],[/^goal/i,"🎯"],[/^week/i,"📆"],[/^name/i,"📛"],[/^avatar/i,"🦊"],[/^difficulty/i,"🎚️"],[/^score/i,"🏆"],[/^level/i,"📶"],[/^time/i,"⏱️"]];
+function emojify(root=document){const els=$$(".app h2,.app h3,.app label,.app .tool,.app .btn,.app .control > label,.modal h2,.modal h3,.modal label,.setting h3",root);for(const el of els){if(el.closest(".kp,.pp,.md,.px"))continue;const txt=(el.textContent||"").trim();if(!txt||EMOJI.test(txt.slice(0,4)))continue;const hit=MAP.find(([re])=>re.test(txt));const em=hit?hit[1]:/^H[23]$/.test(el.tagName)?"✨":null;if(!em)continue;const tn=[...el.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(tn)tn.textContent=tn.textContent.replace(/^\s*/,m=>m+em+" ");else el.insertAdjacentText("afterbegin",em+" ")}}
+
+function init(){try{buildParallax()}catch(e){}emojify();reveal();tilt();ripple();sparkles();drift();}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+window.kidFx={emojify,scenes:SCENES.length,layers:SCENES.reduce((a,s)=>a+s.L.length+s.E.length,0)};
+})();
+</script>

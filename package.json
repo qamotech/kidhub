@@ -1,0 +1,15 @@
+{
+  "name": "kidhub",
+  "private": true,
+  "description": "KidHub static site — dev tooling only (no build step).",
+  "scripts": {
+    "test": "node test.cjs && node test-plus.cjs && node test-paint.cjs && node test-dashboard.cjs",
+    "test:a11y": "node test-a11y.cjs",
+    "serve": "python -m http.server 8000"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "html-validate": "^9.0.0",
+    "playwright": "^1.50.0"
+  }
+}
