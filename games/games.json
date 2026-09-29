@@ -1,0 +1,80 @@
+[
+ {
+  "slug": "neon-pong",
+  "emoji": "🏓",
+  "title": "Neon Pong",
+  "blurb": "Classic paddle battle with glowing neon."
+ },
+ {
+  "slug": "combat-cars",
+  "emoji": "🏎️",
+  "title": "Combat Cars",
+  "blurb": "Retro arena racing, 16-bit style."
+ },
+ {
+  "slug": "shadow-defense",
+  "emoji": "🥋",
+  "title": "Shadow Defense",
+  "blurb": "Block and defend like a dojo master."
+ },
+ {
+  "slug": "miyagi-throw",
+  "emoji": "🥷",
+  "title": "Miyagi Throw!",
+  "blurb": "Aim and throw to hit every target."
+ },
+ {
+  "slug": "n8-strike",
+  "emoji": "🤖",
+  "title": "N8 Strike",
+  "blurb": "Transforming mecha action."
+ },
+ {
+  "slug": "ninja-sandbox",
+  "emoji": "🌀",
+  "title": "Ninja Sandbox",
+  "blurb": "Run, jump and transform in a ninja playground."
+ },
+ {
+  "slug": "shipment-8bit",
+  "emoji": "👾",
+  "title": "Shipment 8-Bit",
+  "blurb": "Pixel-art arena adventure."
+ },
+ {
+  "slug": "blob-bash-royale",
+  "emoji": "🟣",
+  "title": "Blob Bash Royale",
+  "blurb": "Bouncy blob platform brawler."
+ },
+ {
+  "slug": "panther-arena",
+  "emoji": "🐆",
+  "title": "Panther Arena",
+  "blurb": "Gold-hunting panther showdown."
+ },
+ {
+  "slug": "mecha-strike",
+  "emoji": "🦾",
+  "title": "Mecha Strike",
+  "blurb": "Giant robot transformer protocol."
+ },
+ {
+  "slug": "qamelot-conquest",
+  "emoji": "🏰",
+  "title": "Qamelot Conquest",
+  "blurb": "Castle-storming arcade quest."
+ },
+ {
+  "slug": "qamelot-tower-defense",
+  "emoji": "🗼",
+  "title": "Qamelot Tower Defense",
+  "blurb": "Build towers, stop the waves."
+ },
+ {
+  "slug": "stix-stax-stonz",
+  "emoji": "❌",
+  "title": "Stix Stax Stonz",
+  "blurb": "Tic-tac-toe with a cyber twist."
+ }
+]

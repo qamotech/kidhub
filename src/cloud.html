@@ -1,0 +1,135 @@
+<style id="cloud-css">
+.cw-btn{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:900;width:78px;height:56px;border:0;padding:0;cursor:pointer;background:none;animation:cwFloat 4.5s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(40,20,90,.3))}
+.cw-btn svg{width:100%;height:100%;display:block}
+.cw-btn .cw-ic{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;padding-top:6px}
+.cw-btn:focus-visible{outline:4px solid #6d4aff;outline-offset:4px;border-radius:30px}
+.cw-btn.cw-open{animation:none;transform:scale(.92)}
+.cw-badge[hidden]{display:none}
+.cw-badge{position:absolute;top:-4px;right:-2px;min-width:22px;height:22px;border-radius:11px;background:#ff3b5c;color:#fff;font:800 12px system-ui;display:grid;place-items:center;padding:0 5px}
+@keyframes cwFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+.cw-panel{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:901;width:min(380px,calc(100vw - 28px));max-height:min(620px,calc(100vh - 120px));display:flex;flex-direction:column;border-radius:26px;overflow:hidden;background:#fff;color:#25304a;box-shadow:0 24px 60px rgba(40,20,90,.35);transform-origin:bottom left;transform:scale(.6) translateY(20px);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.2,1.3,.4,1),opacity .25s}
+.cw-panel.open{transform:none;opacity:1;pointer-events:auto}
+.cw-head{padding:14px 16px 10px;color:#fff;background:var(--cw-sky)}
+.cw-head h2{margin:0;font-size:1.15rem}.cw-head p{margin:2px 0 0;font-size:12px;opacity:.95}
+.cw-tabs{display:flex;gap:4px;padding:8px;background:#f6f3ff;overflow-x:auto}
+.cw-tabs button{flex:1 0 auto;font:700 13px system-ui;border:0;border-radius:999px;padding:8px 10px;min-height:38px;background:transparent;color:#4b3f8f;cursor:pointer}
+.cw-tabs button.on{background:#fff;box-shadow:0 2px 8px rgba(80,50,160,.18)}
+.cw-body{padding:12px 14px 16px;overflow:auto;flex:1;font:14px system-ui}
+.cw-body button{font:700 13px system-ui;min-height:40px;border-radius:12px;border:2px solid #e3dcf2;background:#fff;color:#25304a;padding:6px 10px;cursor:pointer}
+.cw-body button.pri{background:linear-gradient(135deg,#6d4aff,#ff5fa2);border:0;color:#fff}
+.cw-body button.sos{background:#ff3b5c;border:0;color:#fff}
+.cw-body button:focus-visible,.cw-body input:focus-visible,.cw-body textarea:focus-visible,.cw-body select:focus-visible,.cw-tabs button:focus-visible{outline:3px solid #6d4aff;outline-offset:2px}
+.cw-body input,.cw-body textarea,.cw-body select{font:14px system-ui;border:2px solid #e3dcf2;border-radius:12px;padding:8px 10px;width:100%;box-sizing:border-box;min-height:40px;background:#fff;color:#25304a}
+.cw-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.cw-chip{border-radius:999px!important}
+.cw-chip[aria-pressed=true]{background:#efe9ff!important;border-color:#6d4aff!important}
+.cw-list{list-style:none;padding:0;margin:6px 0;display:grid;gap:6px}
+.cw-list li{border:2px solid #f0ebfb;border-radius:12px;padding:8px;display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.cw-list small{color:#6b7280}
+.cw-st{font-size:12px;font-weight:800;white-space:nowrap}
+.cw-note{font-size:12px;color:#6b7280;margin:6px 0}
+.cw-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:760px){.cw-btn{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.cw-panel{bottom:calc(150px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 180px)}}
+@media (prefers-reduced-motion:reduce){.cw-btn{animation:none}.cw-panel{transition:opacity .15s}}
+</style>
+<script id="cloud-js">
+(()=>{"use strict";
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY="kidHubCloud";
+const DEF={contacts:[{id:"c1",name:"Mom",emoji:"👩"},{id:"c2",name:"Dad",emoji:"👨"}],hook:{url:"",fmt:"json"},pinHash:"",quiet:{on:false,from:"20:30",to:"07:00"},voice:true,outbox:[],reminders:[],unread:0};
+let S=(()=>{try{const s=JSON.parse(localStorage.getItem(KEY)||"{}");return{...DEF,...s,hook:{...DEF.hook,...(s.hook||{})},quiet:{...DEF.quiet,...(s.quiet||{})}}}catch(e){return JSON.parse(JSON.stringify(DEF))}})();
+S.contacts=(Array.isArray(S.contacts)?S.contacts:DEF.contacts).filter(c=>c&&typeof c.name==="string").slice(0,6).map((c,i)=>({id:String(c.id||"c"+i).replace(/\W/g,"").slice(0,12)||"c"+i,name:c.name.slice(0,24),emoji:String(c.emoji||"🙂").slice(0,4)}));
+S.outbox=(Array.isArray(S.outbox)?S.outbox:[]).slice(-40);S.reminders=(Array.isArray(S.reminders)?S.reminders:[]).slice(0,20);if(!["json","discord","slack","ntfy"].includes(S.hook.fmt))S.hook.fmt="json";
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const toast=m=>{try{ui.toast(m)}catch(e){}};
+const say=t=>{if(!S.voice||!("speechSynthesis" in window))return;try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))}catch(e){}};
+const chime=(hi=false)=>{try{window.KBI&&KBI.play(hi?"magicwand":"marimba",hi?880:659)}catch(e){}};
+const me=()=>{try{return(state.profile&&state.profile.name)||"KidHub explorer"}catch(e){return"KidHub explorer"}};
+const hm=d=>d.getHours()*60+d.getMinutes(),toMin=s=>{const[h,m]=String(s).split(":").map(Number);return(h||0)*60+(m||0)};
+const inQuiet=()=>{if(!S.quiet.on)return false;const n=hm(new Date()),a=toMin(S.quiet.from),b=toMin(S.quiet.to);return a<=b?n>=a&&n<b:n>=a||n<b};
+
+/* 1 · Sky-time colors: the cloud & header shift with the time of day */
+function sky(){const h=new Date().getHours(),p=h<6||h>=21?["#1b1464","#4a1f7a","#c9c3ff"]:h<9?["#ff9a8b","#ffd3a5","#fff3e6"]:h<17?["#3fb8ff","#8fd7ff","#ffffff"]:["#ff7e5f","#a45cff","#ffe0f0"];document.documentElement.style.setProperty("--cw-sky",`linear-gradient(135deg,${p[0]},${p[1]})`);const f=$("#cwFill");if(f)f.setAttribute("fill",p[2]);return p}
+
+/* Notification Sync: parent-configured webhook (https only). Nothing is sent until a grown-up sets one up. */
+async function deliver(msg){const u=S.hook.url;if(!/^https:\/\/[^\s]+$/i.test(u))return"saved";if(!navigator.onLine)return"queued";
+ const names=msg.to.map(id=>(S.contacts.find(c=>c.id===id)||{}).name).filter(Boolean),text=`${msg.sos?"🆘 ":""}${msg.from} → ${names.join(", ")}: ${msg.content}`;
+ let init;if(S.hook.fmt==="discord")init={method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:text.slice(0,1900)})};
+ else if(S.hook.fmt==="slack")init={method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"payload="+encodeURIComponent(JSON.stringify({text}))};
+ else if(S.hook.fmt==="ntfy")init={method:"POST",headers:{Title:`KidHub: message from ${msg.from}`.replace(/[^\x20-\x7e]/g,""),Priority:msg.sos?"urgent":"default",Tags:msg.sos?"rotating_light":"speech_balloon"},body:text};
+ else init={method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({to:names,content:msg.content,from:msg.from,priority:msg.sos?"high":"normal",sentAt:new Date(msg.at).toISOString(),app:"KidHub"})};
+ try{const r=await fetch(u,init);if(r.type==="opaque")return"sent?";return r.ok?"sent":"failed"}catch(e){try{await fetch(u,{...init,mode:"no-cors"});return"sent?"}catch(_){return"queued"}}}
+const ST={sent:"✅ Sent",["sent?"]:"📨 Sent (unconfirmed)",saved:"💾 Saved — ask a grown-up to connect messages",queued:"⏳ Waiting for internet",failed:"⚠️ Failed — will retry",quiet:"🌙 Held for quiet hours",sending:"📤 Sending…"};
+async function send(content,{sos=false}={}){content=String(content||"").trim().slice(0,500);const to=$$(".cw-chip[aria-pressed=true]").map(b=>b.dataset.c);if(!content)return toast("✍️ Type or say a message first");if(!to.length)return toast("👆 Pick who to send it to");
+ const msg={id:Date.now().toString(36),to,content,from:me(),sos,at:Date.now(),status:"sending"};S.outbox.push(msg);S.outbox=S.outbox.slice(-40);render();
+ msg.status=inQuiet()&&!sos?"quiet":await deliver(msg);save();render();chime(msg.status==="sent"||msg.status==="sent?");say(msg.status==="sent"||msg.status==="sent?"?"Message sent!":msg.status==="saved"?"Message saved.":"I'll send it soon.");if(sos&&navigator.vibrate)navigator.vibrate([200,100,200])}
+/* 6 · Offline outbox with auto-retry */
+let retrying=false;async function retry(){if(retrying||!navigator.onLine)return;retrying=true;for(const m of S.outbox){if(["queued","failed"].includes(m.status)||(m.status==="quiet"&&!inQuiet())){m.status=await deliver(m);save()}}retrying=false;render()}
+addEventListener("online",retry);
+
+/* 2 · Scheduled reminders */
+let lastCheck="";function checkReminders(){const d=new Date(),k=d.toISOString().slice(0,16);if(k===lastCheck)return;lastCheck=k;const t=`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`,day=d.toISOString().slice(0,10);
+ S.reminders.forEach(r=>{if(r.time===t&&r.last!==day){r.last=day;S.unread++;toast(`⏰ ${r.text}`);say("Reminder: "+r.text);chime(true);try{if("Notification" in window&&Notification.permission==="granted")new Notification("⏰ KidHub reminder",{body:r.text})}catch(e){}if(!r.daily)r.done=true}});S.reminders=S.reminders.filter(r=>!r.done);save();badge();if(S.outbox.some(m=>m.status==="quiet")&&!inQuiet())retry()}
+
+/* 3 · Voice-to-text */
+function dictate(btn){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return toast("🎤 Voice typing isn't available in this browser");const r=new SR();r.lang=navigator.language||"en-US";r.interimResults=true;btn.textContent="🔴 Listening…";r.onresult=e=>{$("#cwMsg").value=[...e.results].map(x=>x[0].transcript).join("").slice(0,500)};r.onend=()=>{btn.textContent="🎤 Say it"};r.onerror=()=>{btn.textContent="🎤 Say it";toast("🎤 I couldn't hear that — try again")};r.start()}
+
+/* 8 · Parent lock (PIN, SHA-256) + quiet hours */
+const sha=async t=>{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("kidhub:"+t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")};
+let unlocked=false,gate=null;
+
+/* ---------- UI ---------- */
+let tab="msg";
+function badge(){const b=$("#cwBadge");if(!b)return;b.hidden=!S.unread;b.textContent=S.unread>9?"9+":S.unread}
+function render(){const body=$("#cwBody");if(!body)return;$$(".cw-tabs button").forEach(b=>{b.classList.toggle("on",b.dataset.t===tab);b.setAttribute("aria-selected",b.dataset.t===tab)});
+ if(tab==="msg"){const conn=/^https:/.test(S.hook.url);body.innerHTML=`<div class="cw-row" role="group" aria-label="Send to">${S.contacts.map((c,i)=>`<button type="button" class="cw-chip" data-c="${esc(c.id)}" aria-pressed="${i===0}">${esc(c.emoji)} ${esc(c.name)}</button>`).join("")}</div>
+  <label class="cw-sr" for="cwMsg">Message</label><textarea id="cwMsg" rows="3" maxlength="500" placeholder="✍️ Write a message…"></textarea>
+  <div class="cw-row"><button type="button" class="pri" id="cwSend">📤 Send</button><button type="button" id="cwMic">🎤 Say it</button><button type="button" class="sos" id="cwSos">🆘 I need a grown-up</button></div>
+  <p class="cw-note">⚡ Quick messages:</p><div class="cw-row">${["🌟 Look what I made!","✅ I finished my homework!","🎮 Can I play a game?","🍎 I'm hungry","😴 I'm tired","❤️ Love you!","🏠 I'm home","🤔 Can you help me?"].map(q=>`<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
+  <p class="cw-note">${conn?"🔗 Messages go to your grown-ups' connected service.":"💾 Not connected yet — messages are saved here until a grown-up connects them in ⚙️."}${inQuiet()?" 🌙 Quiet hours are on.":""}</p>`;
+  $$(".cw-chip",body).forEach(b=>b.onclick=()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true"));
+  $$("[data-q]",body).forEach(b=>b.onclick=()=>{$("#cwMsg").value=b.dataset.q;$("#cwMsg").focus()});
+  $("#cwSend").onclick=()=>send($("#cwMsg").value).then(()=>{});$("#cwMic").onclick=e=>dictate(e.currentTarget);
+  let armed=0;$("#cwSos").onclick=e=>{if(!armed){armed=1;e.currentTarget.textContent="🆘 Tap again to send";setTimeout(()=>{armed=0;const b=$("#cwSos");b&&(b.textContent="🆘 I need a grown-up")},3500);return}$$(".cw-chip").forEach(b=>b.setAttribute("aria-pressed","true"));send(`${me()} needs a grown-up, please come help!`,{sos:true})}}
+ else if(tab==="rem"){body.innerHTML=`<div class="cw-row"><label class="cw-sr" for="cwRT">Reminder</label><input id="cwRT" maxlength="80" placeholder="⏰ e.g. Brush teeth"><label class="cw-sr" for="cwRH">Time</label><input id="cwRH" type="time" style="width:130px"><label style="display:flex;gap:4px;align-items:center;font-weight:700"><input type="checkbox" id="cwRD" style="width:auto;min-height:0"> Every day</label><button type="button" class="pri" id="cwRA">➕ Add</button></div>
+  <ul class="cw-list">${S.reminders.map((r,i)=>`<li><span>⏰ <b>${esc(r.time)}</b> ${esc(r.text)} ${r.daily?"<small>(daily)</small>":""}</span><button type="button" data-x="${i}" aria-label="Delete reminder ${esc(r.text)}">🗑️</button></li>`).join("")||'<li class="cw-note">No reminders yet.</li>'}</ul>
+  <button type="button" id="cwNotif">🔔 Allow pop-up alerts</button><p class="cw-note">Reminders ring while KidHub is open.</p>`;
+  $("#cwRA").onclick=()=>{const text=$("#cwRT").value.trim().slice(0,80),time=$("#cwRH").value;if(!text||!/^\d\d:\d\d$/.test(time))return toast("⏰ Add words and a time");if(S.reminders.length>=20)return toast("That's lots of reminders!");S.reminders.push({text,time,daily:$("#cwRD").checked});save();render();toast("⏰ Reminder added")};
+  $$("[data-x]",body).forEach(b=>b.onclick=()=>{S.reminders.splice(+b.dataset.x,1);save();render()});
+  $("#cwNotif").onclick=()=>{if(!("Notification" in window))return toast("Pop-up alerts aren't supported here");Notification.requestPermission().then(p=>toast(p==="granted"?"🔔 Alerts on":"🔕 Alerts off"))}}
+ else if(tab==="out"){body.innerHTML=`<ul class="cw-list">${S.outbox.slice().reverse().map(m=>`<li><span>${m.sos?"🆘 ":""}${esc(m.content)}<br><small>to ${esc(m.to.map(id=>(S.contacts.find(c=>c.id===id)||{name:"?"}).name).join(", "))} · ${new Date(m.at).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}</small></span><span class="cw-st">${ST[m.status]||esc(m.status)}</span></li>`).join("")||'<li class="cw-note">📭 No messages yet.</li>'}</ul><div class="cw-row"><button type="button" id="cwRetry">🔁 Retry waiting</button><button type="button" id="cwShare">📤 Share last message</button><button type="button" id="cwClr">🧹 Clear</button></div>`;
+  $("#cwRetry").onclick=retry;$("#cwClr").onclick=()=>{S.outbox=[];save();render()};
+  $("#cwShare").onclick=()=>{const m=S.outbox[S.outbox.length-1];if(!m)return;const t=`${m.from}: ${m.content}`;if(navigator.share)navigator.share({title:"KidHub message",text:t}).catch(()=>{});else(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("📋 Copied"),()=>toast(t))}}
+ else if(tab==="set"){if(!unlocked){if(!gate){const a=2+Math.floor(Math.random()*8),b=3+Math.floor(Math.random()*7);gate={a,b}}body.innerHTML=`<p>🛡️ <b>Grown-ups only.</b> ${S.pinHash?"Enter your PIN.":`What is ${gate.a} × ${gate.b}?`}</p><div class="cw-row"><label class="cw-sr" for="cwGate">Answer</label><input id="cwGate" type="${S.pinHash?"password":"number"}" inputmode="numeric" maxlength="8" style="width:140px"><button type="button" class="pri" id="cwGo">🔓 Unlock</button></div>`;
+   const go=async()=>{const v=$("#cwGate").value.trim();const ok=S.pinHash?(await sha(v))===S.pinHash:+v===gate.a*gate.b;if(ok){unlocked=true;gate=null;render()}else{toast("🔒 Not quite");$("#cwGate").value=""}};$("#cwGo").onclick=go;$("#cwGate").onkeydown=e=>{if(e.key==="Enter")go()};return}
+  body.innerHTML=`<p class="cw-note">🔗 <b>Connect messages</b> to a service you control. Use an <b>https</b> webhook, such as a Discord or Slack incoming webhook, an ntfy.sh topic, or a Zapier/Make/IFTTT hook (these can forward to text or email). Nothing is sent anywhere until you add one.</p>
+  <label class="cw-sr" for="cwUrl">Webhook URL</label><input id="cwUrl" type="url" maxlength="400" placeholder="https://…" value="${esc(S.hook.url)}">
+  <div class="cw-row"><label for="cwFmt" style="font-weight:700">Format</label><select id="cwFmt" style="width:auto">${[["json","Generic JSON"],["discord","Discord"],["slack","Slack"],["ntfy","ntfy.sh"]].map(([v,l])=>`<option value="${v}" ${S.hook.fmt===v?"selected":""}>${l}</option>`).join("")}</select><button type="button" id="cwTest">🧪 Send test</button></div>
+  <p class="cw-note">👪 <b>Who can be messaged</b></p>${S.contacts.map((c,i)=>`<div class="cw-row"><label class="cw-sr" for="cwE${i}">Emoji</label><input id="cwE${i}" data-e="${i}" value="${esc(c.emoji)}" maxlength="4" style="width:60px"><label class="cw-sr" for="cwN${i}">Name</label><input id="cwN${i}" data-n="${i}" value="${esc(c.name)}" maxlength="24" style="flex:1"><button type="button" data-del="${i}" aria-label="Remove ${esc(c.name)}">🗑️</button></div>`).join("")}<button type="button" id="cwAddC" ${S.contacts.length>=6?"disabled":""}>➕ Add person</button>
+  <p class="cw-note">🌙 <b>Quiet hours</b> (SOS still sends)</p><div class="cw-row"><label style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="cwQ" ${S.quiet.on?"checked":""} style="width:auto;min-height:0"> On</label><label class="cw-sr" for="cwQF">From</label><input id="cwQF" type="time" value="${esc(S.quiet.from)}" style="width:120px"><span>→</span><label class="cw-sr" for="cwQT">To</label><input id="cwQT" type="time" value="${esc(S.quiet.to)}" style="width:120px"></div>
+  <div class="cw-row"><label style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="cwV" ${S.voice?"checked":""} style="width:auto;min-height:0"> 🔊 Read-aloud & chimes</label></div>
+  <p class="cw-note">🔑 <b>Grown-up PIN</b> (optional, replaces the math question)</p><div class="cw-row"><label class="cw-sr" for="cwPin">New PIN</label><input id="cwPin" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits" style="width:140px"><button type="button" id="cwPinSet">💾 Save PIN</button>${S.pinHash?'<button type="button" id="cwPinClr">Remove PIN</button>':""}</div>
+  <div class="cw-row"><button type="button" class="pri" id="cwSave">✅ Save settings</button><button type="button" id="cwLock">🔒 Lock</button></div>`;
+  const readC=()=>{S.contacts=S.contacts.map((c,i)=>({...c,name:($(`[data-n="${i}"]`).value.trim()||c.name).slice(0,24),emoji:($(`[data-e="${i}"]`).value.trim()||"🙂").slice(0,4)}))};
+  $("#cwSave").onclick=()=>{const u=$("#cwUrl").value.trim();if(u&&!/^https:\/\/[^\s]+$/i.test(u))return toast("🔗 The webhook must start with https://");S.hook={url:u,fmt:$("#cwFmt").value};readC();S.quiet={on:$("#cwQ").checked,from:$("#cwQF").value||"20:30",to:$("#cwQT").value||"07:00"};S.voice=$("#cwV").checked;save();toast("✅ Cloud settings saved");retry()};
+  $("#cwTest").onclick=async()=>{$("#cwSave").click();if(!S.hook.url)return;const r=await deliver({to:S.contacts.map(c=>c.id),content:"🧪 Test from KidHub — messages are connected!",from:me(),at:Date.now()});toast(ST[r]||r)};
+  $("#cwAddC").onclick=()=>{readC();S.contacts.push({id:"c"+Date.now().toString(36).slice(-6),name:"Grown-up",emoji:"🧑"});save();render()};
+  $$("[data-del]",body).forEach(b=>b.onclick=()=>{if(S.contacts.length<=1)return toast("Keep at least one person");readC();S.contacts.splice(+b.dataset.del,1);save();render()});
+  $("#cwPinSet").onclick=async()=>{const v=$("#cwPin").value.trim();if(!/^\d{4,8}$/.test(v))return toast("🔑 Use 4–8 digits");S.pinHash=await sha(v);save();toast("🔑 PIN saved");render()};
+  const pc=$("#cwPinClr");if(pc)pc.onclick=()=>{S.pinHash="";save();render()};$("#cwLock").onclick=()=>{unlocked=false;render()}}
+ else{body.innerHTML=`<p><b>☁️ Cloud Widget · super upgrades</b></p><ol class="cw-list" style="list-style:none">${["🌈 Sky-time colors: the cloud changes with dawn, day, sunset and night","⏰ Scheduled reminders with chimes, voice and pop-up alerts","🎤 Voice-to-text: say your message instead of typing","⚡ Quick messages & feelings in one tap","🆘 “I need a grown-up” alert that goes to everyone (tap twice)","📬 Offline outbox that retries when the internet is back","🔊 Read-aloud confirmations & friendly chimes","🛡️ Grown-up lock (math question or PIN) & quiet hours"].map(x=>`<li>${x}</li>`).join("")}</ol><p class="cw-note">Plus 🔗 notification sync to a grown-up's webhook, an expanding dashboard, and floating animations.</p>`}}
+function open(v){const p=$("#cwPanel"),b=$("#cwBtn"),o=v==null?!p.classList.contains("open"):v;p.classList.toggle("open",o);b.classList.toggle("cw-open",o);b.setAttribute("aria-expanded",o);p.setAttribute("aria-hidden",!o);if(o){sky();S.unread=0;save();badge();render();retry();setTimeout(()=>{const f=p.querySelector(".cw-tabs .on");f&&f.focus()},50)}else{unlocked=false;b.focus()}}
+function build(){const b=document.createElement("button");b.type="button";b.className="cw-btn";b.id="cwBtn";b.setAttribute("aria-label","Open Cloud messages and reminders");b.setAttribute("aria-expanded","false");b.setAttribute("aria-controls","cwPanel");
+ b.innerHTML=`<svg viewBox="0 0 78 56" aria-hidden="true"><path id="cwFill" d="M20 50h40a16 16 0 0 0 1-32 20 20 0 0 0-38-2 17 17 0 0 0-3 34z" fill="#fff" stroke="#6d4aff" stroke-width="2.5"/></svg><span class="cw-ic" aria-hidden="true">💬</span><span class="cw-badge" id="cwBadge" hidden></span>`;
+ const p=document.createElement("div");p.className="cw-panel";p.id="cwPanel";p.setAttribute("role","dialog");p.setAttribute("aria-label","Cloud messages");p.setAttribute("aria-hidden","true");
+ p.innerHTML=`<div class="cw-head"><h2>☁️ Cloud</h2><p>💬 Message your grown-ups · ⏰ reminders</p></div><div class="cw-tabs" role="tablist">${[["msg","💬 Send"],["rem","⏰ Remind"],["out","📬 Outbox"],["set","⚙️ Grown-ups"],["new","✨ New"]].map(([k,l])=>`<button type="button" role="tab" data-t="${k}">${l}</button>`).join("")}</div><div class="cw-body" id="cwBody"></div>`;
+ document.body.append(b,p);b.onclick=()=>open();$$(".cw-tabs button",p).forEach(x=>x.onclick=()=>{tab=x.dataset.t;render()});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&p.classList.contains("open"))open(false)});
+ document.addEventListener("pointerdown",e=>{if(p.classList.contains("open")&&!p.contains(e.target)&&!b.contains(e.target))open(false)},{passive:true});
+ try{app.toggleQuickConnect=()=>open();app.sendPing=n=>{open(true)};app.sendMsg=m=>{open(true);const t=$("#cwMsg");t&&(t.value=m)}}catch(e){}
+ sky();badge();setInterval(()=>{if(!document.hidden){checkReminders();sky()}},20000);checkReminders()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",build);else build();
+window.kidCloud={open,send,deliver,get state(){return S}};
+})();
+</script>

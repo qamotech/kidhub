@@ -6,7 +6,7 @@ await page.evaluate(()=>app.show('music'));await page.locator('#musicDeck').wait
 assert.equal(await page.evaluate(()=>musicDeck.features),64);
 assert.equal(await page.locator('#mdKb .md-k').count(),25);
 await page.locator('#mdKb .md-k').first().click();
-for(const v of ['piano','organ','marimba','pad','pluck','bass','musicbox','chip']){await page.selectOption('#mdInst',v);await page.evaluate(()=>{musicDeck.noteOn(60);musicDeck.noteOff(60)})}
+const ids=await page.evaluate(()=>KBI.LIST.map(i=>i.id));assert.equal(ids.length,24);assert.equal(await page.locator('#instrument option').count(),24);for(const v of ids){await page.selectOption('#mdInst',v);await page.evaluate(()=>{musicDeck.noteOn(60);musicDeck.noteOff(60)})}
 await page.locator('[data-t="sound"]').click();for(const r of await page.locator('[data-fx]').all())await r.fill('60');for(const r of await page.locator('[data-env]').all())await r.fill('20');
 await page.locator('[data-t="play"]').click();for(const c of ['major','minor','seven','off'])await page.selectOption('#mdChord',c);
 await page.selectOption('#mdArp','up');await page.evaluate(()=>musicDeck.noteOn(60));await page.waitForTimeout(400);await page.evaluate(()=>musicDeck.noteOff(60));await page.selectOption('#mdArp','off');

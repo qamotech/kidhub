@@ -1,0 +1,22 @@
+<script id="voice-js">
+/* Friendly voice: every speechSynthesis.speak() in KidHub uses a warm, human-sounding female voice
+   (natural/neural voices first) with a kid-friendly style, unless the grown-up picks another. */
+(()=>{"use strict";if(!("speechSynthesis" in window))return;
+const KEY="kidHubVoice",STYLES={natural:{pitch:1.08,rate:.96,label:"🙂 Natural & warm"},cartoon:{pitch:1.35,rate:1.04,label:"🐰 Cartoon buddy"},story:{pitch:1.15,rate:.88,label:"📖 Storyteller"},calm:{pitch:1,rate:.82,label:"🌙 Calm & slow"}};
+let pref={name:"",style:"cartoon"};try{pref={...pref,...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){}if(!STYLES[pref.style])pref.style="cartoon";
+const RANK=[/ana online \(natural\)/i,/aria online \(natural\)/i,/jenny online \(natural\)/i,/ava online \(natural\)/i,/emma online \(natural\)/i,/michelle online \(natural\)/i,/sonia online \(natural\)/i,/natural/i,/google us english/i,/samantha/i,/ava|allison|susan|karen|moira|tessa|fiona|victoria/i,/zira|hazel|female/i,/google uk english female/i];
+const MALE=/\b(guy|davis|andrew|brian|christopher|eric|roger|steffan|ryan|thomas|william|david|mark|george|daniel|alex|fred|male)\b/i;
+let voices=[];const load=()=>{voices=speechSynthesis.getVoices()};load();speechSynthesis.addEventListener?.("voiceschanged",()=>{load();fill()});
+function best(){if(pref.name){const v=voices.find(v=>v.name===pref.name);if(v)return v}const lang=(navigator.language||"en").slice(0,2),pool=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(lang)&&!MALE.test(v.name));for(const re of RANK){const v=pool.find(v=>re.test(v.name));if(v)return v}return pool[0]||voices.find(v=>!MALE.test(v.name))||null}
+const orig=speechSynthesis.speak.bind(speechSynthesis);
+speechSynthesis.speak=u=>{try{if(u&&!u._kh){u._kh=1;const v=best(),s=STYLES[pref.style];if(v){u.voice=v;u.lang=v.lang}if(u.pitch===1)u.pitch=s.pitch;if(u.rate===1||(u.rate>.9&&u.rate<1))u.rate=s.rate}}catch(e){}return orig(u)};
+function fill(){const sel=document.getElementById("khVoice");if(!sel)return;const lang=(navigator.language||"en").slice(0,2),list=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(lang));const cur=best();sel.replaceChildren(new Option("✨ Best friendly voice (auto)",""),...list.map(v=>new Option(`${MALE.test(v.name)?"🧔":"👩"} ${v.name.replace(/Microsoft |Online |\(Natural\)| - .*/g,"").trim()}${/natural/i.test(v.name)?" ⭐ natural":""}`,v.name)));sel.value=pref.name&&list.some(v=>v.name===pref.name)?pref.name:"";const n=document.getElementById("khVoiceNow");if(n)n.textContent=cur?`Using: ${cur.name}`:"Voices load when your browser is ready."}
+function ui(){const modal=document.querySelector("#settings .modal");if(!modal||document.getElementById("khVoiceBox"))return;const sec=document.createElement("section");sec.className="setting";sec.id="khVoiceBox";sec.style.marginTop="11px";
+ sec.innerHTML=`<h3>🗣️ Read-aloud voice</h3><label for="khVoice" class="kp-sr">Voice</label><select id="khVoice" style="width:100%;margin:6px 0"></select><label for="khStyle" class="kp-sr">Voice style</label><select id="khStyle" style="width:100%;margin:6px 0">${Object.entries(STYLES).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("")}</select><button type="button" class="tool" id="khVoiceTry">🔊 Hear it</button> <small id="khVoiceNow"></small>`;
+ modal.appendChild(sec);const sel=sec.querySelector("#khVoice"),st=sec.querySelector("#khStyle");st.value=pref.style;
+ const store=()=>{try{localStorage.setItem(KEY,JSON.stringify(pref))}catch(e){}fill()};sel.onchange=()=>{pref.name=sel.value;store()};st.onchange=()=>{pref.style=st.value;store()};
+ sec.querySelector("#khVoiceTry").onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance("Hi friend! I'm your KidHub helper. Let's make something amazing today!"))};fill()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ui);else ui();
+window.kidVoice={best,get pref(){return pref}};
+})();
+</script>

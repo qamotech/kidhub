@@ -1,0 +1,72 @@
+<script id="kbi-js">
+/* KidsBeat Instrument engine (KBI): the 24 KidsBeat instruments, pitched across the keyboard,
+   each with a mastering stage (rumble high-pass → tone EQ → gain trim) into a shared limiter. */
+window.KBI=(()=>{"use strict";
+const C4=261.63;
+const LIST=[
+{id:"kick",name:"Boom Kick",emoji:"🥁",cat:"🥁 Drums",base:150,m:{hp:25,f:80,g:3,trim:1}},
+{id:"snare",name:"Crisp Snare",emoji:"👏",cat:"🥁 Drums",base:220,m:{hp:90,f:2500,g:2,trim:.9}},
+{id:"hat_closed",name:"Tik Hi-Hat",emoji:"⏱️",cat:"🥁 Drums",base:7000,m:{hp:5000,f:9000,g:2,trim:.8}},
+{id:"hat_open",name:"Open Cymbal",emoji:"💿",cat:"🥁 Drums",base:6500,m:{hp:4000,f:8000,g:2,trim:.7}},
+{id:"tom",name:"Floor Tom",emoji:"🪘",cat:"🥁 Drums",base:110,m:{hp:40,f:200,g:2,trim:1}},
+{id:"rimshot",name:"Wood Rimshot",emoji:"🪵",cat:"🥁 Drums",base:1600,m:{hp:300,f:1800,g:1,trim:.9}},
+{id:"clap",name:"Hand Clap",emoji:"🙌",cat:"🪘 World percussion",base:1000,m:{hp:300,f:1200,g:2,trim:.9}},
+{id:"cowbell",name:"Funk Cowbell",emoji:"🔔",cat:"🪘 World percussion",base:540,m:{hp:300,f:900,g:1,trim:.7}},
+{id:"shaker",name:"Maraca Shaker",emoji:"🪇",cat:"🪘 World percussion",base:4500,m:{hp:3000,f:7000,g:1,trim:.8}},
+{id:"bongo",name:"Afro Bongo",emoji:"🥁",cat:"🪘 World percussion",base:320,m:{hp:80,f:400,g:2,trim:1}},
+{id:"marimba",name:"Woody Marimba",emoji:"🪵",cat:"🪘 World percussion",base:C4,pitched:1,m:{hp:60,f:900,g:2,trim:1}},
+{id:"steelpan",name:"Steel Pan",emoji:"🛢️",cat:"🪘 World percussion",base:C4,pitched:1,m:{hp:80,f:2200,g:2,trim:.9}},
+{id:"piano",name:"Grand Piano",emoji:"🎹",cat:"🎸 Acoustic",base:C4,pitched:1,hold:1,m:{hp:30,f:3000,g:1.5,trim:1.1}},
+{id:"guitar",name:"Acoustic Guitar",emoji:"🎸",cat:"🎸 Acoustic",base:C4,pitched:1,m:{hp:70,f:220,g:3,trim:1.2}},
+{id:"brass",name:"Brass Horn",emoji:"🎺",cat:"🎸 Acoustic",base:C4,pitched:1,hold:1,m:{hp:80,f:1500,g:2,trim:.8}},
+{id:"flute",name:"Breathy Flute",emoji:"🪈",cat:"🎸 Acoustic",base:C4,pitched:1,hold:1,m:{hp:200,f:2500,g:2,trim:1}},
+{id:"slapbass",name:"Slap Bass",emoji:"🎸",cat:"🔊 Synths & bass",base:C4,pitched:1,m:{hp:30,f:120,g:3,trim:.9}},
+{id:"wobblebass",name:"Wobble Bass",emoji:"🌀",cat:"🔊 Synths & bass",base:C4,pitched:1,hold:1,m:{hp:30,f:100,g:2,trim:.8}},
+{id:"candylead",name:"Candy Lead",emoji:"🍬",cat:"🔊 Synths & bass",base:C4,pitched:1,hold:1,m:{hp:120,f:3000,g:1,trim:.6}},
+{id:"cosmicchords",name:"Cosmic Pad",emoji:"✨",cat:"🔊 Synths & bass",base:C4,pitched:1,hold:1,m:{hp:100,f:1500,g:1,trim:.9}},
+{id:"magicwand",name:"Magic Wand",emoji:"🪄",cat:"✨ Fun sounds",base:880,pitched:1,m:{hp:300,f:4000,g:1,trim:.8}},
+{id:"laser",name:"Pew Laser",emoji:"🔫",cat:"✨ Fun sounds",base:900,m:{hp:100,f:2000,g:1,trim:.6}},
+{id:"discowhistle",name:"Disco Whistle",emoji:"😙",cat:"✨ Fun sounds",base:1200,pitched:1,hold:1,m:{hp:400,f:2500,g:1,trim:.6}},
+{id:"arcadeboing",name:"Arcade Boing",emoji:"🐸",cat:"✨ Fun sounds",base:200,m:{hp:60,f:600,g:1,trim:.8}}];
+const BY=Object.fromEntries(LIST.map(i=>[i.id,i]));
+let shared=null,limiter=null;
+function ctx(){if(!shared){shared=new (window.AudioContext||window.webkitAudioContext)();limiter=shared.createDynamicsCompressor();limiter.threshold.value=-8;limiter.knee.value=6;limiter.ratio.value=12;limiter.attack.value=.003;limiter.release.value=.15;limiter.connect(shared.destination)}if(shared.state==="suspended")shared.resume();return shared}
+const chains=new WeakMap(),noise=new WeakMap(),ks=new WeakMap();
+function master(c,dest,id){let per=chains.get(dest);if(!per){per={};chains.set(dest,per)}if(per[id])return per[id];const m=BY[id].m,hp=c.createBiquadFilter(),eq=c.createBiquadFilter(),tr=c.createGain();hp.type="highpass";hp.frequency.value=m.hp;hp.Q.value=.7;eq.type="peaking";eq.frequency.value=m.f;eq.gain.value=m.g;eq.Q.value=.9;tr.gain.value=m.trim;hp.connect(eq).connect(tr).connect(dest);return per[id]=hp}
+function nbuf(c){let b=noise.get(c);if(!b){b=c.createBuffer(1,c.sampleRate,c.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;noise.set(c,b)}return b}
+function pluck(c,f){let m=ks.get(c);if(!m){m={};ks.set(c,m)}const k=Math.round(f*10);if(m[k])return m[k];const sr=c.sampleRate,N=Math.max(2,Math.round(sr/f)),len=Math.round(sr*Math.min(3,1.2+220/f)),b=c.createBuffer(1,len,sr),d=b.getChannelData(0),ring=new Float32Array(N);for(let i=0;i<N;i++)ring[i]=(Math.random()*2-1)*(1-.5*i/N);let p=0;for(let i=0;i<len;i++){const nx=(p+1)%N;d[i]=ring[p];ring[p]=(ring[p]+ring[nx])*.4985;p=nx}return m[k]=b}
+function play(id,freq=C4,o={}){const inst=BY[id]||BY.piano,c=o.ctx||ctx(),dest=o.dest||(c===shared?limiter:c.destination),t=Math.max(o.t||0,c.currentTime),vel=o.vel==null?1:o.vel,hold=!!(o.hold&&inst.hold);
+ const out=c.createGain();out.gain.value=vel*(o.vol==null?1:o.vol);out.connect(master(c,dest,inst.id));const f=inst.pitched?freq:inst.base*(freq/C4),srcs=[];let end=t+1,rel=.12;
+ const osc=(type,fr)=>{const x=c.createOscillator();x.type=type;x.frequency.setValueAtTime(fr,t);srcs.push(x);return x};
+ const gn=v=>{const g=c.createGain();g.gain.setValueAtTime(v,t);return g};
+ const nz=len=>{const s=c.createBufferSource();s.buffer=nbuf(c);srcs.push(s);s._len=len;return s};
+ const env=(g,a,peak,d,sus)=>{g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(peak,t+a);if(hold&&sus)g.gain.setTargetAtTime(peak*sus,t+a,d/3);else g.gain.exponentialRampToValueAtTime(.0001,t+a+d)};
+ switch(inst.id){
+ case"kick":{const o1=osc("sine",f),g=gn(1.2);o1.frequency.exponentialRampToValueAtTime(35,t+.08);g.gain.exponentialRampToValueAtTime(.001,t+.4);o1.connect(g).connect(out);const cl=osc("triangle",400),cg=gn(.6);cl.frequency.exponentialRampToValueAtTime(40,t+.02);cg.gain.exponentialRampToValueAtTime(.001,t+.025);cl.connect(cg).connect(out);end=t+.42;break}
+ case"snare":{const o1=osc("triangle",f),g=gn(.7);o1.frequency.exponentialRampToValueAtTime(100,t+.08);g.gain.exponentialRampToValueAtTime(.001,t+.12);o1.connect(g).connect(out);const n=nz(),bp=c.createBiquadFilter(),ng=gn(.9);bp.type="bandpass";bp.frequency.value=2000*(f/220);bp.Q.value=1.5;ng.gain.exponentialRampToValueAtTime(.001,t+.2);n.connect(bp).connect(ng).connect(out);end=t+.22;break}
+ case"hat_closed":case"hat_open":{const dec=inst.id==="hat_open"?.4:.06,hp=c.createBiquadFilter(),g=gn(.18);hp.type="highpass";hp.frequency.value=7000;g.gain.exponentialRampToValueAtTime(.001,t+dec);hp.connect(g).connect(out);[2,3.2,4.16,5.43,6.79,8.21].forEach(r=>osc("square",f*r/5).connect(hp));end=t+dec+.02;break}
+ case"tom":case"bongo":{const o1=osc("sine",f),g=gn(.95),d=inst.id==="tom"?.38:.2;o1.frequency.exponentialRampToValueAtTime(f*.45,t+.12);g.gain.exponentialRampToValueAtTime(.001,t+d);o1.connect(g).connect(out);const n=nz(),lp=c.createBiquadFilter(),ng=gn(.25);lp.type="lowpass";lp.frequency.value=f*6;ng.gain.exponentialRampToValueAtTime(.001,t+.03);n.connect(lp).connect(ng).connect(out);end=t+d+.02;break}
+ case"rimshot":{const n=nz(),bp=c.createBiquadFilter(),g=gn(1.2);bp.type="bandpass";bp.frequency.value=f;bp.Q.value=12;g.gain.exponentialRampToValueAtTime(.001,t+.06);n.connect(bp).connect(g).connect(out);end=t+.07;break}
+ case"clap":{const n=nz(),bp=c.createBiquadFilter(),g=c.createGain();bp.type="bandpass";bp.frequency.value=f*1.1;bp.Q.value=2;g.gain.setValueAtTime(0,t);[0,.011,.023].forEach(d=>{g.gain.setValueAtTime(.85,t+d);g.gain.exponentialRampToValueAtTime(.15,t+d+.009)});g.gain.setValueAtTime(.9,t+.032);g.gain.exponentialRampToValueAtTime(.001,t+.24);n.connect(bp).connect(g).connect(out);end=t+.25;break}
+ case"cowbell":{const bp=c.createBiquadFilter(),g=gn(.6);bp.type="bandpass";bp.frequency.value=f*1.85;g.gain.exponentialRampToValueAtTime(.001,t+.3);bp.connect(g).connect(out);osc("square",f).connect(bp);osc("square",f*1.48).connect(bp);end=t+.31;break}
+ case"shaker":{const n=nz(),hp=c.createBiquadFilter(),g=c.createGain();hp.type="highpass";hp.frequency.value=f;g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.75,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+.09);n.connect(hp).connect(g).connect(out);end=t+.1;break}
+ case"marimba":case"steelpan":{const mar=inst.id==="marimba",d=(mar?.5:.9)*Math.min(2,Math.sqrt(C4/f)+.3);(mar?[[1,.9],[4,.3],[9.9,.05]]:[[1,.8],[2.01,.4],[3.02,.25],[4.1,.08]]).forEach(([ov,lv],i)=>{const o1=osc("sine",f*ov),g=gn(lv);if(!mar)o1.frequency.exponentialRampToValueAtTime(f*ov*.985,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+d/(1+i*.8));o1.connect(g).connect(out)});const n=nz(),bp=c.createBiquadFilter(),ng=gn(.2);bp.type="bandpass";bp.frequency.value=f*3;ng.gain.exponentialRampToValueAtTime(.001,t+.012);n.connect(bp).connect(ng).connect(out);end=t+d+.05;rel=.08;break}
+ case"piano":{const d=Math.min(4,1.2*Math.sqrt(C4/f)+.4),B=.00012,body=c.createGain();body.gain.value=1;body.connect(out);[1,2,3,4,5,6].forEach(h=>{const hf=f*h*Math.sqrt(1+B*h*h),lv=.55/Math.pow(h,1.15);[-1.5,1.5].slice(0,h<3?2:1).forEach(det=>{const o1=osc(h<3?"triangle":"sine",hf),g=c.createGain();o1.detune.value=h<3?det:0;env(g,.004,lv/(h<3?1.6:1),d/Math.sqrt(h),.35);o1.connect(g).connect(body)})});const n=nz(),bp=c.createBiquadFilter(),ng=gn(.3);bp.type="bandpass";bp.frequency.value=Math.min(8000,f*4);bp.Q.value=.8;ng.gain.exponentialRampToValueAtTime(.001,t+.02);n.connect(bp).connect(ng).connect(out);end=hold?t+30:t+d+.1;rel=.25;break}
+ case"guitar":{const s=c.createBufferSource();s.buffer=pluck(c,f);srcs.push(s);const body=c.createBiquadFilter();body.type="peaking";body.frequency.value=110;body.gain.value=4;const g=gn(1);s.connect(body).connect(g).connect(out);end=t+s.buffer.duration;rel=.15;break}
+ case"brass":{const lp=c.createBiquadFilter(),g=c.createGain();lp.type="lowpass";lp.Q.value=1.2;lp.frequency.setValueAtTime(f*1.5,t);lp.frequency.linearRampToValueAtTime(Math.min(12000,f*9),t+.05);lp.frequency.setTargetAtTime(Math.min(8000,f*4),t+.05,.15);env(g,.035,.5,.6,.75);[-7,7].forEach(dt=>{const o1=osc("sawtooth",f);o1.detune.value=dt;o1.connect(lp)});lp.connect(g).connect(out);end=hold?t+30:t+.7;rel=.12;break}
+ case"flute":{const o1=osc("sine",f),o2=osc("sine",f*2),g=c.createGain(),g2=gn(.12),lfo=osc("sine",5),lg=c.createGain();lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(f*.006,t+.35);lfo.connect(lg).connect(o1.frequency);env(g,.06,.7,.7,.85);o1.connect(g);o2.connect(g2).connect(g);const n=nz(),bp=c.createBiquadFilter(),ng=c.createGain();bp.type="bandpass";bp.frequency.value=f*2;bp.Q.value=2;env(ng,.03,.09,.5,.5);n.connect(bp).connect(ng).connect(out);g.connect(out);end=hold?t+30:t+.8;rel=.12;break}
+ case"slapbass":case"wobblebass":{const sl=inst.id==="slapbass",o1=osc(sl?"square":"sawtooth",f/2),sub=osc("sine",f/4),lp=c.createBiquadFilter(),g=c.createGain();lp.type="lowpass";lp.Q.value=sl?2:8;if(sl){lp.frequency.setValueAtTime(3200,t);lp.frequency.exponentialRampToValueAtTime(220,t+.2);env(g,.003,.85,.4,.3)}else{const lfo=osc("sine",4),lg=gn(900);lp.frequency.setValueAtTime(700,t);lfo.connect(lg).connect(lp.frequency);env(g,.01,.75,.4,.8)}o1.connect(lp);sub.connect(lp);lp.connect(g).connect(out);end=hold?t+30:t+.45;rel=.08;break}
+ case"candylead":{const o1=osc("sawtooth",f*.98),o2=osc("square",f*1.003),lp=c.createBiquadFilter(),g=c.createGain(),g2=gn(.3);o1.frequency.linearRampToValueAtTime(f,t+.03);lp.type="lowpass";lp.frequency.value=Math.min(9000,f*6);env(g,.01,.5,.35,.7);o1.connect(lp);o2.connect(g2).connect(lp);lp.connect(g).connect(out);end=hold?t+30:t+.4;rel=.1;break}
+ case"cosmicchords":{const g=c.createGain();env(g,.12,.9,1.2,.8);g.connect(out);[1,1.25,1.5,2].forEach((r,i)=>[-6,6].forEach(dt=>{const o1=osc(i<3?"sine":"triangle",f*r);o1.detune.value=dt;const og=gn(i<3?.18:.06);o1.connect(og).connect(g)}));end=hold?t+30:t+1.4;rel=.6;break}
+ case"magicwand":{[0,4,7,11,12,16].forEach((st,i)=>{const tt=t+i*.04,o1=c.createOscillator(),g=c.createGain();o1.type="sine";o1.frequency.setValueAtTime(f*2**(st/12),tt);g.gain.setValueAtTime(.0001,t);g.gain.setValueAtTime(.4,tt);g.gain.exponentialRampToValueAtTime(.001,tt+.18);o1.connect(g).connect(out);o1.start(tt);o1.stop(tt+.2)});end=t+.45;break}
+ case"laser":{const o1=osc("sawtooth",f*2),g=gn(.8);o1.frequency.exponentialRampToValueAtTime(60,t+.18);g.gain.exponentialRampToValueAtTime(.001,t+.2);o1.connect(g).connect(out);end=t+.21;break}
+ case"discowhistle":{const o1=osc("sine",f),lfo=osc("sine",14),lg=gn(f*.02),g=c.createGain();lfo.connect(lg).connect(o1.frequency);env(g,.02,.6,.35,.8);o1.connect(g).connect(out);end=hold?t+30:t+.4;break}
+ case"arcadeboing":{const o1=osc("sine",f),g=gn(.8);o1.frequency.linearRampToValueAtTime(f*2.5,t+.08);o1.frequency.linearRampToValueAtTime(f*1.2,t+.2);g.gain.exponentialRampToValueAtTime(.001,t+.25);o1.connect(g).connect(out);end=t+.26;break}}
+ srcs.forEach(s=>{if(s.start&&!s._started){s._started=1;s.start(t);try{s.stop(end+rel+.05)}catch(e){}}});
+ let stopped=false;return{inst,stop(t2){if(stopped||!hold)return;stopped=true;const tt=Math.max(t2==null?c.currentTime:t2,t+.01);out.gain.cancelScheduledValues(tt);out.gain.setValueAtTime(out.gain.value||vel,tt);out.gain.setTargetAtTime(0,tt,rel/3);srcs.forEach(s=>{try{s.stop(tt+rel+.1)}catch(e){}})}}}
+return{LIST,BY,ctx,play,get limiter(){ctx();return limiter},C4};
+})();
+</script>
+<script id="kbi-ui">
+(()=>{const s=document.getElementById("instrument");if(!s||!window.KBI)return;const cats=[...new Set(KBI.LIST.map(i=>i.cat))];s.innerHTML=cats.map(c=>`<optgroup label="${c}">${KBI.LIST.filter(i=>i.cat===c).map(i=>`<option value="${i.id}">${i.emoji} ${i.name}</option>`).join("")}</optgroup>`).join("");s.value="piano";s.addEventListener("change",()=>KBI.play(s.value,KBI.C4))})();
+</script>

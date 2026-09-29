@@ -1,0 +1,38 @@
+<style id="arcade-css">
+.ar{max-width:1100px;margin:0 auto;padding:0 12px 90px}
+.ar-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.ar-bar input{flex:1 1 220px;font:inherit;min-height:44px;padding:8px 14px;border-radius:14px;border:2px solid #e3dcf2}
+.ar-bar button{font:inherit;font-weight:800;min-height:44px;padding:8px 16px;border-radius:14px;border:0;cursor:pointer;background:linear-gradient(135deg,#6d4aff,#ff5fa2);color:#fff}
+.ar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.ar-tile{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:22px;text-decoration:none;color:#fff;min-height:170px;overflow:hidden;background:linear-gradient(145deg,var(--a),var(--b));box-shadow:0 10px 24px rgba(40,20,90,.22);transition:transform .2s,box-shadow .2s}
+.ar-tile:hover,.ar-tile:focus-visible{transform:translateY(-5px) rotate(-1deg);box-shadow:0 16px 34px rgba(40,20,90,.32)}
+.ar-tile:focus-visible{outline:4px solid #ffe066;outline-offset:3px}
+.ar-tile .e{font-size:48px;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3));transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.ar-tile:hover .e{transform:scale(1.2) rotate(-10deg)}
+.ar-tile b{font-size:1.15rem}.ar-tile small{opacity:.92;font-weight:600}
+.ar-tile .go{margin-top:auto;font-weight:900}
+.ar-tile .rec{position:absolute;top:10px;right:12px;font-size:12px;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:999px}
+@media (prefers-reduced-motion:reduce){.ar-tile,.ar-tile .e{transition:none}.ar-tile:hover{transform:none}}
+</style>
+<script id="arcade-js">
+(()=>{"use strict";
+const GAMES=/*__GAMES__*/[];
+const main=document.querySelector("main");if(!main||!GAMES.length||typeof app==="undefined")return;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const HUES=[["#ff5f7e","#ff914d"],["#20a9ec","#6d4aff"],["#2bc678","#0f9b8e"],["#8a6ee7","#ff5fa2"],["#ffb347","#ff5f7e"],["#1d1440","#6d4aff"],["#0a6fb8","#3fc1ff"]];
+let recent=[];try{recent=JSON.parse(localStorage.getItem("kidHubArcade")||"[]").filter(s=>GAMES.some(g=>g.slug===s)).slice(0,5)}catch(e){}
+const sec=document.createElement("section");sec.className="screen";sec.id="s-arcade";
+sec.innerHTML=`<div class="activity"><div class="act-head"><button class="back" onclick="app.show('hub')" aria-label="Back to hub">←</button><div><h2>🕹️ Arcade</h2><p>${GAMES.length} full-screen games — tap one to play!</p></div></div><div class="ar"><div class="ar-bar" role="search"><label class="kp-sr" for="arSearch">Search games</label><input type="search" id="arSearch" placeholder="🔎 Find a game…" autocomplete="off"><button type="button" id="arRandom">🎲 Random game</button></div><div class="ar-grid" id="arGrid"></div><p class="tip" style="margin-top:12px">🔙 Every game has a <b>KidHub</b> button to come back and a <b>⛶ Fullscreen</b> button.</p></div></div>`;
+main.appendChild(sec);
+const go=slug=>{recent=[slug,...recent.filter(s=>s!==slug)].slice(0,5);try{localStorage.setItem("kidHubArcade",JSON.stringify(recent))}catch(e){}};
+const render=()=>{const q=document.getElementById("arSearch").value.trim().toLowerCase();const list=GAMES.filter(g=>!q||(g.title+" "+g.blurb).toLowerCase().includes(q)).sort((a,b)=>{const ra=recent.indexOf(a.slug),rb=recent.indexOf(b.slug);return(ra<0?99:ra)-(rb<0?99:rb)});
+ document.getElementById("arGrid").innerHTML=list.map((g,i)=>{const[a,b]=HUES[GAMES.indexOf(g)%HUES.length];return`<a class="ar-tile" href="games/${esc(g.slug)}.html" target="_top" data-slug="${esc(g.slug)}" style="--a:${a};--b:${b}">${recent.includes(g.slug)?'<span class="rec">🕘 Recent</span>':""}<span class="e" aria-hidden="true">${esc(g.emoji)}</span><b>${esc(g.title)}</b><small>${esc(g.blurb)}</small><span class="go">▶️ Play</span></a>`}).join("")||'<p>😅 No games match — try another word.</p>';
+ document.querySelectorAll("#arGrid [data-slug]").forEach(a=>a.addEventListener("click",()=>go(a.dataset.slug)))};
+document.getElementById("arSearch").addEventListener("input",render);
+document.getElementById("arRandom").onclick=()=>{const g=GAMES[Math.floor(Math.random()*GAMES.length)];go(g.slug);(window.top||window).location.href=new URL(`games/${g.slug}.html`,location.href).href};
+render();
+const cards=document.getElementById("cards");if(cards&&!cards.querySelector('[data-id="arcade"]')){cards.insertAdjacentHTML("afterbegin",`<article class="card" tabindex="0" role="button" data-id="arcade" data-cat="play" data-search="arcade games pong racing ninja robot tower defense" style="--c:#ff5f7e" onclick="app.show('arcade')"><div class="card-icon">🕹️</div><h3>Arcade <span class="feature-badge">${GAMES.length} games</span></h3><p>Full-screen games: pong, racing, ninjas, towers & more.</p></article>`);const c=document.getElementById("count");if(c)c.textContent=c.textContent.replace(/\d+/,m=>+m+1)}
+if(location.hash==="#arcade")app.show("arcade");
+window.kidArcade={games:GAMES.length};
+})();
+</script>

@@ -1,0 +1,7 @@
+const { chromium } = require('playwright');const assert=require('assert');const fs=require('fs');const path=require('path');
+(async()=>{const b=await chromium.launch({channel:'msedge'});const games=JSON.parse(fs.readFileSync('games/games.json','utf8'));const bad=[];
+for(const g of games){const p=await b.newPage({viewport:{width:1280,height:800}});const err=[];p.on('pageerror',e=>err.push(e.message.slice(0,90)));
+ await p.goto('file:///'+path.resolve('games',g.slug+'.html').split(path.sep).join('/'));await p.waitForTimeout(1200);await p.mouse.click(640,420);await p.keyboard.press('Space');await p.waitForTimeout(500);
+ const r=await p.evaluate(()=>({links:[...document.querySelectorAll('a[href]')].filter(a=>getComputedStyle(a).display!=='none').map(a=>a.getAttribute('href')),fs:!!document.getElementById('kh-fs'),nav:document.querySelectorAll('nav,[id^=n8x],footer.cyber-footer').length}));
+ const ok=!err.length&&r.fs&&r.nav===0&&r.links.length===1&&r.links[0].includes('studio.html');console.log((ok?'OK  ':'BAD ')+g.slug.padEnd(24)+JSON.stringify(r.links)+(err.length?' ERR '+err[0]:''));if(!ok)bad.push(g.slug);if(g.slug==='neon-pong')await p.screenshot({path:'game-shot.png'});await p.close()}
+await b.close();assert.deepEqual(bad,[],'games failing: '+bad);console.log(`PASS games: ${games.length} games load clean, 1 KidHub link + fullscreen, menus removed`)})().catch(e=>{console.error(e.message);process.exit(1)});
