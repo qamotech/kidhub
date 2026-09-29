@@ -29,6 +29,10 @@ Tests: `node test.cjs` (Art Studio) and `node test-plus.cjs` (all 80 tools, 10 a
 
 ## 🆕 Latest release
 
+- 🌟 **NEW game: PopStorm: Glow Guardians** (`games/popstorm.html`, first in the Arcade). It's an original arcade roguelite for ages 8+: pop grumpy Gloomies, collect gems, and draft power-ups.
+  - Content: 8 heroes, 8 powers with 8 evolutions, 10 buddy items, 13 Gloomie types, and 3 bosses across 4 worlds.
+  - Keep-playing hooks: 5 pets, gift boxes, 5 random events, 31 trophies, daily quests, a daily challenge, Boss Rush, endless mode, a coin shop, Glow Rank, and streaks.
+  - Built as one 3,000+ line HTML file with synthesized audio, keyboard, touch, and gamepad support, and an automated full playtest (`node test-popstorm.cjs`).
 - 🕹️ **Arcade:** 13 full-screen games in `games/`. Each game keeps only the game, plus one ⬅️ KidHub link and a ⛶ Fullscreen button (`python tools/import_games.py` regenerates them).
 - 🎹 **KidsBeat instruments:** 24 mastered instruments (drums, world percussion, piano, guitar, brass, flute, synths, fun sounds) power the whole Music Lab.
 - 🧑‍🏫 **Beat Coach:** auto-fix groove, 7 smart genre grooves, fills, remix, undo, live drum recording (keys 1–6), accents, humanize, auto-bass, kit and mix, a 16-step melody lane that stays in key, "Make it cohesive" melody tuning, auto-tune, a 2–4 octave keyboard (octaves 0–7), and a star rating with tips.

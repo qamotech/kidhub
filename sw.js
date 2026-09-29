@@ -1,6 +1,6 @@
 /* KidHub service worker: network-first pages with cached fallback (keeps working offline and
    during GitHub Pages deploys), stale-while-revalidate for everything else. */
-const V='kidhub-2026.09.28-2347-51ec41';
+const V='kidhub-2026.09.29-0124-d65b6f';
 const CORE=['./','./index.html','./studio.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE).catch(()=>{})))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('kidhub-')&&k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

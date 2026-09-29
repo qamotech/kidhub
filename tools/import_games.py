@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup, Comment
 SRC = Path(__file__).resolve().parents[2] / 'N8DEV' / 'Arcade'
 OUT = Path(__file__).resolve().parents[1] / 'games'
 GAMES = [  # file, slug, emoji, title, blurb
+    ('PopStorm.html', 'popstorm', '🌟', 'PopStorm: Glow Guardians', 'NEW! Pop Gloomies, build wild power-ups, beat 3 bosses.'),
     ('neon-pong.html', 'neon-pong', '🏓', 'Neon Pong', 'Classic paddle battle with glowing neon.'),
     ('CombatCars.html', 'combat-cars', '🏎️', 'Combat Cars', 'Retro arena racing, 16-bit style.'),
     ('MiyagiDo-ShadowDefense.html', 'shadow-defense', '🥋', 'Shadow Defense', 'Block and defend like a dojo master.'),

@@ -1,5 +1,9 @@
 # 🗓️ Changelog
 
+## 2026-09-29 — PopStorm: Glow Guardians
+- New featured Arcade game: PopStorm (3,090-line single-file roguelite for ages 8+).
+- Motion polish: gated hovers, transform-based bars, stacked toasts, and a reduced-motion default.
+
 ## 2026-09-29 — Beats, themes & polish
 - Beat Coach: auto-fix sequencer, cohesive melody tuning, auto-tune, live drum recording, 2–4 octave keyboard, octaves 0–7.
 - 8 working themes with dark-mode dimming; the cloud widget menu now fits every screen.
