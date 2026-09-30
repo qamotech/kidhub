@@ -31,3 +31,5 @@ if not m:
     sys.exit('dashboard iframe not found')
 idx.write_text(o[:m.start(2)] + html.escape(s, quote=True) + o[m.end(2):], encoding='utf-8')
 print('built', len(s), 'bytes,', len(blocks), 'modules')
+from tools.practice_kits import build as build_practice_kits
+build_practice_kits()

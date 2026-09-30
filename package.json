@@ -1,12 +1,13 @@
 {
   "name": "kidhub",
   "private": true,
-  "description": "KidHub static site \u00e2\u20ac\u201d dev tooling only (no build step).",
+  "description": "KidHub creative activities, games, art, music, and learning — static site and development tooling",
   "scripts": {
-    "test": "node test.cjs && node test-plus.cjs && node test-paint.cjs && node test-music.cjs && node test-beats.cjs && node test-fx.cjs && node test-games.cjs && node test-cloud-arcade.cjs && node test-cloud-fit.cjs && node test-polish.cjs && node test-dashboard.cjs && node test-a11y.cjs && node test-popstorm.cjs",
+    "test": "node test.cjs && node test-plus.cjs && node test-paint.cjs && node test-music.cjs && node test-beats.cjs && node test-fx.cjs && node test-games.cjs && node test-cloud-arcade.cjs && node test-cloud-fit.cjs && node test-polish.cjs && node test-dashboard.cjs && node test-a11y.cjs && node test-popstorm.cjs && node test-adventures.cjs && node test-expanded-core.cjs",
     "test:a11y": "node test-a11y.cjs",
     "serve": "python -m http.server 8000",
-    "build": "python tools/import_games.py && python build.py"
+    "build": "python tools/import_games.py && python build.py",
+    "test:activities": "node test-adventures.cjs && node test-expanded-core.cjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",

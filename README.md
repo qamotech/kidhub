@@ -4,6 +4,38 @@
 
 **A colorful browser activity hub with an expanded Art Studio for drawing, storytelling, and creative exploration.** Open one HTML file, choose Art Studio, and start making something imaginative. The application is self-contained HTML, CSS, and JavaScript; there is no build step or application server.
 
+## 🧭 All-activity expansion — September 30, 2026
+
+Every core activity now has an **Adventure trail** with three tailored missions, Explore/Stretch/Invent guidance, a coach tip, saved checkmarks, a discovery journal, and a text download. Checkmarks are self-reported and do not alter game scores.
+
+| Area | New content and controls |
+|---|---|
+| 🎨 Art Studio | Imagination mixer combining six characters, six places, and six problems; save an idea to your journal. |
+| ⭐ Catch the Stars | Party, Ocean, and Garden targets; 15/90-second rounds; relaxed mode with no heart loss from missed targets. |
+| 📚 Story Garden | Three original four-page books with comprehension questions: The Listening Bridge, The Patient Seed, and The Missing Beat. |
+| 🎹 Music Lab | Eight-beat rhythm builder, rests, 60–160 BPM control, one-shot playback, and stop. |
+| 🚀 Math Mission | Whole-number division, division hints, mixed-operation inclusion, and adjustable word-problem practice. |
+| 🧠 Memory Match | Four card collections, 10/12-pair boards, background timer suspension, and restart-safe flip/peek timers. |
+| 🤖 Code Logic | Ten routes, level selection, safe controls during playback, and coordinate practice. Existing five-level badge progress is preserved. |
+| 🪐 Space Explorer | Planet-order practice questions with immediate explanations and comparison missions. |
+| 🦴 Dino Dig | Observation, careful excavation, and museum-label practice with a field journal. |
+| 🧩 Shapes Puzzle | Strategy questions, planning tips, and replay-comparison missions. |
+| 🐮 Farm Friends | Extra animal-call practice and farm-story challenges. |
+| 🖍️ Coloring Book | A 16-square pattern quilt with custom colors and SVG export. |
+| 🔤 Word Spelling | 50 illustrated words, short/long filters, and missing-letter practice. |
+| 🕒 Telling Time | Adjustable elapsed-time practice and daily-routine missions. |
+| 🎵 Music Maker | 16 steps across five rows; existing eight-step songs migrate without losing notes. |
+| 📖 Storybook Creator | Up to 24 pages, 800 characters per page, and an imagination mixer. |
+| 🧰 80 toolbox tools | Separate journals and category-specific experiments for math, words, science, time/money, arts, games, wellbeing, and helpers. |
+| 🕹️ 14 arcade games | Tailored practice goals, strategy notes, a session timer, last-20-session history, and JSON export. |
+| 🎛️ Three companion apps | The same practice companion, with goals suited to KidsBeat, Qamo Mathcore, and Stix Stax Stonz. |
+
+Open an activity and expand **Adventure trail**. In an arcade game or companion app, use **🧭 Practice**. The practice panel does not pause gameplay; use the game's own pause control first. Session times measure elapsed wall-clock time between Start and Finish.
+
+Progress is browser-local: `kidHubAdventuresV1` for trails and `kidHubPractice:<activity>` for game/companion practice. Export journals before clearing site data. These records are separate from the existing Toolbox backup export.
+
+Sources: `src/zzz-adventures.html` adds the guided activities; `activity-kit.js` powers the shared game companion; `tools/practice_kits.py` attaches it idempotently during `python build.py`. Core activity banks remain in `studio.html`. `node test-adventures.cjs` verifies the new coverage against a local server on port 8765; set `BASE_URL` for another origin.
+
 ## 🧰 KidHub Plus — 80 tools, 80 features, 10 badges, 80 improvements
 
 Open **🧰 Toolbox** from the hub (or press **T**, or link straight to a tool with `#tool=<id>`, e.g. `studio.html#tool=piano`).

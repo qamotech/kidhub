@@ -1,5 +1,10 @@
 # 🗓️ Changelog
 
+## 2026-09-30 — Every activity expansion
+
+Added 18 guided trails, separate journals for all 80 tools, 14 arcade practice companions, and three embedded-app practice companions. Expanded stories, spelling, coding, math, memory, catching, music sequencing, and storybook capacity. Added practice questions, a rhythm builder, an imagination mixer, and an SVG quilt export. Preserved saved eight-step songs during migration and made memory restart timers safe.
+
+
 ## 2026-09-29 — PopStorm: Glow Guardians
 - New featured Arcade game: PopStorm (3,090-line single-file roguelite for ages 8+).
 - Motion polish: gated hovers, transform-based bars, stacked toasts, and a reduced-motion default.

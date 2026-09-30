@@ -48,4 +48,7 @@
 b.onclick=()=>{const d=document.documentElement;if(fs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{const r=(d.requestFullscreen||d.webkitRequestFullscreen);r&&r.call(d).catch&&r.call(d).catch(()=>{})}};
 const sync=()=>{b.textContent=fs()?'🗗 Exit fullscreen':'⛶ Fullscreen'};document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
 let t;const wake=()=>{k.classList.remove('kh-dim');clearTimeout(t);t=setTimeout(()=>k.classList.add('kh-dim'),3000)};addEventListener('pointermove',wake,{passive:true});wake()})();</script>
+<!-- PRACTICE KIT -->
+<script src="../activity-kit.js" data-activity="miyagi-throw" data-title="Miyagi Throw!" data-goals="[&quot;Practice aiming at a nearby target.&quot;, &quot;Adjust your aim for a farther target.&quot;, &quot;Record which cue helped you aim more accurately.&quot;]" defer></script>
+<!-- /PRACTICE KIT -->
 </body></html>

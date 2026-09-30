@@ -636,5 +636,8 @@ requestAnimationFrame(gameLoop);
 b.onclick=()=>{const d=document.documentElement;if(fs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{const r=(d.requestFullscreen||d.webkitRequestFullscreen);r&&r.call(d).catch&&r.call(d).catch(()=>{})}};
 const sync=()=>{b.textContent=fs()?'🗗 Exit fullscreen':'⛶ Fullscreen'};document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
 let t;const wake=()=>{k.classList.remove('kh-dim');clearTimeout(t);t=setTimeout(()=>k.classList.add('kh-dim'),3000)};addEventListener('pointermove',wake,{passive:true});wake()})();</script>
+<!-- PRACTICE KIT -->
+<script src="../activity-kit.js" data-activity="ninja-sandbox" data-title="Ninja Sandbox" data-goals="[&quot;Explore the movement controls in a safe area.&quot;, &quot;Chain a run and a jump toward a chosen landmark.&quot;, &quot;Invent a short route and try it twice.&quot;]" defer></script>
+<!-- /PRACTICE KIT -->
 </body>
 </html>

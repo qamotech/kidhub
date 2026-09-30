@@ -17,3 +17,7 @@ Use browser site-data settings to remove stored state. Export artwork first. Mov
 ## 👪 Adult guidance
 
 Use nicknames rather than identifying information. Avoid importing sensitive photos on a shared device. The inherited parent gate and simulated messaging are not identity verification or real-time communication systems.
+
+## 🧭 Adventure and practice records
+
+Adventure trail checkmarks, challenge style, and journal notes use `kidHubAdventuresV1`. Game and companion goals, notes, and the last 20 session timestamps/durations use `kidHubPractice:<activity>`. They remain in local storage and are not sent by the new practice features. Downloaded journals and JSON practice logs are separate files and are not included in the existing Toolbox backup. Browser storage is not encrypted; use non-sensitive notes on shared devices.

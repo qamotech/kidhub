@@ -1844,5 +1844,8 @@
 b.onclick=()=>{const d=document.documentElement;if(fs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{const r=(d.requestFullscreen||d.webkitRequestFullscreen);r&&r.call(d).catch&&r.call(d).catch(()=>{})}};
 const sync=()=>{b.textContent=fs()?'🗗 Exit fullscreen':'⛶ Fullscreen'};document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
 let t;const wake=()=>{k.classList.remove('kh-dim');clearTimeout(t);t=setTimeout(()=>k.classList.add('kh-dim'),3000)};addEventListener('pointermove',wake,{passive:true});wake()})();</script>
+<!-- PRACTICE KIT -->
+<script src="../activity-kit.js" data-activity="qamelot-conquest" data-title="Qamelot Conquest" data-goals="[&quot;Explore movement and attacks in the first area.&quot;, &quot;Choose a route before entering a crowded encounter.&quot;, &quot;Record a tactic you would try on the next run.&quot;]" defer></script>
+<!-- /PRACTICE KIT -->
 </body>
 </html>
