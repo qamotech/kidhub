@@ -8,12 +8,11 @@ GOALS={
 'combat-cars':['Learn steering and turning before chasing opponents.','Plan a route that avoids a crowded area.','Compare an aggressive and a defensive driving strategy.'],
 'shadow-defense':['Identify the defense controls before starting.','Practice waiting for an attack before responding.','Describe one timing improvement after two rounds.'],
 'miyagi-throw':['Practice aiming at a nearby target.','Adjust your aim for a farther target.','Record which cue helped you aim more accurately.'],
-'n8-strike':['Learn movement and transformation controls.','Try each available attack deliberately.','Compare two approaches to the same encounter.'],
+'n8-shift':['Learn which form beats each hazard: walls, pits, lasers and drones.','Practice shifting just before a hazard to land a PERFECT.','Compare two runs and note which hazard you want to improve on.'],
 'ninja-sandbox':['Explore the movement controls in a safe area.','Chain a run and a jump toward a chosen landmark.','Invent a short route and try it twice.'],
 'shipment-8bit':['Learn the arena layout before rushing.','Practice movement around an obstacle.','Record a route or position that helped you survive.'],
 'blob-bash-royale':['Practice recovery after leaving a platform.','Use a defensive option before attacking.','Compare two fighters or stages and note a difference.'],
 'panther-arena':['Inspect the board before choosing a move.','Predict an opponent response before your turn.','Explain one choice that protected your position.'],
-'mecha-strike':['Practice movement and transformation.','Test each attack against a reachable target.','Describe a useful movement-and-attack combination.'],
 'qamelot-conquest':['Explore movement and attacks in the first area.','Choose a route before entering a crowded encounter.','Record a tactic you would try on the next run.'],
 'qamelot-tower-defense':['Inspect paths before placing a tower.','Compare tower coverage from two positions.','Explain one upgrade or placement choice after a wave.'],
 'stix-stax-stonz':['Identify every line that could win.','Block an immediate threat before planning your own line.','Describe a move that creates two threats.']}

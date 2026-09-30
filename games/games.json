@@ -30,10 +30,10 @@
   "blurb": "Aim and throw to hit every target."
  },
  {
-  "slug": "n8-strike",
-  "emoji": "🤖",
-  "title": "N8 Strike",
-  "blurb": "Transforming mecha action."
+  "slug": "n8-shift",
+  "emoji": "⚡",
+  "title": "N8 SHIFT",
+  "blurb": "Shift Racer, Jet & Titan to beat every hazard!"
  },
  {
   "slug": "ninja-sandbox",
@@ -58,12 +58,6 @@
   "emoji": "🐆",
   "title": "Panther Arena",
   "blurb": "Gold-hunting panther showdown."
- },
- {
-  "slug": "mecha-strike",
-  "emoji": "🦾",
-  "title": "Mecha Strike",
-  "blurb": "Giant robot transformer protocol."
  },
  {
   "slug": "qamelot-conquest",

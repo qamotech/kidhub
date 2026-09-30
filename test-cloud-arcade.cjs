@@ -4,7 +4,7 @@ const posts=[];await page.route('https://hooks.example.test/**',r=>{posts.push(r
 await page.goto('file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html');
 assert.equal(await page.locator('h1,h2,.brand,body').first().evaluate(()=>/kid ?hub[- ]?64/i.test(document.body.innerText)),false,'no KidHub 64 text');
 // arcade
-await page.locator('[data-id="arcade"]').click();assert.equal(await page.locator('#arGrid .ar-tile').count(),14);await page.fill('#arSearch','pong');assert.equal(await page.locator('#arGrid .ar-tile').count(),1);
+await page.locator('[data-id="arcade"]').click();assert.equal(await page.locator('#arGrid .ar-tile').count(),13);await page.fill('#arSearch','pong');assert.equal(await page.locator('#arGrid .ar-tile').count(),1);
 assert.equal(await page.locator('#arGrid .ar-tile').first().getAttribute('href'),'games/neon-pong.html');await page.evaluate(()=>app.show('hub'));
 // cloud: left side, opens, saves offline, sends via webhook
 const bb=await page.locator('#cwBtn').boundingBox();assert(bb.x<60,'cloud on left');
@@ -19,4 +19,4 @@ await page.keyboard.press('Escape');assert.equal(await page.locator('#cwPanel.op
 // instruments on native piano
 await page.evaluate(()=>app.show('music'));await page.selectOption('#instrument','guitar');await page.locator('[data-note="0"]').first().click().catch(()=>{});
 await page.setViewportSize({width:390,height:844});await page.locator('#cwBtn').click({force:true});await page.waitForTimeout(450);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile overflow');await page.screenshot({path:'cloud-mobile.png'});
-assert.deepEqual(errors,[]);console.log('PASS cloud+arcade: 14-game arcade menu, KidHub rename, left cloud widget, offline save, webhook send, reminders, mobile');await b.close()})().catch(e=>{console.error(e);process.exit(1)});
+assert.deepEqual(errors,[]);console.log('PASS cloud+arcade: 13-game arcade menu, KidHub rename, left cloud widget, offline save, webhook send, reminders, mobile');await b.close()})().catch(e=>{console.error(e);process.exit(1)});
