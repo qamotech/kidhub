@@ -1,0 +1,31 @@
+<script id="kidhub-recents">
+(()=>{'use strict';
+// Report what a child opens (activities, toolbox tools, arcade games) so the dashboard's
+// "Recent" menu can list it. Inside the dashboard the portal records it; when KidHub runs
+// on its own page, write the same shared store so the dashboard sees it next time.
+const KEY='kidHubPortalV1',HUBS=new Set(['hub','tools','arcade']),SAFE=/^[a-z0-9-]+$/;
+// Only count screens a child opened: deep links, restores and dashboard launches change screens
+// without a tap (the dashboard records its own launches).
+let lastInput=0;['pointerdown','keydown'].forEach(t=>addEventListener(t,()=>{lastInput=Date.now()},true));
+const childOpened=()=>Date.now()-lastInput<4000;
+function record(id){
+  try{const p=window.parent!==window&&window.parent.KidHubPortal;if(p&&typeof p.recordUse==='function'){p.recordUse(id);return}}catch(e){}
+  try{const raw=JSON.parse(localStorage.getItem(KEY)||'{}'),v=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+    const list=Array.isArray(v.recent)?v.recent.filter(x=>typeof x==='string'&&x!==id):[];v.recent=[id,...list].slice(0,8);localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}
+}
+if(typeof app==='object'&&app&&typeof app.show==='function'){
+  const show=app.show;
+  app.show=function(id){const before=this.current,result=show.apply(this,arguments);if(this.current===id&&id!==before&&!HUBS.has(id)&&SAFE.test(id)&&childOpened())record('core-'+id);return result};
+}
+if(window.KidHubPlus&&typeof KidHubPlus.openTool==='function'){
+  const open=KidHubPlus.openTool;
+  KidHubPlus.openTool=function(id){const result=open.apply(this,arguments);if(typeof id==='string'&&SAFE.test(id)&&childOpened())record('tool-'+id);return result};
+}
+// Toolbox buttons and arcade tiles call their own local functions, so watch the clicks.
+document.addEventListener('click',e=>{
+  const el=e.target&&e.target.closest?e.target:null;if(!el)return;
+  const tool=el.closest('#tools-root [data-t]');if(tool&&SAFE.test(tool.dataset.t||''))record('tool-'+tool.dataset.t);
+  const game=el.closest('.ar-tile[data-slug]');if(game&&SAFE.test(game.dataset.slug||''))record('game-'+game.dataset.slug);
+},true);
+})();
+</script>

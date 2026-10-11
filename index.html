@@ -183,6 +183,10 @@
             font-weight: 700;
             color: var(--primary);
         }
+        .nav-recent { display: flex; flex-direction: column; gap: 8px; }
+        .nav-recent .nav-btn { padding-top: 10px; padding-bottom: 10px; min-width: 0; }
+        .nav-recent-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .nav-recent-empty { margin: 0 10px; font-size: 0.85rem; opacity: 0.75; }
         .content-area {
             flex: 1;
             position: relative;
@@ -278,7 +282,7 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#particles{display:none}}
 </style><style>@media(max-width:700px){.main-container{flex-direction:column;min-height:0}.sidebar{width:100%;min-width:0;padding:6px;display:flex;flex-direction:row;gap:6px;overflow-x:auto;flex-shrink:0;border-right:0;border-bottom:1px solid var(--border-color)}.sidebar h3,.sidebar h4,.sidebar .nav-title{display:none}.sidebar .nav-btn{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px;font-size:12px;margin:0}.content-area{width:100%;flex:1;min-height:0}footer .footer-links{display:none}}</style><link rel="stylesheet" href="portal.css"><style>
 #dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
-@media(max-width:700px){.sidebar{max-height:70px}.sidebar>div{display:none}#active-app-label{display:none}.footer-links{display:flex!important}footer{gap:8px;flex-wrap:wrap}.kh-portal{padding:16px}}
+@media(max-width:700px){.sidebar{max-height:70px}.sidebar>div{display:none}.sidebar>div.nav-recent{display:contents}.nav-recent-empty{display:none}#active-app-label{display:none}.footer-links{display:flex!important}footer{gap:8px;flex-wrap:wrap}.kh-portal{padding:16px}}
 </style><script defer src="offline.js"></script></head>
 <body>
 
@@ -305,6 +309,9 @@
             <button class="nav-btn " data-target="app-1">🎵 KidsBeat</button>
             <button class="nav-btn " data-target="app-2">📐 Qamo Mathcore</button>
             <button class="nav-btn " data-target="app-3">❌ Stix Stax Stonz</button>
+
+            <div id="nav-recent-label" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">Recent</div>
+            <div id="nav-recent" class="nav-recent" role="group" aria-labelledby="nav-recent-label"><p class="nav-recent-empty">Apps you open show up here.</p></div>
 
             <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">Resources</div>
             <button class="nav-btn" data-library="start">🧭 Start here</button>
@@ -5962,7 +5969,7 @@ window.KidHubPlus={tools:T.length,features:FEATURES.length,improvements:IMPROVEM
 &lt;/style&gt;
 &lt;script id=&quot;arcade-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
-const GAMES=[{&quot;slug&quot;: &quot;popstorm&quot;, &quot;emoji&quot;: &quot;🌟&quot;, &quot;title&quot;: &quot;PopStorm: Glow Guardians&quot;, &quot;blurb&quot;: &quot;NEW! Pop Gloomies, build wild power-ups, beat 3 bosses.&quot;}, {&quot;slug&quot;: &quot;neon-pong&quot;, &quot;emoji&quot;: &quot;🏓&quot;, &quot;title&quot;: &quot;Neon Pong&quot;, &quot;blurb&quot;: &quot;Classic paddle battle with glowing neon.&quot;}, {&quot;slug&quot;: &quot;combat-cars&quot;, &quot;emoji&quot;: &quot;🏎️&quot;, &quot;title&quot;: &quot;Combat Cars&quot;, &quot;blurb&quot;: &quot;Retro arena racing, 16-bit style.&quot;}, {&quot;slug&quot;: &quot;shadow-defense&quot;, &quot;emoji&quot;: &quot;🥋&quot;, &quot;title&quot;: &quot;Shadow Defense&quot;, &quot;blurb&quot;: &quot;Block and defend like a dojo master.&quot;}, {&quot;slug&quot;: &quot;miyagi-throw&quot;, &quot;emoji&quot;: &quot;🥷&quot;, &quot;title&quot;: &quot;Miyagi Throw!&quot;, &quot;blurb&quot;: &quot;Aim and throw to hit every target.&quot;}, {&quot;slug&quot;: &quot;n8-shift&quot;, &quot;emoji&quot;: &quot;⚡&quot;, &quot;title&quot;: &quot;N8 SHIFT&quot;, &quot;blurb&quot;: &quot;Shift Racer, Jet &amp; Titan to beat every hazard!&quot;}, {&quot;slug&quot;: &quot;ninja-sandbox&quot;, &quot;emoji&quot;: &quot;🌀&quot;, &quot;title&quot;: &quot;Ninja Sandbox&quot;, &quot;blurb&quot;: &quot;Run, jump and transform in a ninja playground.&quot;}, {&quot;slug&quot;: &quot;shipment-8bit&quot;, &quot;emoji&quot;: &quot;👾&quot;, &quot;title&quot;: &quot;Shipment 8-Bit&quot;, &quot;blurb&quot;: &quot;Pixel-art arena adventure.&quot;}, {&quot;slug&quot;: &quot;blob-bash-royale&quot;, &quot;emoji&quot;: &quot;🟣&quot;, &quot;title&quot;: &quot;Blob Bash Royale&quot;, &quot;blurb&quot;: &quot;Bouncy blob platform brawler.&quot;}, {&quot;slug&quot;: &quot;panther-arena&quot;, &quot;emoji&quot;: &quot;🐆&quot;, &quot;title&quot;: &quot;Panther Arena&quot;, &quot;blurb&quot;: &quot;Gold-hunting panther showdown.&quot;}, {&quot;slug&quot;: &quot;qamelot-conquest&quot;, &quot;emoji&quot;: &quot;🏰&quot;, &quot;title&quot;: &quot;Qamelot Conquest&quot;, &quot;blurb&quot;: &quot;Castle-storming arcade quest.&quot;}, {&quot;slug&quot;: &quot;qamelot-tower-defense&quot;, &quot;emoji&quot;: &quot;🗼&quot;, &quot;title&quot;: &quot;Qamelot Tower Defense&quot;, &quot;blurb&quot;: &quot;Build towers, stop the waves.&quot;}, {&quot;slug&quot;: &quot;stix-stax-stonz&quot;, &quot;emoji&quot;: &quot;❌&quot;, &quot;title&quot;: &quot;Stix Stax Stonz&quot;, &quot;blurb&quot;: &quot;Tic-tac-toe with a cyber twist.&quot;}];
+const GAMES=[{&quot;slug&quot;: &quot;popstorm&quot;, &quot;emoji&quot;: &quot;🌟&quot;, &quot;title&quot;: &quot;PopStorm: Glow Guardians&quot;, &quot;blurb&quot;: &quot;NEW! Pop Gloomies, build wild power-ups, beat 3 bosses.&quot;}, {&quot;slug&quot;: &quot;neon-pong&quot;, &quot;emoji&quot;: &quot;🏓&quot;, &quot;title&quot;: &quot;Neon Pong&quot;, &quot;blurb&quot;: &quot;Classic paddle battle with glowing neon.&quot;}, {&quot;slug&quot;: &quot;combat-cars&quot;, &quot;emoji&quot;: &quot;🏎️&quot;, &quot;title&quot;: &quot;Combat Cars&quot;, &quot;blurb&quot;: &quot;Retro arena racing, 16-bit style.&quot;}, {&quot;slug&quot;: &quot;shadow-defense&quot;, &quot;emoji&quot;: &quot;🥋&quot;, &quot;title&quot;: &quot;Shadow Defense&quot;, &quot;blurb&quot;: &quot;Block and defend like a dojo master.&quot;}, {&quot;slug&quot;: &quot;miyagi-throw&quot;, &quot;emoji&quot;: &quot;🥷&quot;, &quot;title&quot;: &quot;Miyagi Throw!&quot;, &quot;blurb&quot;: &quot;Aim and throw to hit every target.&quot;}, {&quot;slug&quot;: &quot;n8-shift&quot;, &quot;emoji&quot;: &quot;⚡&quot;, &quot;title&quot;: &quot;N8 SHIFT&quot;, &quot;blurb&quot;: &quot;Shift Racer, Jet &amp; Titan to beat every hazard!&quot;}, {&quot;slug&quot;: &quot;ninja-sandbox&quot;, &quot;emoji&quot;: &quot;🌀&quot;, &quot;title&quot;: &quot;Ninja Sandbox&quot;, &quot;blurb&quot;: &quot;Run, jump and transform in a ninja playground.&quot;}, {&quot;slug&quot;: &quot;shipment-8bit&quot;, &quot;emoji&quot;: &quot;👾&quot;, &quot;title&quot;: &quot;Shipment 8-Bit&quot;, &quot;blurb&quot;: &quot;Pixel-art arena adventure.&quot;}, {&quot;slug&quot;: &quot;blob-bash-royale&quot;, &quot;emoji&quot;: &quot;🟣&quot;, &quot;title&quot;: &quot;Blob Bash Royale&quot;, &quot;blurb&quot;: &quot;Bouncy blob platform brawler.&quot;}, {&quot;slug&quot;: &quot;panther-arena&quot;, &quot;emoji&quot;: &quot;🐆&quot;, &quot;title&quot;: &quot;Panther Arena&quot;, &quot;blurb&quot;: &quot;Gold-hunting panther showdown.&quot;}, {&quot;slug&quot;: &quot;qamelot-conquest&quot;, &quot;emoji&quot;: &quot;🏰&quot;, &quot;title&quot;: &quot;Qamelot Conquest&quot;, &quot;blurb&quot;: &quot;Castle-storming arcade quest.&quot;}, {&quot;slug&quot;: &quot;qamelot-tower-defense&quot;, &quot;emoji&quot;: &quot;🗼&quot;, &quot;title&quot;: &quot;Qamelot Tower Defense&quot;, &quot;blurb&quot;: &quot;Build towers, stop the waves.&quot;}, {&quot;slug&quot;: &quot;stix-stax-stonz&quot;, &quot;emoji&quot;: &quot;❌&quot;, &quot;title&quot;: &quot;Stix Stax Stonz&quot;, &quot;blurb&quot;: &quot;Tic-tac-toe with a cyber twist.&quot;}, {&quot;slug&quot;: &quot;neuropulse&quot;, &quot;emoji&quot;: &quot;⚡&quot;, &quot;title&quot;: &quot;NeuroPulse Cyberdeck&quot;, &quot;blurb&quot;: &quot;Cybernetic audio-visual synth, 16-step sequencer &amp; 3D holo-deck.&quot;}];
 const main=document.querySelector(&quot;main&quot;);if(!main||!GAMES.length||typeof app===&quot;undefined&quot;)return;
 const esc=s=&gt;String(s).replace(/[&amp;&lt;&gt;&quot;&#x27;]/g,c=&gt;({&quot;&amp;&quot;:&quot;&amp;amp;&quot;,&quot;&lt;&quot;:&quot;&amp;lt;&quot;,&quot;&gt;&quot;:&quot;&amp;gt;&quot;,&#x27;&quot;&#x27;:&quot;&amp;quot;&quot;,&quot;&#x27;&quot;:&quot;&amp;#39;&quot;}[c]));
 const HUES=[[&quot;#ff5f7e&quot;,&quot;#ff914d&quot;],[&quot;#20a9ec&quot;,&quot;#6d4aff&quot;],[&quot;#2bc678&quot;,&quot;#0f9b8e&quot;],[&quot;#8a6ee7&quot;,&quot;#ff5fa2&quot;],[&quot;#ffb347&quot;,&quot;#ff5f7e&quot;],[&quot;#1d1440&quot;,&quot;#6d4aff&quot;],[&quot;#0a6fb8&quot;,&quot;#3fc1ff&quot;]];
@@ -7116,7 +7123,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;c86354d0958e8a7d&quot;;
+const BUILD=&quot;1eb36c465d2299d5&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7278,6 +7285,39 @@ const header=document.querySelector(&#x27;footer&#x27;);if(header&amp;&amp;!head
 })();
 &lt;/script&gt;
 &lt;!-- /SRC:zzzz-navigation --&gt;
+&lt;!-- SRC:zzzzz-recents --&gt;
+&lt;script id=&quot;kidhub-recents&quot;&gt;
+(()=&gt;{&#x27;use strict&#x27;;
+// Report what a child opens (activities, toolbox tools, arcade games) so the dashboard&#x27;s
+// &quot;Recent&quot; menu can list it. Inside the dashboard the portal records it; when KidHub runs
+// on its own page, write the same shared store so the dashboard sees it next time.
+const KEY=&#x27;kidHubPortalV1&#x27;,HUBS=new Set([&#x27;hub&#x27;,&#x27;tools&#x27;,&#x27;arcade&#x27;]),SAFE=/^[a-z0-9-]+$/;
+// Only count screens a child opened: deep links, restores and dashboard launches change screens
+// without a tap (the dashboard records its own launches).
+let lastInput=0;[&#x27;pointerdown&#x27;,&#x27;keydown&#x27;].forEach(t=&gt;addEventListener(t,()=&gt;{lastInput=Date.now()},true));
+const childOpened=()=&gt;Date.now()-lastInput&lt;4000;
+function record(id){
+  try{const p=window.parent!==window&amp;&amp;window.parent.KidHubPortal;if(p&amp;&amp;typeof p.recordUse===&#x27;function&#x27;){p.recordUse(id);return}}catch(e){}
+  try{const raw=JSON.parse(localStorage.getItem(KEY)||&#x27;{}&#x27;),v=raw&amp;&amp;typeof raw===&#x27;object&#x27;&amp;&amp;!Array.isArray(raw)?raw:{};
+    const list=Array.isArray(v.recent)?v.recent.filter(x=&gt;typeof x===&#x27;string&#x27;&amp;&amp;x!==id):[];v.recent=[id,...list].slice(0,8);localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}
+}
+if(typeof app===&#x27;object&#x27;&amp;&amp;app&amp;&amp;typeof app.show===&#x27;function&#x27;){
+  const show=app.show;
+  app.show=function(id){const before=this.current,result=show.apply(this,arguments);if(this.current===id&amp;&amp;id!==before&amp;&amp;!HUBS.has(id)&amp;&amp;SAFE.test(id)&amp;&amp;childOpened())record(&#x27;core-&#x27;+id);return result};
+}
+if(window.KidHubPlus&amp;&amp;typeof KidHubPlus.openTool===&#x27;function&#x27;){
+  const open=KidHubPlus.openTool;
+  KidHubPlus.openTool=function(id){const result=open.apply(this,arguments);if(typeof id===&#x27;string&#x27;&amp;&amp;SAFE.test(id)&amp;&amp;childOpened())record(&#x27;tool-&#x27;+id);return result};
+}
+// Toolbox buttons and arcade tiles call their own local functions, so watch the clicks.
+document.addEventListener(&#x27;click&#x27;,e=&gt;{
+  const el=e.target&amp;&amp;e.target.closest?e.target:null;if(!el)return;
+  const tool=el.closest(&#x27;#tools-root [data-t]&#x27;);if(tool&amp;&amp;SAFE.test(tool.dataset.t||&#x27;&#x27;))record(&#x27;tool-&#x27;+tool.dataset.t);
+  const game=el.closest(&#x27;.ar-tile[data-slug]&#x27;);if(game&amp;&amp;SAFE.test(game.dataset.slug||&#x27;&#x27;))record(&#x27;game-&#x27;+game.dataset.slug);
+},true);
+})();
+&lt;/script&gt;
+&lt;!-- /SRC:zzzzz-recents --&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>

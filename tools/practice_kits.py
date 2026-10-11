@@ -15,7 +15,8 @@ GOALS={
 'panther-arena':['Inspect the board before choosing a move.','Predict an opponent response before your turn.','Explain one choice that protected your position.'],
 'qamelot-conquest':['Explore movement and attacks in the first area.','Choose a route before entering a crowded encounter.','Record a tactic you would try on the next run.'],
 'qamelot-tower-defense':['Inspect paths before placing a tower.','Compare tower coverage from two positions.','Explain one upgrade or placement choice after a wave.'],
-'stix-stax-stonz':['Identify every line that could win.','Block an immediate threat before planning your own line.','Describe a move that creates two threats.']}
+'stix-stax-stonz':['Identify every line that could win.','Block an immediate threat before planning your own line.','Describe a move that creates two threats.'],
+'neuropulse':['Explore two synthesizer presets and compare their timbre and modulation.','Program a 16-step melody and adjust tempo or swing to change the groove.','Experiment with different 3D hologram visualizer modes and record a session.']}
 COMPANIONS={1:('KidsBeat',['Build a short beat with two contrasting sounds.','Change the tempo and compare the groove.','Record a pattern or describe how to recreate it.']),2:('Qamo Mathcore',['Draw a math diagram with a pen, shape, or text tool.','Compare a mirrored sketch or a second notebook page.','Export the drawing and explain your reasoning.']),3:('Stix Stax Stonz',['Find a possible winning line.','Block an immediate threat.','Describe a move that sets up your next turn.'])}
 def tag(id,title,goals,src):
  attrs={'src':src,'data-activity':id,'data-title':title,'data-goals':json.dumps(goals,ensure_ascii=False)}

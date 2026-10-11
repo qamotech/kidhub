@@ -5643,7 +5643,7 @@ window.KidHubPlus={tools:T.length,features:FEATURES.length,improvements:IMPROVEM
 </style>
 <script id="arcade-js">
 (()=>{"use strict";
-const GAMES=[{"slug": "popstorm", "emoji": "🌟", "title": "PopStorm: Glow Guardians", "blurb": "NEW! Pop Gloomies, build wild power-ups, beat 3 bosses."}, {"slug": "neon-pong", "emoji": "🏓", "title": "Neon Pong", "blurb": "Classic paddle battle with glowing neon."}, {"slug": "combat-cars", "emoji": "🏎️", "title": "Combat Cars", "blurb": "Retro arena racing, 16-bit style."}, {"slug": "shadow-defense", "emoji": "🥋", "title": "Shadow Defense", "blurb": "Block and defend like a dojo master."}, {"slug": "miyagi-throw", "emoji": "🥷", "title": "Miyagi Throw!", "blurb": "Aim and throw to hit every target."}, {"slug": "n8-shift", "emoji": "⚡", "title": "N8 SHIFT", "blurb": "Shift Racer, Jet & Titan to beat every hazard!"}, {"slug": "ninja-sandbox", "emoji": "🌀", "title": "Ninja Sandbox", "blurb": "Run, jump and transform in a ninja playground."}, {"slug": "shipment-8bit", "emoji": "👾", "title": "Shipment 8-Bit", "blurb": "Pixel-art arena adventure."}, {"slug": "blob-bash-royale", "emoji": "🟣", "title": "Blob Bash Royale", "blurb": "Bouncy blob platform brawler."}, {"slug": "panther-arena", "emoji": "🐆", "title": "Panther Arena", "blurb": "Gold-hunting panther showdown."}, {"slug": "qamelot-conquest", "emoji": "🏰", "title": "Qamelot Conquest", "blurb": "Castle-storming arcade quest."}, {"slug": "qamelot-tower-defense", "emoji": "🗼", "title": "Qamelot Tower Defense", "blurb": "Build towers, stop the waves."}, {"slug": "stix-stax-stonz", "emoji": "❌", "title": "Stix Stax Stonz", "blurb": "Tic-tac-toe with a cyber twist."}];
+const GAMES=[{"slug": "popstorm", "emoji": "🌟", "title": "PopStorm: Glow Guardians", "blurb": "NEW! Pop Gloomies, build wild power-ups, beat 3 bosses."}, {"slug": "neon-pong", "emoji": "🏓", "title": "Neon Pong", "blurb": "Classic paddle battle with glowing neon."}, {"slug": "combat-cars", "emoji": "🏎️", "title": "Combat Cars", "blurb": "Retro arena racing, 16-bit style."}, {"slug": "shadow-defense", "emoji": "🥋", "title": "Shadow Defense", "blurb": "Block and defend like a dojo master."}, {"slug": "miyagi-throw", "emoji": "🥷", "title": "Miyagi Throw!", "blurb": "Aim and throw to hit every target."}, {"slug": "n8-shift", "emoji": "⚡", "title": "N8 SHIFT", "blurb": "Shift Racer, Jet & Titan to beat every hazard!"}, {"slug": "ninja-sandbox", "emoji": "🌀", "title": "Ninja Sandbox", "blurb": "Run, jump and transform in a ninja playground."}, {"slug": "shipment-8bit", "emoji": "👾", "title": "Shipment 8-Bit", "blurb": "Pixel-art arena adventure."}, {"slug": "blob-bash-royale", "emoji": "🟣", "title": "Blob Bash Royale", "blurb": "Bouncy blob platform brawler."}, {"slug": "panther-arena", "emoji": "🐆", "title": "Panther Arena", "blurb": "Gold-hunting panther showdown."}, {"slug": "qamelot-conquest", "emoji": "🏰", "title": "Qamelot Conquest", "blurb": "Castle-storming arcade quest."}, {"slug": "qamelot-tower-defense", "emoji": "🗼", "title": "Qamelot Tower Defense", "blurb": "Build towers, stop the waves."}, {"slug": "stix-stax-stonz", "emoji": "❌", "title": "Stix Stax Stonz", "blurb": "Tic-tac-toe with a cyber twist."}, {"slug": "neuropulse", "emoji": "⚡", "title": "NeuroPulse Cyberdeck", "blurb": "Cybernetic audio-visual synth, 16-step sequencer & 3D holo-deck."}];
 const main=document.querySelector("main");if(!main||!GAMES.length||typeof app==="undefined")return;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const HUES=[["#ff5f7e","#ff914d"],["#20a9ec","#6d4aff"],["#2bc678","#0f9b8e"],["#8a6ee7","#ff5fa2"],["#ffb347","#ff5f7e"],["#1d1440","#6d4aff"],["#0a6fb8","#3fc1ff"]];
@@ -6797,7 +6797,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="c86354d0958e8a7d";
+const BUILD="1eb36c465d2299d5";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6959,5 +6959,38 @@ const header=document.querySelector('footer');if(header&&!header.querySelector('
 })();
 </script>
 <!-- /SRC:zzzz-navigation -->
+<!-- SRC:zzzzz-recents -->
+<script id="kidhub-recents">
+(()=>{'use strict';
+// Report what a child opens (activities, toolbox tools, arcade games) so the dashboard's
+// "Recent" menu can list it. Inside the dashboard the portal records it; when KidHub runs
+// on its own page, write the same shared store so the dashboard sees it next time.
+const KEY='kidHubPortalV1',HUBS=new Set(['hub','tools','arcade']),SAFE=/^[a-z0-9-]+$/;
+// Only count screens a child opened: deep links, restores and dashboard launches change screens
+// without a tap (the dashboard records its own launches).
+let lastInput=0;['pointerdown','keydown'].forEach(t=>addEventListener(t,()=>{lastInput=Date.now()},true));
+const childOpened=()=>Date.now()-lastInput<4000;
+function record(id){
+  try{const p=window.parent!==window&&window.parent.KidHubPortal;if(p&&typeof p.recordUse==='function'){p.recordUse(id);return}}catch(e){}
+  try{const raw=JSON.parse(localStorage.getItem(KEY)||'{}'),v=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+    const list=Array.isArray(v.recent)?v.recent.filter(x=>typeof x==='string'&&x!==id):[];v.recent=[id,...list].slice(0,8);localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}
+}
+if(typeof app==='object'&&app&&typeof app.show==='function'){
+  const show=app.show;
+  app.show=function(id){const before=this.current,result=show.apply(this,arguments);if(this.current===id&&id!==before&&!HUBS.has(id)&&SAFE.test(id)&&childOpened())record('core-'+id);return result};
+}
+if(window.KidHubPlus&&typeof KidHubPlus.openTool==='function'){
+  const open=KidHubPlus.openTool;
+  KidHubPlus.openTool=function(id){const result=open.apply(this,arguments);if(typeof id==='string'&&SAFE.test(id)&&childOpened())record('tool-'+id);return result};
+}
+// Toolbox buttons and arcade tiles call their own local functions, so watch the clicks.
+document.addEventListener('click',e=>{
+  const el=e.target&&e.target.closest?e.target:null;if(!el)return;
+  const tool=el.closest('#tools-root [data-t]');if(tool&&SAFE.test(tool.dataset.t||''))record('tool-'+tool.dataset.t);
+  const game=el.closest('.ar-tile[data-slug]');if(game&&SAFE.test(game.dataset.slug||''))record('game-'+game.dataset.slug);
+},true);
+})();
+</script>
+<!-- /SRC:zzzzz-recents -->
 </body>
 </html>

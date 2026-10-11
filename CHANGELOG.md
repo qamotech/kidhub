@@ -1,5 +1,11 @@
 # 🗓️ Changelog
 
+## 2026-10-11 — NeuroPulse Cyberdeck
+
+- Added NeuroPulse Cyberdeck (`games/neuropulse.html`) to the KidHub Arcade and application catalog (114 verified entries).
+- Full studio-grade polyphonic dual-oscillator synthesizer, analog drum machine, 16-step polyrhythmic matrix sequencer, and audio-reactive 3D holographic vector/particle engine with 6 visualization modes and lossless 16-bit WAV export.
+- Included KidHub fullscreen navigation chrome and custom practice kit companion with tailored experimentation goals.
+
 ## 2026-10-10 — Seasonal Swap (40 holiday edits)
 
 New `src/seasons.html` module: 40 decoration slots (logo, subtitle, greeting, banner, countdown, falling particles, cursor trail, click bursts, garland, corners, hidden-item hunt + badge, art stickers/prompts/palette, catch + memory collections, jokes, mascot tune, tips, colors, footer, confetti, sky, ground and more) refilled automatically by date: Halloween (Oct) → Thanksgiving (Nov) → Christmas (Dec 1–26) → New Year → Valentine's → St. Patrick's → Spring → Garden → Summer → Fireworks → Late Summer → Back to School. Settings has a season picker (Auto / any season / Off). Respects reduced motion. Test: `test-seasons.cjs`.

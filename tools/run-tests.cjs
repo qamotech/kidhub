@@ -1,7 +1,7 @@
 // Self-contained local browser tests. An existing BASE_URL can target a preview instead.
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
-const all=['test.cjs','test-plus.cjs','test-paint.cjs','test-music.cjs','test-beats.cjs','test-fx.cjs','test-games.cjs','test-cloud-arcade.cjs','test-cloud-fit.cjs','test-polish.cjs','test-dashboard.cjs','test-a11y.cjs','test-popstorm.cjs','test-adventures.cjs','test-expanded-core.cjs','test-resources.cjs','test-reliability.cjs','test-cloud-email.cjs','test-seasons.cjs'];
+const all=['test.cjs','test-plus.cjs','test-paint.cjs','test-music.cjs','test-beats.cjs','test-fx.cjs','test-games.cjs','test-cloud-arcade.cjs','test-cloud-fit.cjs','test-polish.cjs','test-dashboard.cjs','test-a11y.cjs','test-popstorm.cjs','test-adventures.cjs','test-expanded-core.cjs','test-resources.cjs','test-reliability.cjs','test-cloud-email.cjs','test-seasons.cjs','test-qtd.cjs','test-recents.cjs'];
 const tests=process.argv.slice(2).length?process.argv.slice(2):all;
 const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.webmanifest':'application/manifest+json','.png':'image/png','.svg':'image/svg+xml'};
 const server=http.createServer(async(req,res)=>{

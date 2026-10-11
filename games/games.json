@@ -76,5 +76,11 @@
   "emoji": "❌",
   "title": "Stix Stax Stonz",
   "blurb": "Tic-tac-toe with a cyber twist."
+ },
+ {
+  "slug": "neuropulse",
+  "emoji": "⚡",
+  "title": "NeuroPulse Cyberdeck",
+  "blurb": "Cybernetic audio-visual synth, 16-step sequencer & 3D holo-deck."
  }
 ]
