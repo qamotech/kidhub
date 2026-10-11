@@ -187,6 +187,8 @@
         .nav-recent .nav-btn { padding-top: 10px; padding-bottom: 10px; min-width: 0; }
         .nav-recent-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .nav-recent-empty { margin: 0 10px; font-size: 0.85rem; opacity: 0.75; }
+        .nav-count { margin-left: auto; font-size: 0.75rem; font-weight: 700; opacity: 0.7; }
+        .nav-count:empty { display: none; }
         .content-area {
             flex: 1;
             position: relative;
@@ -303,17 +305,19 @@
         </div>
     </header>
     <div class="main-container">
-        <nav class="sidebar" aria-label="Dashboard navigation"><button class="nav-btn" data-library="applications">🗂️ All applications</button>
-            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:10px 0 5px 10px; font-weight:800;">Applications</div>
-            <button class="nav-btn active" data-target="app-0">🎮 KidHub</button>
-            <button class="nav-btn " data-target="app-1">🎵 KidsBeat</button>
-            <button class="nav-btn " data-target="app-2">📐 Qamo Mathcore</button>
-            <button class="nav-btn " data-target="app-3">❌ Stix Stax Stonz</button>
-
-            <div id="nav-recent-label" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">Recent</div>
+        <nav class="sidebar" aria-label="Dashboard navigation">
+            <div id="nav-recent-label" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:10px 0 5px 10px; font-weight:800;">🕘 Recent</div>
             <div id="nav-recent" class="nav-recent" role="group" aria-labelledby="nav-recent-label"><p class="nav-recent-empty">Apps you open show up here.</p></div>
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">🚀 Applications</div>
+            <button class="nav-btn active" data-target="app-0">🎮 KidHub</button>
+            <button class="nav-btn nav-cat" data-library="applications" data-category="Learn" title="Learning apps, activities and tools">📚 Learn <span class="nav-count" data-count="Learn"></span></button>
+            <button class="nav-btn nav-cat" data-library="applications" data-category="Create" title="Art, music and making">🎨 Create <span class="nav-count" data-count="Create"></span></button>
+            <button class="nav-btn nav-cat" data-library="applications" data-category="Play" title="Games and arcade">🎲 Play <span class="nav-count" data-count="Play"></span></button>
+            <button class="nav-btn nav-cat" data-library="applications" data-category="Wellbeing" title="Calm, feelings and healthy habits">💚 Wellbeing <span class="nav-count" data-count="Wellbeing"></span></button>
+            <button class="nav-btn nav-cat" data-library="applications" data-category="Helpers" title="Timers, lists and handy helpers">🧰 Helpers <span class="nav-count" data-count="Helpers"></span></button>
+            <button class="nav-btn nav-cat" data-library="applications" data-category="All" title="Everything in one list">🗂️ All applications <span class="nav-count" data-count="All"></span></button>
 
-            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">Resources</div>
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">💡 Resources</div>
             <button class="nav-btn" data-library="start">🧭 Start here</button>
             <button class="nav-btn" data-library="guides">📖 Activity guides</button>
             <button class="nav-btn" data-library="printables">🖨️ Printables</button>
@@ -321,7 +325,7 @@
             <button class="nav-btn" data-library="help">🛟 Help & diagnostics</button>
             <button class="nav-btn" id="btn-api-docs" data-library="docs">🛠️ Developer docs</button>
             <button class="nav-btn" id="reload-app">🔄 Reload application</button>
-            <a class="nav-btn" id="direct-app" href="studio.html">↗ Open KidHub directly</a>
+            <a class="nav-btn" id="direct-app" href="studio.html">🔗 Open KidHub directly</a>
         </nav>
         <div class="content-area"><section id="dashboard-panel" hidden aria-label="Applications and resources"><div id="hub-portal" class="kh-portal"></div></section>
             <iframe id="app-0" class="active" srcdoc="&lt;!doctype html&gt;
@@ -7123,7 +7127,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;1e9f2f7d8549b92d&quot;;
+const BUILD=&quot;c182a78dc1bd0be7&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7318,6 +7322,65 @@ document.addEventListener(&#x27;click&#x27;,e=&gt;{
 })();
 &lt;/script&gt;
 &lt;!-- /SRC:zzzzz-recents --&gt;
+&lt;!-- SRC:zzzzzz-announce --&gt;
+&lt;script id=&quot;kidhub-announce&quot;&gt;
+(()=&gt;{&#x27;use strict&#x27;;
+// One-time &quot;what&#x27;s new&quot; popup, shown once per browser in the topmost KidHub page:
+// the dashboard when KidHub is embedded there, otherwise this page.
+const NEWS={
+  id:&#x27;cloud-messages-2026-10&#x27;,
+  title:&#x27;☁️ Cloud messages work now!&#x27;,
+  body:&#x27;Send a message to your grown-ups with the ☁️ Cloud button. Every grown-up on the list gets it by email, and if you are offline it waits and sends later. Go ahead and try it out!&#x27;,
+  note:&#x27;Grown-ups: open ☁️ Cloud to add your email address and turn on delivery.&#x27;,
+  go:&#x27;☁️ Try it now&#x27;,later:&#x27;Got it&#x27;
+};
+const KEY=&#x27;kidhubAnnouncementsSeen&#x27;;
+let host=window;
+try{if(window.parent!==window&amp;&amp;window.parent.KidHubShell)host=window.parent}catch(e){}
+if(navigator.webdriver)return;   // automated test browsers skip it; test-announce.cjs turns it back on
+let seen=[];
+try{seen=JSON.parse(host.localStorage.getItem(KEY)||&#x27;[]&#x27;)}catch(e){}
+if(!Array.isArray(seen)||seen.includes(NEWS.id))return;
+const doc=host.document;
+
+function markSeen(){try{host.localStorage.setItem(KEY,JSON.stringify([...seen.filter(x=&gt;typeof x===&#x27;string&#x27;),NEWS.id].slice(-20)))}catch(e){}}
+function openCloud(){
+  try{if(host!==window)host.KidHubShell.launch({frame:0})}catch(e){}
+  const b=document.getElementById(&#x27;cwBtn&#x27;);
+  if(b&amp;&amp;b.getAttribute(&#x27;aria-expanded&#x27;)!==&#x27;true&#x27;)b.click();
+  setTimeout(()=&gt;{const m=document.getElementById(&#x27;cwMsg&#x27;);if(m)m.focus()},150);
+}
+function show(){
+  if(doc.getElementById(&#x27;kh-news&#x27;))return;
+  const style=doc.createElement(&#x27;style&#x27;);style.id=&#x27;kh-news-css&#x27;;
+  style.textContent=&#x27;#kh-news{border:3px solid #7756bf;border-radius:20px;padding:0;width:min(440px,calc(100vw - 32px));color:#25304a;background:#fff8ed;box-shadow:0 18px 50px rgba(20,16,50,.45);font:16px/1.5 system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif}&#x27;
+    +&#x27;#kh-news::backdrop{background:rgba(20,16,50,.45)}#kh-news .kn-body{padding:22px 22px 18px}&#x27;
+    +&#x27;#kh-news h2{margin:0 0 10px;font:800 1.45rem/1.2 system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif;color:#36265f}#kh-news p{margin:0 0 10px}&#x27;
+    +&#x27;#kh-news .kn-note{font-size:.9rem;color:#56596b}#kh-news .kn-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}&#x27;
+    +&#x27;#kh-news button{min-height:44px;border-radius:12px;padding:10px 18px;font:700 1rem system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif;cursor:pointer;border:2px solid #7756bf}&#x27;
+    +&#x27;#kh-news .kn-go{background:#7756bf;color:#fff}#kh-news .kn-later{background:#fff;color:#36265f}#kh-news button:focus-visible{outline:3px solid #ffb400;outline-offset:2px}&#x27;
+    +&#x27;@media (prefers-reduced-motion:no-preference){#kh-news[open]{animation:kn-pop .28s cubic-bezier(.2,.8,.2,1.15)}@keyframes kn-pop{from{opacity:0;transform:translateY(12px) scale(.96)}}}&#x27;;
+  doc.head.append(style);
+  const d=doc.createElement(&#x27;dialog&#x27;);d.id=&#x27;kh-news&#x27;;d.setAttribute(&#x27;aria-labelledby&#x27;,&#x27;kh-news-title&#x27;);
+  const body=doc.createElement(&#x27;div&#x27;);body.className=&#x27;kn-body&#x27;;
+  const h=doc.createElement(&#x27;h2&#x27;);h.id=&#x27;kh-news-title&#x27;;h.textContent=NEWS.title;
+  const p=doc.createElement(&#x27;p&#x27;);p.textContent=NEWS.body;
+  const n=doc.createElement(&#x27;p&#x27;);n.className=&#x27;kn-note&#x27;;n.textContent=NEWS.note;
+  const row=doc.createElement(&#x27;div&#x27;);row.className=&#x27;kn-actions&#x27;;
+  const go=doc.createElement(&#x27;button&#x27;);go.type=&#x27;button&#x27;;go.className=&#x27;kn-go&#x27;;go.textContent=NEWS.go;
+  const later=doc.createElement(&#x27;button&#x27;);later.type=&#x27;button&#x27;;later.className=&#x27;kn-later&#x27;;later.textContent=NEWS.later;
+  row.append(go,later);body.append(h,p,n,row);d.append(body);doc.body.append(d);
+  d.addEventListener(&#x27;close&#x27;,()=&gt;{markSeen();d.remove();style.remove()},{once:true});
+  later.onclick=()=&gt;d.close();
+  go.onclick=()=&gt;{d.close();openCloud()};
+  try{d.showModal()}catch(e){d.setAttribute(&#x27;open&#x27;,&#x27;&#x27;)}
+  go.focus();
+}
+const start=()=&gt;setTimeout(show,900);
+if(doc.readyState===&#x27;complete&#x27;)start();else host.addEventListener(&#x27;load&#x27;,start,{once:true});
+})();
+&lt;/script&gt;
+&lt;!-- /SRC:zzzzzz-announce --&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>

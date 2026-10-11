@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-11 — Organized menu + cloud messages popup
+
+- **Main menu**: 🕘 Recent sits at the top (last 3 apps used). 🚀 Applications now has 🎮 KidHub followed by category links that open the library already filtered: 📚 Learn, 🎨 Create, 🎲 Play, 💚 Wellbeing, 🧰 Helpers and 🗂️ All applications, each with a live count. The open category is highlighted, the filter is kept in the URL (`#library=applications&category=Play`), and every menu item has an emoji.
+- **"Cloud messages work now!" popup** (`src/zzzzzz-announce.html`): shown once per browser in the dashboard (or in KidHub when opened on its own). "☁️ Try it now" opens the Cloud panel, "Got it" or Esc dismisses it for good. Automated test browsers skip it; `test-announce.cjs` turns it back on.
+- **NeuroPulse practice kit loads**: its Content-Security-Policy blocked the shared `activity-kit.js`; `script-src` now allows `'self'`.
+- Tests updated for the new menu (`test-recents`, `test-resources`, `test-adventures`); `test-adventures` allows immersive games that hide the practice button.
+
 ## 2026-10-11 — KidsBeat Interactive Piano Roll & 24 Songs Library
 
 - Streamlined KidsBeat from a complex multi-track DAW into an intuitive, kid-friendly interactive piano roll with vertical falling notes (Synthesia-style).

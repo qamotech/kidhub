@@ -1,5 +1,5 @@
 /* Pages use network-first; cached assets return immediately and refresh in the background. */
-const V='kidhub-1e9f2f7d8549b92d';
+const V='kidhub-c182a78dc1bd0be7';
 const CORE=['./','./index.html','./studio.html','./activity-kit.js','./resources.html','./portal.css','./portal.js','./portal-data.js','./dashboard-shell.js','./offline.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(CORE))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('kidhub-')&&k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

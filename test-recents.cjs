@@ -1,4 +1,4 @@
-// Dashboard "Recent" menu: 3 most recently used KidHub apps between Applications and Resources.
+// Dashboard "Recent" menu: 3 most recently used KidHub apps at the top of the sidebar, above Applications.
 const { chromium } = require('playwright'); const assert = require('assert');
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
@@ -16,14 +16,25 @@ const recent = page => page.$$eval('#nav-recent [data-recent]', bs => bs.map(b =
 
   // placement: Applications group, then Recent, then Resources
   const order = await page.evaluate(() => [...document.querySelector('nav.sidebar').children].map(el => el.id === 'nav-recent' ? '[recent]' : el.textContent.trim()).filter(Boolean));
-  const iApps = order.indexOf('Applications'), iStix = order.findIndex(t => t.includes('Stix Stax Stonz')), iRecent = order.indexOf('Recent'), iBox = order.indexOf('[recent]'), iRes = order.indexOf('Resources');
-  assert(iApps >= 0 && iApps < iStix && iStix < iRecent && iRecent < iBox && iBox < iRes, 'Recent sits between Applications and Resources: ' + JSON.stringify(order));
+  const at = t => order.findIndex(x => x.includes(t));
+  assert(at('Recent') === 0 && order.indexOf('[recent]') === 1 && at('Applications') === 2 && at('KidHub') === 3, 'Recent on top, then Applications starting with KidHub: ' + JSON.stringify(order));
+  assert.deepEqual(order.slice(4, 10).map(t => t.replace(/\s*\d+$/, '')), ['📚 Learn', '🎨 Create', '🎲 Play', '💚 Wellbeing', '🧰 Helpers', '🗂️ All applications'], 'category links follow KidHub');
+  assert(at('Resources') > at('All applications'), 'Resources below Applications');
+  const labels = await page.$$eval('nav.sidebar > *:not(#nav-recent)', els => els.map(e => e.textContent.trim()).filter(Boolean));
+  for (const t of labels) assert(/^\p{Extended_Pictographic}/u.test(t), 'menu item without an emoji: ' + t);
+  assert.equal(await page.locator('.nav-count[data-count="Create"]').innerText(), '16', 'category counts come from the catalog');
   assert.deepEqual(await recent(page), [], 'starts empty');
   assert(await page.isVisible('#nav-recent .nav-recent-empty'), 'empty state explains what will appear');
 
   // sidebar apps, studio activities and toolbox tools all count
-  await page.click('.nav-btn[data-target="app-1"]');
+  await page.click('.nav-cat[data-category="Create"]');
+  assert.equal(await page.inputValue('#app-category'), 'Create', 'category link opens the library filtered');
+  assert.equal(await page.locator('.nav-cat.active').getAttribute('data-category'), 'Create', 'open category is highlighted');
+  await page.locator('[data-launch="suite-1"]').first().click();
+  assert(await page.evaluate(() => document.getElementById('app-1').classList.contains('active')), 'KidsBeat opens from its category');
   assert.deepEqual(await recent(page), ['suite-1']);
+  const recentEmoji = await page.$$eval('#nav-recent .nav-btn', bs => bs.every(b => /^\p{Extended_Pictographic}/u.test(b.textContent.trim())));
+  assert(recentEmoji, 'recent items show their emoji');
   await page.click('.nav-btn[data-target="app-0"]');
   const studio = await (await page.$('#app-0')).contentFrame();
   await studio.locator(`[onclick="app.show('draw')"]`).first().click();
@@ -68,5 +79,5 @@ const recent = page => page.$$eval('#nav-recent [data-recent]', bs => bs.map(b =
 
   await b.close();
   assert.deepEqual(errors, [], 'page errors: ' + errors.join(' | '));
-  console.log('PASS recents: 3 recent apps between Applications and Resources; sidebar, activities, tools, arcade, standalone; launch, persist, phone');
+  console.log('PASS recents: 3 recent apps at the top of the menu, above Applications; sidebar, activities, tools, arcade, standalone; launch, persist, phone');
 })().catch(e => { console.error(e.message); process.exit(1); });
