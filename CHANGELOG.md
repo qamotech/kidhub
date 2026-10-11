@@ -1,5 +1,30 @@
 # 🗓️ Changelog
 
+## 2026-10-11 — KidsBeat Interactive Piano Roll & 24 Songs Library
+
+- Streamlined KidsBeat from a complex multi-track DAW into an intuitive, kid-friendly interactive piano roll with vertical falling notes (Synthesia-style).
+- 24 complete, accurately transcribed songs across Nursery, Folk, and Classical categories (e.g. Twinkle Twinkle, Mary Had a Little Lamb, Ode to Joy, Happy Birthday, Canon in D, Fur Elise).
+- 4 interactive play modes: "Guide Me" (Wait-for-Me note learning with glowing keys and star rewards), "Listen & Watch" (automatic demo playback), "Play Along" (arcade rhythm game with hit scoring), and "Free Play".
+- 6 instrument synthesizers (Grand Piano, Magic Music Box, Wooden Marimba, 8-Bit Chiptune, Soft Flute, Toy Brass) and 3 drum backing beats.
+- Accessible pitch labels (Letters, Numbers, Solfège), adjustable tempo (Slow, Normal, Fast), responsive QWERTY keyboard mapping, and touch support.
+
+## 2026-10-11 — Tower Defense makeover + Recent menu
+
+Shipped inside the NeuroPulse commit (`68ef5a5`); recorded here so the work is findable.
+
+**Qamelot Tower Defense** (`games/qamelot-tower-defense.html`)
+- Real tower art again: the old image files were never in the repo, so every tower fell back to a coloured circle. Towers are now drawn in code and change with each upgrade: wooden hut → stone keep → battlements → gold-trimmed Champion with banners → crowned Legend with orbiting sparks. Each element has its own crown (tesla coil, brazier, boulders, fountain, ice crystals, windmill, magnet); gun towers get an upgrading mount.
+- Two more upgrades for every tower: levels 4 (Champion) and 5 (Legend) add damage, range, speed and an extra shot each. C4 goes to level 7 (Seismic, Doomsday).
+- Every tower fires a projectile you can see: fireballs, tumbling boulders, water drops, ice shards, wind swirls, magnet orbs, electric bolts and tracer bullets, plus muzzle flashes and impact streaks that stay visible at 16x/32x speed.
+- Always fullscreen and game-only: fills the screen, enters fullscreen on the first tap (and again after an accidental exit), keeps the screen awake, hides the KidHub/Practice buttons, and slims the bars on landscape phones.
+- Drag and drop on phones and tablets (towers ride above the finger so they stay visible), plus tap-to-place and mouse drag.
+- Eight more improvements: green/red placement preview, range ring on the selected tower, level pips, next-tier name and price on the upgrade button, keyboard shortcuts (1–7, Space, U, T, P, Esc), auto-pause when the app is hidden, haptic buzz on place/upgrade, and multi-shot volleys that no longer fire from sold towers or at defeated enemies.
+
+**Dashboard Recent menu** (`index.html`, `dashboard-shell.js`, `portal.js`, `src/zzzzz-recents.html`)
+- The three most recently used apps (applications, activities, toolbox tools, arcade games) sit in the sidebar between Applications and Resources, using the library's existing recent list. Studio screens count only when a child opens them, not on deep links or restores.
+
+Tests: `test-qtd.cjs`, `test-recents.cjs`; `test-games.cjs` allows games that hide the KidHub chrome on purpose.
+
 ## 2026-10-11 — NeuroPulse Cyberdeck
 
 - Added NeuroPulse Cyberdeck (`games/neuropulse.html`) to the KidHub Arcade and application catalog (114 verified entries).
