@@ -31,7 +31,7 @@ KIT_CSS = """<style id="kh-kit-css">#kh-kit{position:fixed;left:10px;top:10px;z-
 #kh-kit.kh-dim{opacity:.35}#kh-kit:hover{opacity:1}</style>"""
 KIT = """<div id="kh-kit"><a href="../studio.html#arcade" target="_top" aria-label="Back to KidHub">⬅️ KidHub</a><button type="button" id="kh-fs" aria-label="Toggle fullscreen">⛶ Fullscreen</button></div>
 <script id="kh-kit-js">(()=>{const b=document.getElementById('kh-fs'),k=document.getElementById('kh-kit');const fs=()=>document.fullscreenElement||document.webkitFullscreenElement;
-b.onclick=()=>{const d=document.documentElement;if(fs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{const r=(d.requestFullscreen||d.webkitRequestFullscreen);r&&r.call(d).catch&&r.call(d).catch(()=>{})}};
+b.onclick=()=>{const d=document.documentElement;if(fs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{const r=(d.requestFullscreen||d.webkitRequestFullscreen);if(r){const pending=r.call(d);pending&&pending.catch&&pending.catch(()=>{})}}};
 const sync=()=>{b.textContent=fs()?'🗗 Exit fullscreen':'⛶ Fullscreen'};document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
 let t;const wake=()=>{k.classList.remove('kh-dim');clearTimeout(t);t=setTimeout(()=>k.classList.add('kh-dim'),3000)};addEventListener('pointermove',wake,{passive:true});wake()})();</script>"""
 

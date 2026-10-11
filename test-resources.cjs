@@ -1,0 +1,45 @@
+const {chromium}=require('playwright'),{AxeBuilder}=require('@axe-core/playwright'),assert=require('assert'),fs=require('fs'),vm=require('vm');
+async function checkClearKeyboard(page){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:844});
+  await page.fill('#app-search','spelling');await page.selectOption('#app-kind','Activities');
+  await page.locator('#app-clear').focus();await page.keyboard.press('Enter');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'app-search','Clearing filters must retain keyboard focus');
+  assert.equal(await page.locator('#app-search').inputValue(),'');
+  assert.equal(await page.locator('#app-kind').inputValue(),'All');
+  assert.equal(await page.locator('#app-grid .kh-card').count(),await page.evaluate(()=>KidHubCatalog.length));
+  await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.id),'app-kind','Tab must continue through filters');
+ }
+}
+(async()=>{const browser=await chromium.launch({channel:'msedge',headless:true}),context=await browser.newContext(),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));const base=process.env.BASE_URL||'http://127.0.0.1:8765';await page.goto(base+'/resources.html');
+page.on('dialog',d=>d.accept());
+// Direct library URLs must select the requested section without a recovery click.
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:844});
+ for(const tab of ['applications','planner','printables']){
+  await page.goto(base+'/index.html#library='+tab);
+  await page.locator('#hub-portal [data-tab="'+tab+'"][aria-current="page"]').waitFor();
+  assert.equal(await page.evaluate(()=>location.hash),'#library='+tab);
+  assert(await page.locator('#dashboard-panel').isVisible());
+  assert.equal(await page.evaluate(()=>document.activeElement.tagName),'H1');
+  if(tab==='applications'){
+   await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.id),'app-search');
+   await page.fill('#app-search','spelling');assert(await page.locator('#app-grid .kh-card').count()>0);
+  }
+ }
+}
+await page.goto(base+'/resources.html');await checkClearKeyboard(page);const entries=await page.evaluate(()=>KidHubCatalog);const gameCount=JSON.parse(fs.readFileSync('games/games.json','utf8')).length;assert.equal(entries.length,100+gameCount);assert.equal(await page.locator('#app-grid .kh-card').count(),entries.length);for(const a of entries){assert(fs.existsSync(a.href.split('#')[0]),'missing target '+a.href)}
+await page.fill('#app-search','spelling');assert((await page.locator('#app-grid .kh-card').count())<entries.length);await page.locator('#app-clear').click();await page.selectOption('#app-kind','Arcade');assert.equal(await page.locator('#app-grid .kh-card').count(),gameCount);await page.locator('#app-clear').click();await page.locator('[data-fav="core-draw"]').click();await page.check('#app-favorites');assert.equal(await page.locator('#app-grid .kh-card').count(),1);await page.reload();await page.check('#app-favorites');assert.equal(await page.locator('#app-grid .kh-card').count(),1);
+await page.locator('[data-tab="planner"]').click();await page.selectOption('#plan-app','core-music');await page.fill('#plan-minutes','12');await page.locator('#plan-add').click();await page.locator('#plan-sample').click();assert((await page.locator('#plan-total').innerText()).includes('42 planned minutes'));await page.locator('[data-up="1"]').click();await page.locator('[data-done="0"]').check();await page.fill('#plan-notes','A short music and art session.');
+const exportPromise=page.waitForEvent('download');await page.locator('#library-export').click();const backup=JSON.parse(fs.readFileSync(await(await exportPromise).path(),'utf8'));assert.equal(backup.library.plan.length,4);assert.equal(backup.library.notes,'A short music and art session.');await page.setInputFiles('#library-import',{name:'bad.json',mimeType:'application/json',buffer:Buffer.from('{}')});assert((await page.locator('#portal-status').innerText()).includes('Could not import'));assert((await page.locator('#plan-total').innerText()).includes('42 planned minutes'));await page.setInputFiles('#library-import',{name:'backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});assert((await page.locator('#portal-status').innerText()).includes('imported'));
+await page.locator('[data-tab="printables"]').click();await page.selectOption('#sheet-op','divide');await page.check('#sheet-key');await page.locator('#sheet-generate').click();const sums=await page.locator('#sheet-preview li').allTextContents(),key=await page.locator('#sheet-preview>p').last().innerText();assert.equal(sums.length,10);sums.forEach((s,i)=>{const [a,b]=s.split('=')[0].split('÷').map(Number);assert(Number.isInteger(a/b));assert(key.includes(`${i+1}. ${a/b}`))});for(const type of ['story','science','music','reflection','code']){await page.selectOption('#sheet-kind',type);assert.equal(await page.locator('#sheet-preview li').count(),5)}const popup=context.waitForEvent('page');await page.locator('#sheet-print').click();const print=await popup;await print.waitForLoadState();assert((await print.locator('h2').innerText()).includes('robot'));await print.close();
+for(const tab of ['start','guides','help','privacy','credits','docs']){await page.locator(`[data-tab="${tab}"]`).click();assert((await page.locator('#portal-content').innerText()).length>400);const result=await new AxeBuilder({page}).include('#hub-portal').withTags(['wcag2a','wcag2aa']).analyze();assert.deepEqual(result.violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>v.id),[],'a11y '+tab)}await page.locator('[data-tab="help"]').click();await page.locator('#run-checks').click();assert((await page.locator('#diagnostics').innerText()).includes(`${entries.length} entries`));
+// Desktop and mobile resource views retain reachable controls.
+await page.locator('[data-tab="applications"]').click();await page.locator('#app-clear').click();await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:'resources-desktop.png'});for(const width of [390,768]){await page.setViewportSize({width,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}await page.setViewportSize({width:390,height:844});await page.screenshot({path:'resources-mobile.png'});
+// Embedded library launches every activity and tool through the real routing bridge.
+await page.setViewportSize({width:1280,height:900});await page.goto(base+'/index.html');await page.locator('[data-library="applications"]').click();await checkClearKeyboard(page);await page.setViewportSize({width:1280,height:900});await page.fill('#app-search','Art Studio');await page.locator('[data-launch="core-draw"]').click();const frame=page.frameLocator('#app-0');await frame.locator('#s-draw.active').waitFor();const core=entries.filter(a=>a.kind==='Activities'||a.kind==='Toolbox');for(const a of core){await page.evaluate(a=>KidHubShell.launch(a),a);if(a.tool){await frame.locator('#kpTool').waitFor();assert.equal(await frame.locator('#kpTool').getAttribute('data-tool-id'),a.tool)}else await frame.locator('#s-'+a.screen+'.active').waitFor();}
+for(let i=1;i<4;i++){await page.locator(`.nav-btn[data-target="app-${i}"]`).click();const f=page.frameLocator('#app-'+i);await f.locator('#kh-practice-toggle').waitFor();assert.equal(await f.locator('[id^="n8x"]').count(),0)}
+// The drawing companion still draws and exports after its legacy menu is removed.
+await page.locator('.nav-btn[data-target="app-2"]').click();const mathFrame=page.frameLocator('#app-2');const canvas=mathFrame.locator('canvas').first();const before=await canvas.evaluate(c=>c.toDataURL());const r=await canvas.boundingBox();await page.mouse.move(r.x+r.width*.4,r.y+r.height*.4);await page.mouse.down();await page.mouse.move(r.x+r.width*.5,r.y+r.height*.5,{steps:8});await page.mouse.up();assert.notEqual(await canvas.evaluate(c=>c.toDataURL()),before);const picture=page.waitForEvent('download');await mathFrame.locator('#btn-export').click();assert((await picture).suggestedFilename().length>0);
+await page.locator('#reload-app').click();await page.locator('#reload-cancel').click();assert(!await page.locator('#reload-dialog').isVisible());await page.locator('#reload-app').click();await page.locator('#reload-confirm').click();await mathFrame.locator('#btn-export').waitFor();await page.locator('[data-library="guides"]').click();assert(await page.locator('#dashboard-panel').isVisible());await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+assert.deepEqual(errors,[]);await browser.close();console.log('PASS resources: manifest-backed catalog links, 96 embedded routes, search/favorites, planner backup, six printables, companion drawing/export, reload, guides, mobile, accessibility');})().catch(e=>{console.error(e);process.exit(1)});

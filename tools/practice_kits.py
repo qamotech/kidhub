@@ -16,7 +16,7 @@ GOALS={
 'qamelot-conquest':['Explore movement and attacks in the first area.','Choose a route before entering a crowded encounter.','Record a tactic you would try on the next run.'],
 'qamelot-tower-defense':['Inspect paths before placing a tower.','Compare tower coverage from two positions.','Explain one upgrade or placement choice after a wave.'],
 'stix-stax-stonz':['Identify every line that could win.','Block an immediate threat before planning your own line.','Describe a move that creates two threats.']}
-COMPANIONS={1:('KidsBeat',['Build a short beat with two contrasting sounds.','Change the tempo and compare the groove.','Record a pattern or describe how to recreate it.']),2:('Qamo Mathcore',['Solve a problem using the available controls.','Check the result with a second method.','Write a new example and explain the steps.']),3:('Stix Stax Stonz',['Find a possible winning line.','Block an immediate threat.','Describe a move that sets up your next turn.'])}
+COMPANIONS={1:('KidsBeat',['Build a short beat with two contrasting sounds.','Change the tempo and compare the groove.','Record a pattern or describe how to recreate it.']),2:('Qamo Mathcore',['Draw a math diagram with a pen, shape, or text tool.','Compare a mirrored sketch or a second notebook page.','Export the drawing and explain your reasoning.']),3:('Stix Stax Stonz',['Find a possible winning line.','Block an immediate threat.','Describe a move that sets up your next turn.'])}
 def tag(id,title,goals,src):
  attrs={'src':src,'data-activity':id,'data-title':title,'data-goals':json.dumps(goals,ensure_ascii=False)}
  return '<!-- PRACTICE KIT -->\n<script '+ ' '.join(k+'="'+html.escape(v,quote=True)+'"' for k,v in attrs.items())+' defer></script>\n<!-- /PRACTICE KIT -->'
@@ -31,5 +31,5 @@ def build():
   pattern=rf'(<iframe id="app-{i}"[^>]*srcdoc=")([\s\S]*?)("[^>]*>)';m=re.search(pattern,s);assert m
   inner=replace(html.unescape(m[2]),tag('companion-'+str(i),title,goals,'activity-kit.js'));s=s[:m.start(2)]+html.escape(inner,quote=True)+s[m.end(2):]
  p.write_text(s,encoding='utf-8')
- print('Practice kits: 14 games and 3 companion apps')
+ print('Practice kits:', len(json.loads((ROOT/'games/games.json').read_text(encoding='utf-8'))), 'games and 3 companion apps')
 if __name__=='__main__':build()

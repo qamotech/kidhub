@@ -46,6 +46,30 @@
             --primary: #00cc88;
             --hover-bg: #033322;
         }
+        [data-theme="halloween"] {
+            --bg-color: #1a0f00;
+            --text-color: #ff9900;
+            --header-bg: rgba(26, 15, 0, 0.85);
+            --border-color: #6600cc;
+            --primary: #ff6600;
+            --hover-bg: #331a00;
+        }
+        [data-theme="thanksgiving"] {
+            --bg-color: #2b1408;
+            --text-color: #f4c272;
+            --header-bg: rgba(43, 20, 8, 0.85);
+            --border-color: #8c3f15;
+            --primary: #d95e16;
+            --hover-bg: #4a2511;
+        }
+        [data-theme="christmas"] {
+            --bg-color: #0d2614;
+            --text-color: #f2e6d8;
+            --header-bg: rgba(13, 38, 20, 0.85);
+            --border-color: #b3000c;
+            --primary: #e60012;
+            --hover-bg: #1a4d29;
+        }
         * { box-sizing: border-box; }
         body {
             margin: 0;
@@ -252,11 +276,14 @@
 <style>
 @media(max-width:600px){header{padding:8px;gap:8px;flex-wrap:wrap}.controls{gap:6px;flex-wrap:wrap}.logo{font-size:1rem}footer{padding:6px;font-size:11px}.status-badge{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#particles{display:none}}
-</style><style>@media(max-width:700px){.main-container{flex-direction:column;min-height:0}.sidebar{width:100%;min-width:0;padding:6px;display:flex;flex-direction:row;gap:6px;overflow-x:auto;flex-shrink:0;border-right:0;border-bottom:1px solid var(--border-color)}.sidebar h3,.sidebar h4,.sidebar .nav-title{display:none}.sidebar .nav-btn{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px;font-size:12px;margin:0}.content-area{width:100%;flex:1;min-height:0}footer .footer-links{display:none}}</style></head>
+</style><style>@media(max-width:700px){.main-container{flex-direction:column;min-height:0}.sidebar{width:100%;min-width:0;padding:6px;display:flex;flex-direction:row;gap:6px;overflow-x:auto;flex-shrink:0;border-right:0;border-bottom:1px solid var(--border-color)}.sidebar h3,.sidebar h4,.sidebar .nav-title{display:none}.sidebar .nav-btn{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px;font-size:12px;margin:0}.content-area{width:100%;flex:1;min-height:0}footer .footer-links{display:none}}</style><link rel="stylesheet" href="portal.css"><style>
+#dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
+@media(max-width:700px){.sidebar{max-height:70px}.sidebar>div{display:none}#active-app-label{display:none}.footer-links{display:flex!important}footer{gap:8px;flex-wrap:wrap}.kh-portal{padding:16px}}
+</style><script defer src="offline.js"></script></head>
 <body>
-    <canvas id="particles"></canvas>
+
     <header class="sticky">
-        <div class="logo">🚀 Omni OS <span style="font-size:0.9rem;opacity:0.6;font-weight:normal;">v1.0</span></div>
+        <div class="logo"><span id="logo-emoji">🚀</span> KidHub <span style="font-size:0.85rem;opacity:0.7;font-weight:normal;" id="active-app-label">KidHub</span></div>
         <div class="controls">
             <div class="status-badge">🟢 <span id="status-text">System Online</span></div>
             <select id="theme-selector" title="Select Theme">
@@ -264,23 +291,32 @@
                 <option value="dark">🌙 Dark Mode</option>
                 <option value="cyberpunk">🤖 Cyberpunk Synth</option>
                 <option value="emerald">🌲 Emerald Luxury</option>
+                <option value="halloween">🎃 Halloween</option>
+                <option value="thanksgiving">🦃 Thanksgiving</option>
+                <option value="christmas">🎄 Christmas</option>
             </select>
             <button id="fullscreen-btn" title="Toggle Fullscreen">🔲 Fullscreen</button>
         </div>
     </header>
     <div class="main-container">
-        <div class="sidebar">
+        <nav class="sidebar" aria-label="Dashboard navigation"><button class="nav-btn" data-library="applications">🗂️ All applications</button>
             <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:10px 0 5px 10px; font-weight:800;">Applications</div>
             <button class="nav-btn active" data-target="app-0">🎮 KidHub</button>
             <button class="nav-btn " data-target="app-1">🎵 KidsBeat</button>
-            <button class="nav-btn " data-target="app-2">📐 qamomathcore-sci-fi-nexus</button>
-            <button class="nav-btn " data-target="app-3">⚔️ stix-stax-stonz</button>
-            
+            <button class="nav-btn " data-target="app-2">📐 Qamo Mathcore</button>
+            <button class="nav-btn " data-target="app-3">❌ Stix Stax Stonz</button>
+
             <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin:20px 0 5px 10px; font-weight:800;">Resources</div>
-            <button class="nav-btn" id="btn-api-docs">📚 API / Docs</button>
-            <button class="nav-btn" onclick="showToast('✅ System resources re-allocated successfully')">🔄 Refresh OS</button>
-        </div>
-        <div class="content-area">
+            <button class="nav-btn" data-library="start">🧭 Start here</button>
+            <button class="nav-btn" data-library="guides">📖 Activity guides</button>
+            <button class="nav-btn" data-library="printables">🖨️ Printables</button>
+            <button class="nav-btn" data-library="planner">🗓️ Session planner</button>
+            <button class="nav-btn" data-library="help">🛟 Help & diagnostics</button>
+            <button class="nav-btn" id="btn-api-docs" data-library="docs">🛠️ Developer docs</button>
+            <button class="nav-btn" id="reload-app">🔄 Reload application</button>
+            <a class="nav-btn" id="direct-app" href="studio.html">↗ Open KidHub directly</a>
+        </nav>
+        <div class="content-area"><section id="dashboard-panel" hidden aria-label="Applications and resources"><div id="hub-portal" class="kh-portal"></div></section>
             <iframe id="app-0" class="active" srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
   &lt;head&gt;
@@ -5907,7 +5943,6 @@ window.KidHubPlus={tools:T.length,features:FEATURES.length,improvements:IMPROVEM
 })();
 &lt;/script&gt;
 &lt;!-- KIDHUB PLUS END --&gt;
-
 &lt;!-- SRC:arcade --&gt;
 &lt;style id=&quot;arcade-css&quot;&gt;
 .ar{max-width:1100px;margin:0 auto;padding:0 12px 90px}
@@ -6092,15 +6127,16 @@ async function emailOne(c,msg){
   return&quot;failed&quot;;
  }catch(e){return navigator.onLine?&quot;failed&quot;:&quot;queued&quot;}}
 async function deliver(msg){
+ if(!S.contacts.some(c=&gt;msg.to.includes(c.id)&amp;&amp;c.email)&amp;&amp;!/^https:\/\//i.test(S.hook.url))return&quot;saved&quot;;
  if(!navigator.onLine)return&quot;queued&quot;;
  const results=[];
  const mailTo=msg.to.map(id=&gt;S.contacts.find(c=&gt;c.id===id)).filter(c=&gt;c&amp;&amp;c.email);
  msg.res=msg.res||{};
  for(const c of mailTo){if(msg.res[c.id]===&quot;sent&quot;)continue;msg.res[c.id]=await emailOne(c,msg);results.push(msg.res[c.id])}
- if(/^https:\/\/[^\s]+$/i.test(S.hook.url))results.push(await deliverHook(msg));
+ if(/^https:\/\/[^\s]+$/i.test(S.hook.url)){if(![&quot;sent&quot;,&quot;sent?&quot;].includes(msg.hookStatus))msg.hookStatus=await deliverHook(msg);results.push(msg.hookStatus)}
  if(!results.length&amp;&amp;!mailTo.length&amp;&amp;!Object.keys(msg.res).length)return&quot;saved&quot;;
  const all=[...Object.values(msg.res),...results];
- return all.includes(&quot;activate&quot;)?&quot;activate&quot;:all.every(r=&gt;r===&quot;sent&quot;)?&quot;sent&quot;:all.includes(&quot;sent&quot;)||all.includes(&quot;sent?&quot;)?&quot;sent?&quot;:all.includes(&quot;queued&quot;)?&quot;queued&quot;:&quot;failed&quot;}
+ return all.includes(&quot;activate&quot;)?&quot;activate&quot;:all.every(r=&gt;r===&quot;sent&quot;)?&quot;sent&quot;:all.some(r=&gt;r===&quot;failed&quot;||r===&quot;queued&quot;)?(all.some(r=&gt;r===&quot;sent&quot;||r===&quot;sent?&quot;)?&quot;partial&quot;:all.includes(&quot;queued&quot;)?&quot;queued&quot;:&quot;failed&quot;):&quot;sent?&quot;}
 async function deliverHook(msg){const u=S.hook.url;
  const names=msg.to.map(id=&gt;(S.contacts.find(c=&gt;c.id===id)||{}).name).filter(Boolean),text=`${msg.sos?&quot;🆘 &quot;:&quot;&quot;}${msg.from} → ${names.join(&quot;, &quot;)}: ${msg.content}`;
  let init;if(S.hook.fmt===&quot;discord&quot;)init={method:&quot;POST&quot;,headers:{&quot;Content-Type&quot;:&quot;application/json&quot;},body:JSON.stringify({content:text.slice(0,1900)})};
@@ -6108,12 +6144,12 @@ async function deliverHook(msg){const u=S.hook.url;
  else if(S.hook.fmt===&quot;ntfy&quot;)init={method:&quot;POST&quot;,headers:{Title:`KidHub: message from ${msg.from}`.replace(/[^\x20-\x7e]/g,&quot;&quot;),Priority:msg.sos?&quot;urgent&quot;:&quot;default&quot;,Tags:msg.sos?&quot;rotating_light&quot;:&quot;speech_balloon&quot;},body:text};
  else init={method:&quot;POST&quot;,headers:{&quot;Content-Type&quot;:&quot;application/json&quot;},body:JSON.stringify({to:names,content:msg.content,from:msg.from,priority:msg.sos?&quot;high&quot;:&quot;normal&quot;,sentAt:new Date(msg.at).toISOString(),app:&quot;KidHub&quot;})};
  try{const r=await fetch(u,init);if(r.type===&quot;opaque&quot;)return&quot;sent?&quot;;return r.ok?&quot;sent&quot;:&quot;failed&quot;}catch(e){try{await fetch(u,{...init,mode:&quot;no-cors&quot;});return&quot;sent?&quot;}catch(_){return&quot;queued&quot;}}}
-const ST={activate:&quot;📧 Check your inbox to activate (one time)&quot;,sent:&quot;✅ Sent&quot;,[&quot;sent?&quot;]:&quot;📨 Sent (unconfirmed)&quot;,saved:&quot;💾 Saved — ask a grown-up to connect messages&quot;,queued:&quot;⏳ Waiting for internet&quot;,failed:&quot;⚠️ Failed — will retry&quot;,quiet:&quot;🌙 Held for quiet hours&quot;,sending:&quot;📤 Sending…&quot;};
+const ST={activate:&quot;📧 Ask a grown-up to activate, then retry&quot;,partial:&quot;⚠️ Partly delivered — retry waiting destinations&quot;,sent:&quot;✅ Sent&quot;,[&quot;sent?&quot;]:&quot;📨 Sent (unconfirmed)&quot;,saved:&quot;💾 Saved — ask a grown-up to connect messages&quot;,queued:&quot;⏳ Waiting for internet&quot;,failed:&quot;⚠️ Failed — will retry&quot;,quiet:&quot;🌙 Held for quiet hours&quot;,sending:&quot;📤 Sending…&quot;};
 async function send(content,{sos=false}={}){content=String(content||&quot;&quot;).trim().slice(0,500);const to=$$(&quot;.cw-chip[aria-pressed=true]&quot;).map(b=&gt;b.dataset.c);if(!content)return toast(&quot;✍️ Type or say a message first&quot;);if(!to.length)return toast(&quot;👆 Pick who to send it to&quot;);
  const msg={id:Date.now().toString(36),to,content,from:me(),sos,at:Date.now(),status:&quot;sending&quot;};S.outbox.push(msg);S.outbox=S.outbox.slice(-40);render();
- msg.status=inQuiet()&amp;&amp;!sos?&quot;quiet&quot;:await deliver(msg);save();render();chime(msg.status===&quot;sent&quot;||msg.status===&quot;sent?&quot;);say(msg.status===&quot;sent&quot;||msg.status===&quot;sent?&quot;?&quot;Message sent!&quot;:msg.status===&quot;saved&quot;?&quot;Message saved.&quot;:&quot;I&#x27;ll send it soon.&quot;);if(sos&amp;&amp;navigator.vibrate)navigator.vibrate([200,100,200])}
+ msg.status=inQuiet()&amp;&amp;!sos?&quot;quiet&quot;:await deliver(msg);save();render();chime(msg.status===&quot;sent&quot;||msg.status===&quot;sent?&quot;);say(msg.status===&quot;sent&quot;?&quot;Message sent!&quot;:msg.status===&quot;saved&quot;?&quot;Message saved on this device.&quot;:msg.status===&quot;activate&quot;?&quot;Ask a grown-up to activate email delivery.&quot;:&quot;Delivery is not confirmed. Check the Outbox.&quot;);if(sos&amp;&amp;navigator.vibrate)navigator.vibrate([200,100,200])}
 /* 6 · Offline outbox with auto-retry */
-let retrying=false;async function retry(){if(retrying||!navigator.onLine)return;retrying=true;for(const m of S.outbox){if([&quot;queued&quot;,&quot;failed&quot;,&quot;activate&quot;].includes(m.status)||(m.status===&quot;quiet&quot;&amp;&amp;!inQuiet())){m.status=await deliver(m);save()}}retrying=false;render()}
+let retrying=false;async function retry(includeActivation=false){if(retrying||!navigator.onLine)return;retrying=true;try{for(const m of S.outbox){if(([&quot;queued&quot;,&quot;failed&quot;,&quot;partial&quot;].includes(m.status)||(includeActivation===true&amp;&amp;m.status===&quot;activate&quot;))||(m.status===&quot;quiet&quot;&amp;&amp;!inQuiet())){m.status=await deliver(m);save()}}}finally{retrying=false;render()}}
 addEventListener(&quot;online&quot;,retry);
 
 /* 2 · Scheduled reminders */
@@ -6135,7 +6171,7 @@ function render(){const body=$(&quot;#cwBody&quot;);if(!body)return;$$(&quot;.cw
   &lt;label class=&quot;cw-sr&quot; for=&quot;cwMsg&quot;&gt;Message&lt;/label&gt;&lt;textarea id=&quot;cwMsg&quot; rows=&quot;3&quot; maxlength=&quot;500&quot; placeholder=&quot;✍️ Write a message…&quot;&gt;&lt;/textarea&gt;
   &lt;div class=&quot;cw-row&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;pri&quot; id=&quot;cwSend&quot;&gt;📤 Send&lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;cwMic&quot;&gt;🎤 Say it&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;sos&quot; id=&quot;cwSos&quot;&gt;🆘 I need a grown-up&lt;/button&gt;&lt;/div&gt;
   &lt;p class=&quot;cw-note&quot;&gt;⚡ Quick messages:&lt;/p&gt;&lt;div class=&quot;cw-row&quot;&gt;${[&quot;🌟 Look what I made!&quot;,&quot;✅ I finished my homework!&quot;,&quot;🎮 Can I play a game?&quot;,&quot;🍎 I&#x27;m hungry&quot;,&quot;😴 I&#x27;m tired&quot;,&quot;❤️ Love you!&quot;,&quot;🏠 I&#x27;m home&quot;,&quot;🤔 Can you help me?&quot;].map(q=&gt;`&lt;button type=&quot;button&quot; data-q=&quot;${esc(q)}&quot;&gt;${esc(q)}&lt;/button&gt;`).join(&quot;&quot;)}&lt;/div&gt;
-  &lt;p class=&quot;cw-note&quot;&gt;${conn?&quot;📧 Messages are emailed to your grown-ups.&quot;:&quot;💾 Not connected yet — messages are saved here until a grown-up connects them in ⚙️.&quot;}${inQuiet()?&quot; 🌙 Quiet hours are on.&quot;:&quot;&quot;}&lt;/p&gt;`;
+  &lt;p class=&quot;cw-note&quot;&gt;${conn?&quot;🔗 Messages use the email or webhook destinations configured by a grown-up.&quot;:&quot;💾 Not connected yet — messages are saved here until a grown-up connects them in ⚙️.&quot;}${inQuiet()?&quot; 🌙 Quiet hours are on.&quot;:&quot;&quot;}&lt;/p&gt;`;
   $$(&quot;.cw-chip&quot;,body).forEach(b=&gt;b.onclick=()=&gt;b.setAttribute(&quot;aria-pressed&quot;,b.getAttribute(&quot;aria-pressed&quot;)!==&quot;true&quot;));
   $$(&quot;[data-q]&quot;,body).forEach(b=&gt;b.onclick=()=&gt;{$(&quot;#cwMsg&quot;).value=b.dataset.q;$(&quot;#cwMsg&quot;).focus()});
   $(&quot;#cwSend&quot;).onclick=()=&gt;send($(&quot;#cwMsg&quot;).value).then(()=&gt;{});$(&quot;#cwMic&quot;).onclick=e=&gt;dictate(e.currentTarget);
@@ -6147,11 +6183,11 @@ function render(){const body=$(&quot;#cwBody&quot;);if(!body)return;$$(&quot;.cw
   $$(&quot;[data-x]&quot;,body).forEach(b=&gt;b.onclick=()=&gt;{S.reminders.splice(+b.dataset.x,1);save();render()});
   $(&quot;#cwNotif&quot;).onclick=()=&gt;{if(!(&quot;Notification&quot; in window))return toast(&quot;Pop-up alerts aren&#x27;t supported here&quot;);Notification.requestPermission().then(p=&gt;toast(p===&quot;granted&quot;?&quot;🔔 Alerts on&quot;:&quot;🔕 Alerts off&quot;))}}
  else if(tab===&quot;out&quot;){body.innerHTML=`&lt;ul class=&quot;cw-list&quot;&gt;${S.outbox.slice().reverse().map(m=&gt;`&lt;li&gt;&lt;span&gt;${m.sos?&quot;🆘 &quot;:&quot;&quot;}${esc(m.content)}&lt;br&gt;&lt;small&gt;to ${esc(m.to.map(id=&gt;(S.contacts.find(c=&gt;c.id===id)||{name:&quot;?&quot;}).name).join(&quot;, &quot;))} · ${new Date(m.at).toLocaleTimeString([],{hour:&quot;numeric&quot;,minute:&quot;2-digit&quot;})}&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;cw-st&quot;&gt;${ST[m.status]||esc(m.status)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)||&#x27;&lt;li class=&quot;cw-note&quot;&gt;📭 No messages yet.&lt;/li&gt;&#x27;}&lt;/ul&gt;&lt;div class=&quot;cw-row&quot;&gt;&lt;button type=&quot;button&quot; id=&quot;cwRetry&quot;&gt;🔁 Retry waiting&lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;cwShare&quot;&gt;📤 Share last message&lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;cwClr&quot;&gt;🧹 Clear&lt;/button&gt;&lt;/div&gt;`;
-  $(&quot;#cwRetry&quot;).onclick=retry;$(&quot;#cwClr&quot;).onclick=()=&gt;{S.outbox=[];save();render()};
+  $(&quot;#cwRetry&quot;).onclick=()=&gt;retry(true);$(&quot;#cwClr&quot;).onclick=()=&gt;{S.outbox=[];save();render()};
   $(&quot;#cwShare&quot;).onclick=()=&gt;{const m=S.outbox[S.outbox.length-1];if(!m)return;const t=`${m.from}: ${m.content}`;if(navigator.share)navigator.share({title:&quot;KidHub message&quot;,text:t}).catch(()=&gt;{});else(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=&gt;toast(&quot;📋 Copied&quot;),()=&gt;toast(t))}}
  else if(tab===&quot;set&quot;){if(!unlocked){if(!gate){const a=2+Math.floor(Math.random()*8),b=3+Math.floor(Math.random()*7);gate={a,b}}body.innerHTML=`&lt;p&gt;🛡️ &lt;b&gt;Grown-ups only.&lt;/b&gt; ${S.pinHash?&quot;Enter your PIN.&quot;:`What is ${gate.a} × ${gate.b}?`}&lt;/p&gt;&lt;div class=&quot;cw-row&quot;&gt;&lt;label class=&quot;cw-sr&quot; for=&quot;cwGate&quot;&gt;Answer&lt;/label&gt;&lt;input id=&quot;cwGate&quot; type=&quot;${S.pinHash?&quot;password&quot;:&quot;number&quot;}&quot; inputmode=&quot;numeric&quot; maxlength=&quot;8&quot; style=&quot;width:140px&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;pri&quot; id=&quot;cwGo&quot;&gt;🔓 Unlock&lt;/button&gt;&lt;/div&gt;`;
    const go=async()=&gt;{const v=$(&quot;#cwGate&quot;).value.trim();const ok=S.pinHash?(await sha(v))===S.pinHash:+v===gate.a*gate.b;if(ok){unlocked=true;gate=null;render()}else{toast(&quot;🔒 Not quite&quot;);$(&quot;#cwGate&quot;).value=&quot;&quot;}};$(&quot;#cwGo&quot;).onclick=go;$(&quot;#cwGate&quot;).onkeydown=e=&gt;{if(e.key===&quot;Enter&quot;)go()};return}
-  body.innerHTML=`&lt;p class=&quot;cw-note&quot;&gt;📧 &lt;b&gt;Email:&lt;/b&gt; add each grown-up&#x27;s email below. Messages are delivered by &lt;b&gt;FormSubmit.co&lt;/b&gt;; the very first message to each address sends a one-time &lt;b&gt;Activate&lt;/b&gt; email — click it and every message after that arrives normally. Addresses stay on this device only. Tip: after activating, FormSubmit emails you a private alias you can paste here instead of your address.&lt;/p&gt;
+  body.innerHTML=`&lt;p class=&quot;cw-note&quot;&gt;📧 &lt;b&gt;Email:&lt;/b&gt; add each grown-up&#x27;s email below. Messages are delivered by &lt;b&gt;FormSubmit.co&lt;/b&gt;; the very first message to each address sends a one-time &lt;b&gt;Activate&lt;/b&gt; email — follow its instructions, then use Retry waiting in the Outbox. Delivery still depends on the service and connection. Addresses are stored in this browser and sent to FormSubmit when you send a message. Tip: after activating, FormSubmit emails you a private alias you can paste here instead of your address.&lt;/p&gt;
   &lt;p class=&quot;cw-note&quot;&gt;🔗 &lt;b&gt;Optional extra:&lt;/b&gt; also connect a webhook you control. Use an &lt;b&gt;https&lt;/b&gt; webhook, such as a Discord or Slack incoming webhook, an ntfy.sh topic, or a Zapier/Make/IFTTT hook (these can forward to text or email). Nothing is sent anywhere until you add one.&lt;/p&gt;
   &lt;label class=&quot;cw-sr&quot; for=&quot;cwUrl&quot;&gt;Webhook URL&lt;/label&gt;&lt;input id=&quot;cwUrl&quot; type=&quot;url&quot; maxlength=&quot;400&quot; placeholder=&quot;https://…&quot; value=&quot;${esc(S.hook.url)}&quot;&gt;
   &lt;div class=&quot;cw-row&quot;&gt;&lt;label for=&quot;cwFmt&quot; style=&quot;font-weight:700&quot;&gt;Format&lt;/label&gt;&lt;select id=&quot;cwFmt&quot; style=&quot;width:auto&quot;&gt;${[[&quot;json&quot;,&quot;Generic JSON&quot;],[&quot;discord&quot;,&quot;Discord&quot;],[&quot;slack&quot;,&quot;Slack&quot;],[&quot;ntfy&quot;,&quot;ntfy.sh&quot;]].map(([v,l])=&gt;`&lt;option value=&quot;${v}&quot; ${S.hook.fmt===v?&quot;selected&quot;:&quot;&quot;}&gt;${l}&lt;/option&gt;`).join(&quot;&quot;)}&lt;/select&gt;&lt;button type=&quot;button&quot; id=&quot;cwTest&quot;&gt;🧪 Send test&lt;/button&gt;&lt;/div&gt;
@@ -6161,7 +6197,7 @@ function render(){const body=$(&quot;#cwBody&quot;);if(!body)return;$$(&quot;.cw
   &lt;p class=&quot;cw-note&quot;&gt;🔑 &lt;b&gt;Grown-up PIN&lt;/b&gt; (optional, replaces the math question)&lt;/p&gt;&lt;div class=&quot;cw-row&quot;&gt;&lt;label class=&quot;cw-sr&quot; for=&quot;cwPin&quot;&gt;New PIN&lt;/label&gt;&lt;input id=&quot;cwPin&quot; type=&quot;password&quot; inputmode=&quot;numeric&quot; maxlength=&quot;8&quot; placeholder=&quot;4–8 digits&quot; style=&quot;width:140px&quot;&gt;&lt;button type=&quot;button&quot; id=&quot;cwPinSet&quot;&gt;💾 Save PIN&lt;/button&gt;${S.pinHash?&#x27;&lt;button type=&quot;button&quot; id=&quot;cwPinClr&quot;&gt;Remove PIN&lt;/button&gt;&#x27;:&quot;&quot;}&lt;/div&gt;
   &lt;div class=&quot;cw-row&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;pri&quot; id=&quot;cwSave&quot;&gt;✅ Save settings&lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;cwLock&quot;&gt;🔒 Lock&lt;/button&gt;&lt;/div&gt;`;
   const readC=()=&gt;{S.contacts=S.contacts.map((c,i)=&gt;({...c,name:($(`[data-n=&quot;${i}&quot;]`).value.trim()||c.name).slice(0,24),emoji:($(`[data-e=&quot;${i}&quot;]`).value.trim()||&quot;🙂&quot;).slice(0,4),email:(()=&gt;{const v=$(`[data-m=&quot;${i}&quot;]`).value.trim();return validMail(v)?v:&quot;&quot;})()}))};
-  $(&quot;#cwSave&quot;).onclick=()=&gt;{const u=$(&quot;#cwUrl&quot;).value.trim();if(u&amp;&amp;!/^https:\/\/[^\s]+$/i.test(u))return toast(&quot;🔗 The webhook must start with https://&quot;);S.hook={url:u,fmt:$(&quot;#cwFmt&quot;).value};readC();S.quiet={on:$(&quot;#cwQ&quot;).checked,from:$(&quot;#cwQF&quot;).value||&quot;20:30&quot;,to:$(&quot;#cwQT&quot;).value||&quot;07:00&quot;};S.voice=$(&quot;#cwV&quot;).checked;save();toast(&quot;✅ Cloud settings saved&quot;);retry()};
+  $(&quot;#cwSave&quot;).onclick=()=&gt;{if($$(&quot;[data-m]&quot;,body).some(i=&gt;i.value.trim()&amp;&amp;!validMail(i.value)))return toast(&quot;📧 Check the email address before saving&quot;);const u=$(&quot;#cwUrl&quot;).value.trim();if(u&amp;&amp;!/^https:\/\/[^\s]+$/i.test(u))return toast(&quot;🔗 The webhook must start with https://&quot;);S.hook={url:u,fmt:$(&quot;#cwFmt&quot;).value};readC();S.quiet={on:$(&quot;#cwQ&quot;).checked,from:$(&quot;#cwQF&quot;).value||&quot;20:30&quot;,to:$(&quot;#cwQT&quot;).value||&quot;07:00&quot;};S.voice=$(&quot;#cwV&quot;).checked;save();toast(&quot;✅ Cloud settings saved&quot;);retry()};
   $(&quot;#cwTest&quot;).onclick=async()=&gt;{$(&quot;#cwSave&quot;).click();if(!S.hook.url)return;const r=await deliver({to:S.contacts.map(c=&gt;c.id),content:&quot;🧪 Test from KidHub — messages are connected!&quot;,from:me(),at:Date.now()});toast(ST[r]||r)};
   $(&quot;#cwMailTest&quot;).onclick=async()=&gt;{const bad=$$(&quot;[data-m]&quot;,body).filter(i=&gt;i.value.trim()&amp;&amp;!validMail(i.value));if(bad.length)return toast(&quot;📧 Check the email address&quot;);$(&quot;#cwSave&quot;).click();const who=S.contacts.filter(c=&gt;c.email);if(!who.length)return toast(&quot;📧 Add an email first&quot;);toast(&quot;📧 Sending test…&quot;);const m={to:who.map(c=&gt;c.id),content:&quot;🧪 Test from KidHub — email messages are connected!&quot;,from:me(),at:Date.now()};const r=await deliver(m);toast(ST[r]||r)};
   $(&quot;#cwAddC&quot;).onclick=()=&gt;{readC();S.contacts.push({id:&quot;c&quot;+Date.now().toString(36).slice(-6),name:&quot;Grown-up&quot;,emoji:&quot;🧑&quot;,email:&quot;&quot;});save();render()};
@@ -7080,7 +7116,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;2026.10.10-2216-d6b80a&quot;;
+const BUILD=&quot;c86354d0958e8a7d&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7232,6 +7268,16 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 })();
 &lt;/script&gt;
 &lt;!-- /SRC:zzz-adventures --&gt;
+&lt;!-- SRC:zzzz-navigation --&gt;
+&lt;script id=&quot;library-navigation&quot;&gt;
+(()=&gt;{&#x27;use strict&#x27;;
+window.addEventListener(&#x27;kidhub:launch&#x27;,event=&gt;{const d=event.detail;if(!d||typeof d!==&#x27;object&#x27;)return;if(typeof d.tool===&#x27;string&#x27;&amp;&amp;/^[a-z0-9-]+$/.test(d.tool)&amp;&amp;window.KidHubPlus){app.show(&#x27;tools&#x27;);KidHubPlus.openTool(d.tool)}else if(typeof d.screen===&#x27;string&#x27;&amp;&amp;document.getElementById(&#x27;s-&#x27;+d.screen))app.show(d.screen)});
+// Route footer help to the real resource library. Preserve already configured links.
+document.querySelectorAll(&#x27;footer a[href=&quot;#&quot;]&#x27;).forEach(a=&gt;{const label=a.textContent.toLowerCase();a.href=&#x27;resources.html#&#x27;+(label.includes(&#x27;privacy&#x27;)?&#x27;privacy&#x27;:label.includes(&#x27;parent&#x27;)?&#x27;start&#x27;:&#x27;help&#x27;);a.target=&#x27;_top&#x27;});
+const header=document.querySelector(&#x27;footer&#x27;);if(header&amp;&amp;!header.querySelector(&#x27;[data-resource-link]&#x27;)){const a=document.createElement(&#x27;a&#x27;);a.href=&#x27;resources.html&#x27;;a.target=&#x27;_top&#x27;;a.dataset.resourceLink=&#x27;1&#x27;;a.textContent=&#x27;📚 Applications &amp; resources&#x27;;a.style.cssText=&#x27;display:inline-block;margin:8px;padding:6px&#x27;;header.append(a)}
+})();
+&lt;/script&gt;
+&lt;!-- /SRC:zzzz-navigation --&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
@@ -7281,7 +7327,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
       inset: 0;
       z-index: -1;
       opacity: 0.35;
-      background: 
+      background:
         radial-gradient(circle at 15% 20%, rgba(255, 78, 167, 0.4), transparent 30%),
         radial-gradient(circle at 85% 70%, rgba(87, 255, 210, 0.3), transparent 35%),
         radial-gradient(circle at 50% 50%, rgba(165, 131, 255, 0.25), transparent 45%);
@@ -7623,7 +7669,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     &lt;!-- Top Bar Navigation --&gt;
     &lt;header id=&quot;topbar&quot;&gt;
       &lt;div class=&quot;brand&quot;&gt;🚀 KIDS BEAT MAKER PRO&lt;/div&gt;
-      
+
       &lt;div style=&quot;display:flex; gap:8px;&quot;&gt;
         &lt;button id=&quot;play-btn&quot; class=&quot;btn primary icon&quot; title=&quot;Play/Stop Sequencer&quot;&gt;▶️&lt;/button&gt;
         &lt;button id=&quot;record-btn&quot; class=&quot;btn icon&quot; title=&quot;Record Performance onto Steps&quot;&gt;🔴&lt;/button&gt;
@@ -7750,7 +7796,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
     // Vibrant Palette
     const colors = [
-      &quot;#ff5fae&quot;, &quot;#5bffd2&quot;, &quot;#ffe258&quot;, &quot;#a583ff&quot;, &quot;#71f3aa&quot;, &quot;#ff667c&quot;, 
+      &quot;#ff5fae&quot;, &quot;#5bffd2&quot;, &quot;#ffe258&quot;, &quot;#a583ff&quot;, &quot;#71f3aa&quot;, &quot;#ff667c&quot;,
       &quot;#45d8ff&quot;, &quot;#ff8a3d&quot;, &quot;#e056fd&quot;, &quot;#686de0&quot;, &quot;#badc58&quot;, &quot;#ff7979&quot;,
       &quot;#f6e58d&quot;, &quot;#7ed6df&quot;, &quot;#e056fd&quot;, &quot;#ffbe76&quot;, &quot;#2ed573&quot;, &quot;#ff4757&quot;,
       &quot;#1e90ff&quot;, &quot;#5352ed&quot;, &quot;#ff6b81&quot;, &quot;#ffa502&quot;, &quot;#26de81&quot;, &quot;#a55eea&quot;
@@ -7862,7 +7908,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
       // Node Sources -&gt; Master Filter -&gt; Master Drive -&gt; Master Gain -&gt; Limiter -&gt; Analyser -&gt; Destination
       masterFilter.connect(masterDrive);
       masterDrive.connect(masterGain);
-      
+
       // FX Sends
       masterGain.connect(delayNode);
       masterGain.connect(reverbConvolver);
@@ -7912,7 +7958,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     // Sound Generator Engine with Physical &amp; Life-like Acoustic Modeling
     function playSound(track, time = null) {
       if (!ctx) return;
-      
+
       // Mute / Solo Logic
       const hasSolo = tracks.some(t =&gt; t.solo);
       if (track.mute || (hasSolo &amp;&amp; !track.solo)) return;
@@ -8276,7 +8322,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
           const bFilter = ctx.createBiquadFilter();
           bFilter.type = &#x27;lowpass&#x27;;
-          
+
           if (track.type === &#x27;slapbass&#x27;) {
             bFilter.frequency.setValueAtTime(3200, t);
             bFilter.frequency.exponentialRampToValueAtTime(200, t + 0.18);
@@ -8458,7 +8504,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     function renderUI() {
       const padContainer = document.getElementById(&#x27;pads&#x27;);
       const trackContainer = document.getElementById(&#x27;tracks-wrap&#x27;);
-      
+
       padContainer.innerHTML = &#x27;&#x27;;
       trackContainer.innerHTML = &#x27;&#x27;;
 
@@ -8473,14 +8519,14 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             &lt;span class=&quot;pad-emoji&quot;&gt;${track.emoji}&lt;/span&gt;
             &lt;span&gt;${track.name}&lt;/span&gt;
           `;
-          
+
           pad.onmousedown = (e) =&gt; {
             e.preventDefault();
             initAudio();
             playSound(track);
             pad.classList.add(&#x27;hit&#x27;);
             setTimeout(() =&gt; pad.classList.remove(&#x27;hit&#x27;), 150);
-            
+
             // Auto-Record Logic onto active step
             if (autoRecord &amp;&amp; document.getElementById(&#x27;record-btn&#x27;).classList.contains(&#x27;recording&#x27;)) {
               track.steps[currentStep] = true;
@@ -8493,7 +8539,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         // Render Track Sequencer Row
         const trackDiv = document.createElement(&#x27;div&#x27;);
         trackDiv.className = &#x27;track&#x27;;
-        
+
         const head = document.createElement(&#x27;div&#x27;);
         head.className = &#x27;track-head&#x27;;
         head.style.setProperty(&#x27;--track-color&#x27;, track.color);
@@ -8528,10 +8574,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         head.querySelector(&#x27;.tr-pitch&#x27;).oninput = (e) =&gt; {
           track.pitch = parseInt(e.target.value);
         };
-        
+
         const stepsDiv = document.createElement(&#x27;div&#x27;);
         stepsDiv.className = &#x27;steps&#x27;;
-        
+
         track.steps.forEach((stepOn, stepIdx) =&gt; {
           const stepBtn = document.createElement(&#x27;button&#x27;);
           stepBtn.className = `step ${stepOn ? &#x27;on&#x27; : &#x27;&#x27;}`;
@@ -8595,7 +8641,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     function scheduleNotes() {
       while (nextTime &lt; ctx.currentTime + 0.1) {
         const stepToPlay = currentStep;
-        
+
         // Visual Playhead Sync
         setTimeout(() =&gt; {
           document.querySelectorAll(&#x27;.step&#x27;).forEach(s =&gt; s.classList.remove(&#x27;playhead&#x27;));
@@ -8611,7 +8657,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             playSound(track, nextTime);
           }
         });
-        
+
         nextNote();
       }
       timer = setTimeout(scheduleNotes, 25);
@@ -8808,27 +8854,26 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
     &lt;!-- Global Fullscreen Toggle --&gt;
     &lt;button id=&quot;global-fs-btn&quot; style=&quot;position:fixed;bottom:20px;left:20px;z-index:99999;width:40px;height:40px;border-radius:50%;background:#333;color:#fff;border:none;cursor:pointer;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:grid;place-items:center;&quot; aria-label=&quot;Toggle Fullscreen&quot; onclick=&quot;if(!document.fullscreenElement){document.documentElement.requestFullscreen()}else{document.exitFullscreen()}&quot;&gt;⛶&lt;/button&gt;
-    
+
 &lt;!-- PRACTICE KIT --&gt;
 &lt;script src=&quot;activity-kit.js&quot; data-activity=&quot;companion-1&quot; data-title=&quot;KidsBeat&quot; data-goals=&quot;[&amp;quot;Build a short beat with two contrasting sounds.&amp;quot;, &amp;quot;Change the tempo and compare the groove.&amp;quot;, &amp;quot;Record a pattern or describe how to recreate it.&amp;quot;]&quot; defer&gt;&lt;/script&gt;
 &lt;!-- /PRACTICE KIT --&gt;
 &lt;/body&gt;
 &lt;/html&gt;"></iframe>
             <iframe id="app-2" class="" srcdoc="&lt;!DOCTYPE html&gt;
+
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
-  &lt;meta charset=&quot;utf-8&quot; /&gt;
-  &lt;title&gt;QamoMathCore // SCI-FI_NEXUS&lt;/title&gt;
-  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover&quot; /&gt;
-  &lt;meta name=&quot;apple-mobile-web-app-capable&quot; content=&quot;yes&quot; /&gt;
-  &lt;meta name=&quot;apple-mobile-web-app-status-bar-style&quot; content=&quot;black-translucent&quot; /&gt;
-
-  &lt;!-- Sci-Fi Fonts --&gt;
-  &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;family=Share+Tech+Mono&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
-  &lt;!-- Augmented UI for Cybernetic Framework Panels --&gt;
-  &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://unpkg.com/augmented-ui@2/augmented-ui.min.css&quot;&gt;
-
-  &lt;style&gt;
+&lt;meta charset=&quot;utf-8&quot;/&gt;
+&lt;title&gt;QamoMathCore // SCI-FI_NEXUS&lt;/title&gt;
+&lt;meta content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover&quot; name=&quot;viewport&quot;/&gt;
+&lt;meta content=&quot;yes&quot; name=&quot;apple-mobile-web-app-capable&quot;/&gt;
+&lt;meta content=&quot;black-translucent&quot; name=&quot;apple-mobile-web-app-status-bar-style&quot;/&gt;
+&lt;!-- Sci-Fi Fonts --&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;amp;family=Share+Tech+Mono&amp;amp;display=swap&quot; rel=&quot;stylesheet&quot;/&gt;
+&lt;!-- Augmented UI for Cybernetic Framework Panels --&gt;
+&lt;link href=&quot;https://unpkg.com/augmented-ui@2/augmented-ui.min.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
+&lt;style&gt;
     :root {
       --bg: #03020a;
       --panel-bg: rgba(5, 12, 28, 0.85);
@@ -8926,7 +8971,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     /* Canvas Arena */
     #canvas-container { flex: 1; position: relative; margin: 12px; --aug-border: 2px; --aug-border-bg: var(--neon-cyan); }
     #math-canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
-    
+
     .grid-scifi {
       background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 40px 40px; background-position: center center;
@@ -8954,160 +8999,111 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     @keyframes glitch { 0% { opacity: 0.3; } 100% { opacity: 1; } }
   &lt;/style&gt;
 &lt;!-- N8-ENHANCEMENTS:HEAD:START --&gt;
-  &lt;meta name=&quot;description&quot; content=&quot;Play QamoMathCore // SCI-FI_NEXUS, an interactive browser game from the N8 CyberDev collection.&quot;&gt;
-  &lt;meta name=&quot;keywords&quot; content=&quot;QamoMathCore // SCI-FI_NEXUS, Games &amp;amp; Simulations, N8 CyberDev, Qamelot, interactive web app, standalone HTML&quot;&gt;
-  &lt;meta name=&quot;author&quot; content=&quot;N8 CyberDev / Qamelot&quot;&gt;
-  &lt;meta name=&quot;creator&quot; content=&quot;N8 CyberDev&quot;&gt;
-  &lt;meta name=&quot;publisher&quot; content=&quot;Qamelot&quot;&gt;
-  &lt;meta name=&quot;robots&quot; content=&quot;index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1&quot;&gt;
-  &lt;meta name=&quot;referrer&quot; content=&quot;strict-origin-when-cross-origin&quot;&gt;
-  &lt;meta name=&quot;theme-color&quot; content=&quot;#070b14&quot;&gt;
-  &lt;meta name=&quot;color-scheme&quot; content=&quot;dark light&quot;&gt;
-  &lt;meta name=&quot;application-name&quot; content=&quot;N8 CyberDev&quot;&gt;
-  &lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;
-  &lt;meta name=&quot;n8-improvement-count&quot; content=&quot;80&quot;&gt;
-  &lt;meta name=&quot;n8-feature-count&quot; content=&quot;16&quot;&gt;
-  &lt;link rel=&quot;canonical&quot; href=&quot;https://qamotech.github.io/DevDashboard/qamomathcore-sci-fi-nexus.html&quot;&gt;
-  &lt;link rel=&quot;icon&quot; type=&quot;image/png&quot; sizes=&quot;128x128&quot; href=&quot;n8-icon.png&quot;&gt;
-  &lt;link rel=&quot;shortcut icon&quot; type=&quot;image/png&quot; href=&quot;n8-icon.png&quot;&gt;
-  &lt;link rel=&quot;apple-touch-icon&quot; href=&quot;n8-icon.png&quot;&gt;
-  &lt;link rel=&quot;manifest&quot; href=&quot;qamelot-media-assets/site.webmanifest&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;n8-tools-transformers.css&quot;&gt;
-  &lt;script defer src=&quot;n8-tools-transformers.js&quot;&gt;&lt;/script&gt;
-  &lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;
-  &lt;meta property=&quot;og:site_name&quot; content=&quot;N8 CyberDev&quot;&gt;
-  &lt;meta property=&quot;og:locale&quot; content=&quot;en_US&quot;&gt;
-  &lt;meta property=&quot;og:title&quot; content=&quot;QamoMathCore // SCI-FI_NEXUS&quot;&gt;
-  &lt;meta property=&quot;og:description&quot; content=&quot;Play QamoMathCore // SCI-FI_NEXUS, an interactive browser game from the N8 CyberDev collection.&quot;&gt;
-  &lt;meta property=&quot;og:url&quot; content=&quot;https://qamotech.github.io/DevDashboard/qamomathcore-sci-fi-nexus.html&quot;&gt;
-  &lt;meta name=&quot;twitter:card&quot; content=&quot;summary&quot;&gt;
-  &lt;meta name=&quot;twitter:title&quot; content=&quot;QamoMathCore // SCI-FI_NEXUS&quot;&gt;
-  &lt;meta name=&quot;twitter:description&quot; content=&quot;Play QamoMathCore // SCI-FI_NEXUS, an interactive browser game from the N8 CyberDev collection.&quot;&gt;
-  &lt;style id=&quot;n8x-styles&quot;&gt;
-    :root{--n8x-cyan:#66e7ff;--n8x-violet:#ae82ff;--n8x-ink:#f4fbff;--n8x-muted:#a8b7c8;--n8x-bg:rgba(5,10,18,.96);--n8x-line:rgba(102,231,255,.28);--n8x-shadow:0 18px 55px rgba(0,0,0,.55)}
-    #n8x-skip{position:fixed;left:12px;top:10px;z-index:2147483647;transform:translateY(-160%);padding:10px 14px;border-radius:9px;color:#031017;background:var(--n8x-cyan);font:800 13px/1.2 system-ui,sans-serif;text-decoration:none;transition:transform .18s}
-    #n8x-skip:focus{transform:none}
-    #n8x-shell,#n8x-shell *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif}
-    #n8x-shell{position:fixed;right:14px;bottom:14px;z-index:2147483000;color:var(--n8x-ink);line-height:1.4;touch-action:manipulation}
-    #n8x-shell[data-n8x-side=&quot;left&quot;]{left:14px;right:auto}
-    #n8x-dock{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:5px;max-width:250px;padding:6px;border:1px solid var(--n8x-line);border-radius:15px;background:var(--n8x-bg);box-shadow:var(--n8x-shadow);backdrop-filter:blur(18px) saturate(1.25);transition:.18s}
-    #n8x-shell:not([data-n8x-expanded=&quot;true&quot;]) .n8x-secondary{display:none}
-    #n8x-shell[data-n8x-hidden=&quot;true&quot;] #n8x-dock,#n8x-shell[data-n8x-hidden=&quot;true&quot;] #n8x-panel{display:none}
-    #n8x-restore{display:none;place-items:center;width:34px;height:44px;border:1px solid var(--n8x-line);border-right:0;border-radius:12px 0 0 12px;color:var(--n8x-cyan);background:var(--n8x-bg);box-shadow:var(--n8x-shadow);font:900 10px/1 ui-monospace,monospace;letter-spacing:-.04em;cursor:pointer}
-    #n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-restore{border:1px solid var(--n8x-line);border-left:0;border-radius:0 12px 12px 0}
-    #n8x-shell[data-n8x-hidden=&quot;true&quot;] #n8x-restore{display:grid}
-    .n8x-btn,.n8x-link{min-width:42px;min-height:42px;display:grid;place-items:center;border:1px solid transparent;border-radius:11px;padding:7px;color:var(--n8x-ink);background:transparent;text-decoration:none;cursor:pointer;font-size:18px;line-height:1;transition:background .18s,border-color .18s,transform .18s}
-    .n8x-btn:hover,.n8x-btn:focus-visible,.n8x-link:hover,.n8x-link:focus-visible{outline:0;border-color:var(--n8x-line);background:rgba(102,231,255,.12);transform:translateY(-2px)}
-    .n8x-primary{color:#041017;background:linear-gradient(135deg,var(--n8x-cyan),#a8f3ff)}
-    #n8x-progress{position:fixed;left:0;top:0;z-index:2147483646;width:0;height:3px;background:linear-gradient(90deg,var(--n8x-cyan),var(--n8x-violet));box-shadow:0 0 12px var(--n8x-cyan);pointer-events:none}
-    #n8x-panel{position:fixed;right:14px;bottom:70px;width:min(400px,calc(100vw - 28px));max-height:min(620px,calc(100vh - 96px));display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;border:1px solid var(--n8x-line);border-radius:18px;background:var(--n8x-bg);box-shadow:var(--n8x-shadow);backdrop-filter:blur(22px) saturate(1.3);overflow:hidden;opacity:0;transform:translateY(18px) scale(.98);pointer-events:none;transition:.2s}
-    #n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-panel{left:14px;right:auto}
-    #n8x-panel[aria-hidden=&quot;false&quot;]{opacity:1;transform:none;pointer-events:auto}
-    .n8x-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 17px 12px}.n8x-head strong{font-size:14px;letter-spacing:.08em;text-transform:uppercase}.n8x-head small{display:block;margin-top:3px;color:var(--n8x-muted);font-size:11px}
-    #n8x-search{width:calc(100% - 28px);min-height:44px;margin:0 14px 10px;border:1px solid var(--n8x-line);border-radius:11px;padding:0 13px;color:var(--n8x-ink);background:rgba(255,255,255,.055);font-size:14px;outline:0}#n8x-search:focus{border-color:var(--n8x-cyan);box-shadow:0 0 0 3px rgba(102,231,255,.1)}
-    #n8x-list{overflow:auto;padding:4px 10px 12px;scrollbar-width:thin}.n8x-page{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;min-height:51px;padding:7px;border-radius:11px;color:var(--n8x-ink);text-decoration:none}.n8x-page:hover,.n8x-page:focus-visible{outline:0;background:rgba(102,231,255,.1)}.n8x-num{display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--n8x-line);border-radius:9px;color:var(--n8x-cyan);font:800 10px/1 ui-monospace,monospace}.n8x-copy{min-width:0}.n8x-copy b,.n8x-copy span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.n8x-copy b{font-size:12px}.n8x-copy span{color:var(--n8x-muted);font-size:9px}.n8x-arrow{color:var(--n8x-muted)}
-    .n8x-foot{display:flex;justify-content:space-between;gap:10px;padding:11px 15px;border-top:1px solid var(--n8x-line);color:var(--n8x-muted);font-size:10px}.n8x-empty{padding:28px 14px;text-align:center;color:var(--n8x-muted);font-size:12px}
-    #n8x-toast{position:fixed;left:50%;bottom:78px;z-index:2147483647;max-width:calc(100vw - 28px);transform:translate(-50%,18px);padding:10px 14px;border:1px solid var(--n8x-line);border-radius:10px;color:var(--n8x-ink);background:var(--n8x-bg);box-shadow:var(--n8x-shadow);font:700 12px/1.3 system-ui,sans-serif;opacity:0;pointer-events:none;transition:.2s}#n8x-toast.n8x-show{opacity:1;transform:translate(-50%,0)}
-    html[data-n8x-calm=&quot;true&quot;] body&gt;*:not(#n8x-shell):not(#n8x-progress):not(#n8x-toast):not(#n8x-skip){filter:saturate(.72) brightness(.86)}
-    html[data-n8x-calm=&quot;true&quot;]{scroll-behavior:auto!important}
-    :focus-visible{outline:2px solid var(--n8x-cyan,#66e7ff);outline-offset:3px}
-    @media(max-width:620px){#n8x-shell{right:0;bottom:max(8px,env(safe-area-inset-bottom))}#n8x-shell[data-n8x-side=&quot;left&quot;]{left:0;right:auto}#n8x-dock{display:grid;grid-template-columns:36px;gap:3px;max-width:none;padding:4px;border-radius:14px 0 0 14px}#n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-dock{border-radius:0 14px 14px 0}#n8x-shell[data-n8x-expanded=&quot;true&quot;] #n8x-dock{grid-template-columns:repeat(2,36px)}.n8x-btn,.n8x-link{min-width:36px;min-height:36px;padding:5px;font-size:15px}#n8x-panel{right:46px;bottom:0;width:min(360px,calc(100vw - 54px));max-height:min(560px,calc(100dvh - 16px));border-radius:16px}#n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-panel{left:46px;right:auto}.n8x-head{padding:12px 13px 9px}#n8x-search{width:calc(100% - 20px);min-height:40px;margin:0 10px 7px}#n8x-list{padding:3px 7px 9px}.n8x-page{grid-template-columns:31px 1fr auto;gap:7px;min-height:44px;padding:5px}.n8x-num{width:28px;height:28px}.n8x-foot{padding:8px 11px}.n8x-foot span:last-child{display:none}}
-    @media(max-width:380px){#n8x-panel{width:calc(100vw - 50px);right:42px}#n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-panel{left:42px;right:auto}.n8x-copy span{display:none}}
-    @media(prefers-reduced-motion:reduce){#n8x-shell *,#n8x-skip,#n8x-toast{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-    @media print{#n8x-shell,#n8x-progress,#n8x-toast,#n8x-skip{display:none!important}}
-  &lt;/style&gt;
-  &lt;!-- N8-ENHANCEMENTS:HEAD:END --&gt;
+&lt;meta content=&quot;Play QamoMathCore // SCI-FI_NEXUS, an interactive browser game from the N8 CyberDev collection.&quot; name=&quot;description&quot;/&gt;
+&lt;meta content=&quot;QamoMathCore // SCI-FI_NEXUS, Games &amp;amp; Simulations, N8 CyberDev, Qamelot, interactive web app, standalone HTML&quot; name=&quot;keywords&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev / Qamelot&quot; name=&quot;author&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev&quot; name=&quot;creator&quot;/&gt;
+&lt;meta content=&quot;Qamelot&quot; name=&quot;publisher&quot;/&gt;
+&lt;meta content=&quot;index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1&quot; name=&quot;robots&quot;/&gt;
+&lt;meta content=&quot;strict-origin-when-cross-origin&quot; name=&quot;referrer&quot;/&gt;
+&lt;meta content=&quot;#070b14&quot; name=&quot;theme-color&quot;/&gt;
+&lt;meta content=&quot;dark light&quot; name=&quot;color-scheme&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev&quot; name=&quot;application-name&quot;/&gt;
+&lt;meta content=&quot;telephone=no&quot; name=&quot;format-detection&quot;/&gt;
+&lt;meta content=&quot;80&quot; name=&quot;n8-improvement-count&quot;/&gt;
+&lt;meta content=&quot;16&quot; name=&quot;n8-feature-count&quot;/&gt;
+&lt;link href=&quot;https://qamotech.github.io/DevDashboard/qamomathcore-sci-fi-nexus.html&quot; rel=&quot;canonical&quot;/&gt;
+&lt;link href=&quot;n8-icon.png&quot; rel=&quot;icon&quot; sizes=&quot;128x128&quot; type=&quot;image/png&quot;/&gt;
+&lt;link href=&quot;n8-icon.png&quot; rel=&quot;shortcut icon&quot; type=&quot;image/png&quot;/&gt;
+&lt;link href=&quot;n8-icon.png&quot; rel=&quot;apple-touch-icon&quot;/&gt;
+&lt;link href=&quot;qamelot-media-assets/site.webmanifest&quot; rel=&quot;manifest&quot;/&gt;
+&lt;link href=&quot;n8-tools-transformers.css&quot; rel=&quot;stylesheet&quot;/&gt;
+&lt;script defer=&quot;&quot; src=&quot;n8-tools-transformers.js&quot;&gt;&lt;/script&gt;
+&lt;meta content=&quot;website&quot; property=&quot;og:type&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev&quot; property=&quot;og:site_name&quot;/&gt;
+&lt;meta content=&quot;en_US&quot; property=&quot;og:locale&quot;/&gt;
+&lt;meta content=&quot;QamoMathCore // SCI-FI_NEXUS&quot; property=&quot;og:title&quot;/&gt;
+&lt;meta content=&quot;Play QamoMathCore // SCI-FI_NEXUS, an interactive browser game from the N8 CyberDev collection.&quot; property=&quot;og:description&quot;/&gt;
+&lt;meta content=&quot;https://qamotech.github.io/DevDashboard/qamomathcore-sci-fi-nexus.html&quot; property=&quot;og:url&quot;/&gt;
+&lt;meta content=&quot;summary&quot; name=&quot;twitter:card&quot;/&gt;
+&lt;meta content=&quot;QamoMathCore // SCI-FI_NEXUS&quot; name=&quot;twitter:title&quot;/&gt;
+&lt;meta content=&quot;Play QamoMathCore // SCI-FI_NEXUS, an interactive browser game from the N8 CyberDev collection.&quot; name=&quot;twitter:description&quot;/&gt;
+
+&lt;!-- N8-ENHANCEMENTS:HEAD:END --&gt;
 &lt;/head&gt;
 &lt;body&gt;
-
-  &lt;input type=&quot;text&quot; id=&quot;text-input&quot; placeholder=&quot;INPUT COMMAND DATA...&quot; autocomplete=&quot;off&quot;&gt;
-
-  &lt;!-- HUD TERMINAL FRAMEWORK --&gt;
-  &lt;header id=&quot;sys-header&quot;&gt;
-    &lt;h1&gt;QAMOMATH // CORE_NEXUS&lt;/h1&gt;
-    &lt;div style=&quot;display: flex; gap: 10px; align-items: center;&quot;&gt;
-      &lt;button id=&quot;btn-theme&quot; class=&quot;cyber-btn&quot; style=&quot;width: 130px;&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;THEME_TOGGLE&lt;/button&gt;
-      &lt;div id=&quot;status-display&quot; style=&quot;color: var(--gold); font-weight: bold; font-size: 0.85rem;&quot;&gt;[COMMS_STANDBY]&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/header&gt;
-
-  &lt;div id=&quot;main-deck&quot;&gt;
-    
-    &lt;!-- PRIMARY INTERFACE OVERLAYS (TOOLS) --&gt;
-    &lt;aside class=&quot;cyber-panel left-panel&quot; data-augmented-ui=&quot;br-clip r-clip-y exe&quot;&gt;
-      &lt;div class=&quot;control-label&quot;&gt;MATRICES&lt;/div&gt;
-      &lt;button class=&quot;cyber-btn active&quot; data-tool=&quot;pen&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;PEN&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;highlighter&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;GLOW&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;laser&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;LASER&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;text&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;TEXT&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;eraser&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;ERASE&lt;/button&gt;
-      
-      &lt;div class=&quot;control-label&quot; style=&quot;margin-top: 8px;&quot;&gt;GEOMETRY&lt;/div&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;line&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;LINE&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;rect&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;BOX&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;circle&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;RING&lt;/button&gt;
-      &lt;button class=&quot;cyber-btn&quot; data-tool=&quot;triangle&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;DELTA&lt;/button&gt;
-    &lt;/aside&gt;
-
-    &lt;!-- CORE INTERACTIVE ENGINE AREA --&gt;
-    &lt;main id=&quot;canvas-container&quot; class=&quot;grid-scifi&quot; data-augmented-ui=&quot;tl-clip tr-clip br-clip bl-clip exe&quot;&gt;
-      &lt;div id=&quot;sym-axis&quot; class=&quot;symmetry-line&quot;&gt;&lt;/div&gt;
-      &lt;canvas id=&quot;math-canvas&quot;&gt;&lt;/canvas&gt;
-    &lt;/main&gt;
-
-    &lt;!-- CRITICAL UTILITIES &amp; COMMS HARDWARE --&gt;
-    &lt;aside class=&quot;cyber-panel right-panel&quot; data-augmented-ui=&quot;bl-clip l-clip-y exe&quot;&gt;
-      
-      &lt;div class=&quot;panel-section&quot;&gt;
-        &lt;!-- COMM_01: Walkie Talkie Voice Uplink Matrix --&gt;
-        &lt;div class=&quot;control-label&quot;&gt;VOICE_COMMS_UPLINK&lt;/div&gt;
-        &lt;button id=&quot;btn-comms&quot; class=&quot;cyber-btn comms-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;HOLD TO TALK&lt;/button&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&quot;panel-section&quot;&gt;
-        &lt;div class=&quot;control-label&quot;&gt;CYBER_HUE_PICKER&lt;/div&gt;
-        &lt;input type=&quot;color&quot; id=&quot;color-picker&quot; value=&quot;#00f3ff&quot;&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&quot;panel-section&quot;&gt;
-        &lt;div class=&quot;control-label&quot;&gt;VECTOR_BEAM_WEIGHT&lt;/div&gt;
-        &lt;input type=&quot;range&quot; id=&quot;brush-size&quot; min=&quot;1&quot; max=&quot;50&quot; value=&quot;4&quot;&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&quot;panel-section&quot;&gt;
-        &lt;button id=&quot;btn-symmetry&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;MIRROR_FIELD: OFF&lt;/button&gt;
-      &lt;/div&gt;
-
-      &lt;div class=&quot;panel-section&quot;&gt;
-        &lt;div class=&quot;control-label&quot;&gt;BOARD_ARRAY&lt;/div&gt;
-        &lt;div style=&quot;display: flex; gap: 4px;&quot;&gt;
-          &lt;button id=&quot;btn-prev&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;&amp;lt;&lt;/button&gt;
-          &lt;button id=&quot;page-display&quot; class=&quot;cyber-btn&quot; style=&quot;flex:1; pointer-events:none;&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;1/1&lt;/button&gt;
-          &lt;button id=&quot;btn-next&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;&amp;gt;&lt;/button&gt;
-          &lt;button id=&quot;btn-add&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;+&lt;/button&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div style=&quot;flex:1;&quot;&gt;&lt;/div&gt;
-
-      &lt;div class=&quot;panel-section&quot;&gt;
-        &lt;div style=&quot;display: flex; gap: 4px;&quot;&gt;
-          &lt;button id=&quot;btn-undo&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;UNDO&lt;/button&gt;
-          &lt;button id=&quot;btn-redo&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;REDO&lt;/button&gt;
-        &lt;/div&gt;
-        &lt;button id=&quot;btn-export&quot; class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;DOWNLOAD_MATRIX&lt;/button&gt;
-        &lt;button id=&quot;btn-clear&quot; class=&quot;cyber-btn danger&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;WIPE_CORE&lt;/button&gt;
-        &lt;button id=&quot;btn-reset&quot; class=&quot;cyber-btn danger&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;HARD_RESET&lt;/button&gt;
-      &lt;/div&gt;
-
-      &lt;div id=&quot;terminal-log&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot;&gt;
-        &lt;div class=&quot;log-entry&quot;&gt;&gt; MATRIX INITIALIZED.&lt;/div&gt;
-      &lt;/div&gt;
-
-    &lt;/aside&gt;
-  &lt;/div&gt;
-
-  &lt;script&gt;
+&lt;input autocomplete=&quot;off&quot; id=&quot;text-input&quot; placeholder=&quot;INPUT COMMAND DATA...&quot; type=&quot;text&quot;/&gt;
+&lt;!-- HUD TERMINAL FRAMEWORK --&gt;
+&lt;header id=&quot;sys-header&quot;&gt;
+&lt;h1&gt;QAMOMATH // CORE_NEXUS&lt;/h1&gt;
+&lt;div style=&quot;display: flex; gap: 10px; align-items: center;&quot;&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-theme&quot; style=&quot;width: 130px;&quot;&gt;THEME_TOGGLE&lt;/button&gt;
+&lt;div id=&quot;status-display&quot; style=&quot;color: var(--gold); font-weight: bold; font-size: 0.85rem;&quot;&gt;[COMMS_STANDBY]&lt;/div&gt;
+&lt;/div&gt;
+&lt;/header&gt;
+&lt;div id=&quot;main-deck&quot;&gt;
+&lt;!-- PRIMARY INTERFACE OVERLAYS (TOOLS) --&gt;
+&lt;aside class=&quot;cyber-panel left-panel&quot; data-augmented-ui=&quot;br-clip r-clip-y exe&quot;&gt;
+&lt;div class=&quot;control-label&quot;&gt;MATRICES&lt;/div&gt;
+&lt;button class=&quot;cyber-btn active&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;pen&quot;&gt;PEN&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;highlighter&quot;&gt;GLOW&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;laser&quot;&gt;LASER&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;text&quot;&gt;TEXT&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;eraser&quot;&gt;ERASE&lt;/button&gt;
+&lt;div class=&quot;control-label&quot; style=&quot;margin-top: 8px;&quot;&gt;GEOMETRY&lt;/div&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;line&quot;&gt;LINE&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;rect&quot;&gt;BOX&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;circle&quot;&gt;RING&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; data-tool=&quot;triangle&quot;&gt;DELTA&lt;/button&gt;
+&lt;/aside&gt;
+&lt;!-- CORE INTERACTIVE ENGINE AREA --&gt;
+&lt;main class=&quot;grid-scifi&quot; data-augmented-ui=&quot;tl-clip tr-clip br-clip bl-clip exe&quot; id=&quot;canvas-container&quot;&gt;
+&lt;div class=&quot;symmetry-line&quot; id=&quot;sym-axis&quot;&gt;&lt;/div&gt;
+&lt;canvas id=&quot;math-canvas&quot;&gt;&lt;/canvas&gt;
+&lt;/main&gt;
+&lt;!-- CRITICAL UTILITIES &amp; COMMS HARDWARE --&gt;
+&lt;aside class=&quot;cyber-panel right-panel&quot; data-augmented-ui=&quot;bl-clip l-clip-y exe&quot;&gt;
+&lt;div class=&quot;panel-section&quot;&gt;
+&lt;!-- COMM_01: Walkie Talkie Voice Uplink Matrix --&gt;
+&lt;div class=&quot;control-label&quot;&gt;VOICE_COMMS_UPLINK&lt;/div&gt;
+&lt;button class=&quot;cyber-btn comms-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-comms&quot;&gt;HOLD TO TALK&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;panel-section&quot;&gt;
+&lt;div class=&quot;control-label&quot;&gt;CYBER_HUE_PICKER&lt;/div&gt;
+&lt;input id=&quot;color-picker&quot; type=&quot;color&quot; value=&quot;#00f3ff&quot;/&gt;
+&lt;/div&gt;
+&lt;div class=&quot;panel-section&quot;&gt;
+&lt;div class=&quot;control-label&quot;&gt;VECTOR_BEAM_WEIGHT&lt;/div&gt;
+&lt;input id=&quot;brush-size&quot; max=&quot;50&quot; min=&quot;1&quot; type=&quot;range&quot; value=&quot;4&quot;/&gt;
+&lt;/div&gt;
+&lt;div class=&quot;panel-section&quot;&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-symmetry&quot;&gt;MIRROR_FIELD: OFF&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;panel-section&quot;&gt;
+&lt;div class=&quot;control-label&quot;&gt;BOARD_ARRAY&lt;/div&gt;
+&lt;div style=&quot;display: flex; gap: 4px;&quot;&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-prev&quot;&gt;&amp;lt;&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;page-display&quot; style=&quot;flex:1; pointer-events:none;&quot;&gt;1/1&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-next&quot;&gt;&amp;gt;&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-add&quot;&gt;+&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div style=&quot;flex:1;&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;panel-section&quot;&gt;
+&lt;div style=&quot;display: flex; gap: 4px;&quot;&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-undo&quot;&gt;UNDO&lt;/button&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-redo&quot;&gt;REDO&lt;/button&gt;
+&lt;/div&gt;
+&lt;button class=&quot;cyber-btn&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-export&quot;&gt;DOWNLOAD_MATRIX&lt;/button&gt;
+&lt;button class=&quot;cyber-btn danger&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-clear&quot;&gt;WIPE_CORE&lt;/button&gt;
+&lt;button class=&quot;cyber-btn danger&quot; data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;btn-reset&quot;&gt;HARD_RESET&lt;/button&gt;
+&lt;/div&gt;
+&lt;div data-augmented-ui=&quot;tl-clip br-clip exe&quot; id=&quot;terminal-log&quot;&gt;
+&lt;div class=&quot;log-entry&quot;&gt;&amp;gt; MATRIX INITIALIZED.&lt;/div&gt;
+&lt;/div&gt;
+&lt;/aside&gt;
+&lt;/div&gt;
+&lt;script&gt;
     /* ==========================================================
        QAMOMATH VECTORS &amp; LOGIC PROCESSING CORE
        ========================================================== */
@@ -9160,7 +9156,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         const audioBlob = new Blob(voiceChunks, { type: &#x27;audio/webm&#x27; });
         voiceChunks = [];
         sysLog(&quot;TRANSMISSION_COMPILING&quot;);
-        
+
         // Convert to Base64 to safely bridge across Google Apps Script
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
@@ -9220,14 +9216,14 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
       try {
         const res = await fetch(`${DB_URL}?action=getCommsPayload&amp;boardId=${BOARD_ID}`);
         const payload = await res.json();
-        
+
         // Handle incoming Voice transmission data
         if(payload.audioTransmission) {
           sysLog(&quot;RECEIVING_TRANS_BURST&quot;);
           const audioCtl = new Audio(&quot;data:audio/webm;base64,&quot; + payload.audioTransmission);
           audioCtl.play().catch(() =&gt; {});
         }
-        
+
         // Handle vector whiteboard updates
         if(payload.timestamp &amp;&amp; payload.timestamp !== lastSyncTimestamp) {
           lastSyncTimestamp = payload.timestamp;
@@ -9297,7 +9293,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
       req.onsuccess = async () =&gt; {
         const structuralItems = req.result.filter(i =&gt; i.needsSync);
         if(structuralItems.length === 0) return;
-        
+
         for (let item of structuralItems) {
           try {
             await fetch(DB_URL, {
@@ -9327,10 +9323,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     function redrawCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const activePaths = state.pages[state.currentPage] || [];
-      
+
       activePaths.forEach(path =&gt; {
         if(path.points.length === 0 &amp;&amp; !path.text) return;
-        
+
         ctx.lineCap = &#x27;round&#x27;; ctx.lineJoin = &#x27;round&#x27;;
         ctx.strokeStyle = path.color; ctx.fillStyle = path.color; ctx.lineWidth = path.size;
         ctx.globalCompositeOperation = &#x27;source-over&#x27;;
@@ -9359,7 +9355,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
           ctx.beginPath();
           const p1 = points[0];
           const pEnd = points[points.length - 1];
-          
+
           let sX = mirror ? canvas.width - p1.x : p1.x;
           let eX = mirror ? canvas.width - pEnd.x : pEnd.x;
 
@@ -9554,7 +9550,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
       tCtx.fillStyle = document.documentElement.classList.contains(&#x27;light-mode&#x27;) ? &#x27;#f0f4f8&#x27; : &#x27;#03020a&#x27;;
       tCtx.fillRect(0, 0, snapshotCanvas.width, snapshotCanvas.height);
       tCtx.drawImage(canvas, 0, 0);
-      
+
       const beamLink = document.createElement(&#x27;a&#x27;);
       beamLink.download = `QAMOMATH_DATA_BURST_${Date.now()}.png`;
       beamLink.href = snapshotCanvas.toDataURL();
@@ -9565,75 +9561,27 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     setTimeout(() =&gt; { initCanvasDimensions(); sysLog(&quot;QAMOMATH CORE RUNTIME ONLINE.&quot;); }, 300);
   &lt;/script&gt;
 &lt;!-- N8-ENHANCEMENTS:BODY:START --&gt;
-  &lt;a id=&quot;n8x-skip&quot; href=&quot;#n8x-content&quot;&gt;Skip to page content&lt;/a&gt;
-  &lt;div id=&quot;n8x-progress&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-  &lt;div id=&quot;n8x-content&quot; tabindex=&quot;-1&quot;&gt;&lt;/div&gt;
-  &lt;aside id=&quot;n8x-shell&quot; aria-label=&quot;N8 CyberDev navigation&quot;&gt;
-    &lt;section id=&quot;n8x-panel&quot; aria-hidden=&quot;true&quot; aria-label=&quot;All Qamelot pages&quot;&gt;
-      &lt;div class=&quot;n8x-head&quot;&gt;&lt;div&gt;&lt;strong&gt;Qamelot Menu&lt;/strong&gt;&lt;small&gt;Search every live N8 experience&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-close&quot; type=&quot;button&quot; aria-label=&quot;Close menu&quot;&gt;×&lt;/button&gt;&lt;/div&gt;
-      &lt;label for=&quot;n8x-search&quot; style=&quot;position:absolute;clip:rect(0 0 0 0)&quot;&gt;Search pages&lt;/label&gt;&lt;input id=&quot;n8x-search&quot; type=&quot;search&quot; placeholder=&quot;Search tools, games, studios…&quot; autocomplete=&quot;off&quot; spellcheck=&quot;false&quot;&gt;
-      &lt;nav id=&quot;n8x-list&quot; aria-label=&quot;Every Qamelot page&quot;&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;acai-adaptive-cyber-analysis-interface.html&quot; data-search=&quot;acai // adaptive cyber analysis interface acai-adaptive-cyber-analysis-interface.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;01&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;ACAI // Adaptive Cyber Analysis Interface&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · acai-adaptive-cyber-analysis-interface.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8AHub.html&quot; data-search=&quot;n8 asset hub n8ahub.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;02&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 Asset Hub&lt;/b&gt;&lt;span&gt;Developer Studios · n8AHub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8AHubPrime.html&quot; data-search=&quot;n8 asset hub prime n8ahubprime.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 Asset Hub Prime&lt;/b&gt;&lt;span&gt;Developer Studios · n8AHubPrime.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;who-road-convo-lab.html&quot; data-search=&quot;who//road — neon conversation lab who-road-convo-lab.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;04&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;WHO//ROAD — Neon Conversation Lab&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · who-road-convo-lab.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;blood-and-gold-panther-arena.html&quot; data-search=&quot;blood &amp;amp; gold: panther arena blood-and-gold-panther-arena.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;05&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Blood &amp;amp; Gold: Panther Arena&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · blood-and-gold-panther-arena.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;cyber-count-calcun8r-edison-hwy.html&quot; data-search=&quot;cyber-count calcun8r // edison hwy cyber-count-calcun8r-edison-hwy.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;06&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;CYBER-COUNT CALCUN8R // EDISON HWY&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · cyber-count-calcun8r-edison-hwy.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;social-footer.html&quot; data-search=&quot;social footer social-footer.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;07&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Social Footer&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · social-footer.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;cyber-data-multi-team-logistics-engine.html&quot; data-search=&quot;cyber-data // multi-team logistics engine cyber-data-multi-team-logistics-engine.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;08&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;CYBER-DATA // MULTI-TEAM LOGISTICS ENGINE&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · cyber-data-multi-team-logistics-engine.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;contractor-tool-belt-tactical-utility-engine.html&quot; data-search=&quot;contractor tool belt - tactical utility engine contractor-tool-belt-tactical-utility-engine.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Contractor Tool Belt - Tactical Utility Engine&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · contractor-tool-belt-tactical-utility-engine.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qtd-courage-under-fire.html&quot; data-search=&quot;qamelot tower defense: courage under fire qtd-courage-under-fire.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Tower Defense: Courage Under Fire&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · qtd-courage-under-fire.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;css-visuals-library-40.html&quot; data-search=&quot;css visuals library (40) css-visuals-library-40.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;11&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;CSS Visuals Library (40)&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · css-visuals-library-40.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdashboard-hub.html&quot; data-search=&quot;devdashboard hub devdashboard-hub.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDashboard Hub&lt;/b&gt;&lt;span&gt;Developer Studios · devdashboard-hub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;blob-bash-royale.html&quot; data-search=&quot;blob bash royale: ascension blob-bash-royale.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Blob Bash Royale: Ascension&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · blob-bash-royale.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;web-app-dev-dashboard.html&quot; data-search=&quot;⚡ web app dev dashboard web-app-dev-dashboard.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;14&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;⚡ Web App Dev Dashboard&lt;/b&gt;&lt;span&gt;Developer Studios · web-app-dev-dashboard.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8AnimHub.html&quot; data-search=&quot;🪃 n8 animation hub n8animhub.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;🪃 N8 Animation Hub&lt;/b&gt;&lt;span&gt;Developer Studios · n8AnimHub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;MiyagiThrow.html&quot; data-search=&quot;🥷🏾 miyagi throw! miyagithrow.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;🥷🏾 Miyagi Throw!&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · MiyagiThrow.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;push-complete.html&quot; data-search=&quot;push complete push-complete.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Push Complete&lt;/b&gt;&lt;span&gt;Developer Studios · push-complete.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-conquest-super-arcade-edition.html&quot; data-search=&quot;qamelot conquest: super arcade edition qamelot-conquest-super-arcade-edition.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Conquest: Super Arcade Edition&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · qamelot-conquest-super-arcade-edition.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdash-svg-studio.html&quot; data-search=&quot;devdash svg studio devdash-svg-studio.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDash SVG Studio&lt;/b&gt;&lt;span&gt;Developer Studios · devdash-svg-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;svg-sandbox-studio.html&quot; data-search=&quot;svg sandbox studio svg-sandbox-studio.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;SVG Sandbox Studio&lt;/b&gt;&lt;span&gt;Developer Studios · svg-sandbox-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;ecotechcomm-secure-ptt-link.html&quot; data-search=&quot;ecotechcomm // secure ptt link ecotechcomm-secure-ptt-link.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;22&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;EcoTechComm // Secure PTT Link&lt;/b&gt;&lt;span&gt;Featured Sites · ecotechcomm-secure-ptt-link.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;ecotechcomm-secure-frequency.html&quot; data-search=&quot;ecotechcomm | secure frequency ecotechcomm-secure-frequency.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;23&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;EcoTechComm | Secure Frequency&lt;/b&gt;&lt;span&gt;Featured Sites · ecotechcomm-secure-frequency.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdashboard-home.html&quot; data-search=&quot;devdashboard home devdashboard-home.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDashboard Home&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · devdashboard-home.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;homehub.html&quot; data-search=&quot;homehub — command your day. build your future. homehub.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;HomeHub — Command Your Day. Build Your Future.&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · homehub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;games/n8-shift.html&quot; data-search=&quot;n8 shift: transform protocol games/n8-shift.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;26&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 SHIFT: Transform Protocol&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · games/n8-shift.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;lattice-a-the-ai-context-lab.html&quot; data-search=&quot;lattice — the ai context lab lattice-a-the-ai-context-lab.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Lattice — The AI Context Lab&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · lattice-a-the-ai-context-lab.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;loc-me-in-llc.html&quot; data-search=&quot;loc me in | premium braids &amp;amp; locs artistry edgewood loc-me-in-llc.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;29&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Loc Me In | Premium Braids &amp;amp; Locs Artistry Edgewood&lt;/b&gt;&lt;span&gt;Featured Sites · loc-me-in-llc.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;eco-tech-motion-library.html&quot; data-search=&quot;eco-tech motion library eco-tech-motion-library.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Eco-Tech Motion Library&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · eco-tech-motion-library.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8Prompt.html&quot; data-search=&quot;build//50 — ai webbuilding prompt deck n8prompt.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;31&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;BUILD//50 — AI Webbuilding Prompt Deck&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · n8Prompt.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;neon-pong.html&quot; data-search=&quot;neon pong neon-pong.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Neon Pong&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · neon-pong.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;new-perspective-painting-llc.html&quot; data-search=&quot;new perspective painting llc new-perspective-painting-llc.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;33&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;New Perspective Painting LLC&lt;/b&gt;&lt;span&gt;Featured Sites · new-perspective-painting-llc.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;pulse-productivity-and-biorhythm-studio.html&quot; data-search=&quot;pulse // productivity &amp;amp; biorhythm studio pulse-productivity-and-biorhythm-studio.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;34&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Pulse // Productivity &amp;amp; Biorhythm Studio&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · pulse-productivity-and-biorhythm-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;index.html&quot; data-search=&quot;qamelot menu — every webpage index.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;35&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Menu — Every Webpage&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · index.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;tri-nexus-grail-matrix.html&quot; data-search=&quot;tri-nexus: grail matrix tri-nexus-grail-matrix.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;37&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;TRI-NEXUS: GRAIL MATRIX&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · tri-nexus-grail-matrix.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamomathcore-sci-fi-nexus.html&quot; data-search=&quot;qamomathcore // sci-fi_nexus qamomathcore-sci-fi-nexus.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;QamoMathCore // SCI-FI_NEXUS&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · qamomathcore-sci-fi-nexus.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-math-core.html&quot; data-search=&quot;qamelot // math_core qamelot-math-core.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;39&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;QAMELOT // MATH_CORE&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · qamelot-math-core.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-media-1.html&quot; data-search=&quot;qamelot media component qamelot-media-1.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Media Component&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · qamelot-media-1.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-media-2.html&quot; data-search=&quot;qamelot media component qamelot-media-2.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;41&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Media Component&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · qamelot-media-2.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-media-3.html&quot; data-search=&quot;qamelot media - forward flick edition qamelot-media-3.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Media - Forward Flick Edition&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · qamelot-media-3.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;screensaver.html&quot; data-search=&quot;interactive nebula screensaver screensaver.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;43&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Interactive Nebula Screensaver&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · screensaver.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;spriteforge-studio.html&quot; data-search=&quot;spriteforge studio spriteforge-studio.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;SpriteForge Studio&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · spriteforge-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;stix-stax-stonz.html&quot; data-search=&quot;stix stax stonz: cyber camelot stix-stax-stonz.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;45&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Stix Stax Stonz: Cyber Camelot&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · stix-stax-stonz.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;task-forge.html&quot; data-search=&quot;task forge task-forge.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;46&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Task Forge&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · task-forge.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8-tools.html&quot; data-search=&quot;n8 tools — your browser workbench n8-tools.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;47&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 Tools — Your browser workbench&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · n8-tools.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdashboard-hub-index.html&quot; data-search=&quot;devdashboard hub devdashboard-hub-index.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;48&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDashboard Hub&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · devdashboard-hub-index.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;funPromptz.html&quot; data-search=&quot;funpromptz — creative media prompt arcade funpromptz.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;49&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;funPromptz — Creative Media Prompt Arcade&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · funPromptz.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;masterPrompt.html&quot; data-search=&quot;masterprompt — animated ai webbuilding command deck masterprompt.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;masterPrompt — Animated AI Webbuilding Command Deck&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · masterPrompt.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;QamelotMenu.html&quot; data-search=&quot;qamelot menu — compatibility directory qamelotmenu.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;51&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Menu — Compatibility Directory&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · QamelotMenu.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;/nav&gt;
-      &lt;div class=&quot;n8x-foot&quot;&gt;&lt;span id=&quot;n8x-count&quot;&gt;48 pages&lt;/span&gt;&lt;span&gt;/ search · Esc close · Alt+M menu&lt;/span&gt;&lt;/div&gt;
-    &lt;/section&gt;
-    &lt;nav id=&quot;n8x-dock&quot; aria-label=&quot;Quick page controls&quot;&gt;
-      &lt;a class=&quot;n8x-link n8x-primary&quot; href=&quot;index.html&quot; aria-label=&quot;Open Qamelot home&quot; title=&quot;Home (Alt+H)&quot;&gt;⌂&lt;/a&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-open&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;n8x-panel&quot; aria-label=&quot;Browse every page&quot; title=&quot;All pages (Alt+M)&quot;&gt;☰&lt;/button&gt;
-      &lt;a class=&quot;n8x-link n8x-secondary&quot; href=&quot;tri-nexus-grail-matrix.html&quot; aria-label=&quot;Previous page: TRI-NEXUS: GRAIL MATRIX&quot; title=&quot;Previous page&quot;&gt;←&lt;/a&gt;
-      &lt;a class=&quot;n8x-link n8x-secondary&quot; href=&quot;qamelot-math-core.html&quot; aria-label=&quot;Next page: QAMELOT // MATH_CORE&quot; title=&quot;Next page&quot;&gt;→&lt;/a&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-random&quot; type=&quot;button&quot; aria-label=&quot;Open a random page&quot; title=&quot;Random page (Alt+R)&quot;&gt;⚄&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-share&quot; type=&quot;button&quot; aria-label=&quot;Share or copy this page link&quot; title=&quot;Share page&quot;&gt;↗&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-calm&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot; aria-label=&quot;Toggle calm viewing mode&quot; title=&quot;Calm mode&quot;&gt;◐&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-full&quot; type=&quot;button&quot; aria-label=&quot;Toggle fullscreen&quot; title=&quot;Fullscreen&quot;&gt;⛶&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-top&quot; type=&quot;button&quot; aria-label=&quot;Back to top&quot; title=&quot;Back to top&quot;&gt;↑&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-more&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-label=&quot;Show more controls&quot; title=&quot;More controls&quot;&gt;•••&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-move&quot; type=&quot;button&quot; aria-label=&quot;Move controls to the other side&quot; title=&quot;Move controls&quot;&gt;⇆&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-hide&quot; type=&quot;button&quot; aria-label=&quot;Hide floating controls&quot; title=&quot;Hide controls&quot;&gt;−&lt;/button&gt;
-    &lt;/nav&gt;
-    &lt;button id=&quot;n8x-restore&quot; type=&quot;button&quot; aria-label=&quot;Show N8 controls&quot; title=&quot;Show controls&quot;&gt;N8&lt;/button&gt;
-  &lt;/aside&gt;
-  &lt;div id=&quot;n8x-toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
-  &lt;script id=&quot;n8x-script&quot;&gt;
-  (()=&gt;{
-    const pages=[&quot;acai-adaptive-cyber-analysis-interface.html&quot;,&quot;n8AHub.html&quot;,&quot;n8AHubPrime.html&quot;,&quot;who-road-convo-lab.html&quot;,&quot;blood-and-gold-panther-arena.html&quot;,&quot;cyber-count-calcun8r-edison-hwy.html&quot;,&quot;social-footer.html&quot;,&quot;cyber-data-multi-team-logistics-engine.html&quot;,&quot;contractor-tool-belt-tactical-utility-engine.html&quot;,&quot;qtd-courage-under-fire.html&quot;,&quot;css-visuals-library-40.html&quot;,&quot;devdashboard-hub.html&quot;,&quot;blob-bash-royale.html&quot;,&quot;web-app-dev-dashboard.html&quot;,&quot;n8AnimHub.html&quot;,&quot;MiyagiThrow.html&quot;,&quot;push-complete.html&quot;,&quot;qamelot-conquest-super-arcade-edition.html&quot;,&quot;devdash-svg-studio.html&quot;,&quot;svg-sandbox-studio.html&quot;,&quot;ecotechcomm-secure-ptt-link.html&quot;,&quot;ecotechcomm-secure-frequency.html&quot;,&quot;devdashboard-home.html&quot;,&quot;homehub.html&quot;,&quot;games/n8-shift.html&quot;,&quot;lattice-a-the-ai-context-lab.html&quot;,&quot;loc-me-in-llc.html&quot;,&quot;eco-tech-motion-library.html&quot;,&quot;n8Prompt.html&quot;,&quot;neon-pong.html&quot;,&quot;new-perspective-painting-llc.html&quot;,&quot;pulse-productivity-and-biorhythm-studio.html&quot;,&quot;index.html&quot;,&quot;tri-nexus-grail-matrix.html&quot;,&quot;qamomathcore-sci-fi-nexus.html&quot;,&quot;qamelot-math-core.html&quot;,&quot;qamelot-media-1.html&quot;,&quot;qamelot-media-2.html&quot;,&quot;qamelot-media-3.html&quot;,&quot;screensaver.html&quot;,&quot;spriteforge-studio.html&quot;,&quot;stix-stax-stonz.html&quot;,&quot;task-forge.html&quot;,&quot;n8-tools.html&quot;,&quot;devdashboard-hub-index.html&quot;,&quot;funPromptz.html&quot;,&quot;masterPrompt.html&quot;,&quot;QamelotMenu.html&quot;];
-    const shell=document.getElementById(&#x27;n8x-shell&#x27;),panel=document.getElementById(&#x27;n8x-panel&#x27;),open=document.getElementById(&#x27;n8x-open&#x27;),search=document.getElementById(&#x27;n8x-search&#x27;),list=document.getElementById(&#x27;n8x-list&#x27;),toast=document.getElementById(&#x27;n8x-toast&#x27;),more=document.getElementById(&#x27;n8x-more&#x27;);
-    const readSetting=(key,fallback)=&gt;{try{return localStorage.getItem(key)??fallback}catch{return fallback}},writeSetting=(key,value)=&gt;{try{localStorage.setItem(key,value)}catch{}};
-    shell.dataset.n8xSide=readSetting(&#x27;n8x-side&#x27;,&#x27;right&#x27;)===&#x27;left&#x27;?&#x27;left&#x27;:&#x27;right&#x27;;shell.dataset.n8xHidden=String(readSetting(&#x27;n8x-hidden&#x27;,&#x27;false&#x27;)===&#x27;true&#x27;);shell.dataset.n8xExpanded=&#x27;false&#x27;;
-    const showToast=(message)=&gt;{toast.textContent=message;toast.classList.add(&#x27;n8x-show&#x27;);clearTimeout(showToast.timer);showToast.timer=setTimeout(()=&gt;toast.classList.remove(&#x27;n8x-show&#x27;),2200)};
-    const setExpanded=(active)=&gt;{shell.dataset.n8xExpanded=String(active);more.setAttribute(&#x27;aria-expanded&#x27;,String(active));more.setAttribute(&#x27;aria-label&#x27;,active?&#x27;Show fewer controls&#x27;:&#x27;Show more controls&#x27;)};
-    const setMenu=(visible,returnFocus=true)=&gt;{if(visible){shell.dataset.n8xHidden=&#x27;false&#x27;;writeSetting(&#x27;n8x-hidden&#x27;,&#x27;false&#x27;);setExpanded(false)}panel.setAttribute(&#x27;aria-hidden&#x27;,String(!visible));open.setAttribute(&#x27;aria-expanded&#x27;,String(visible));if(visible){search.focus();search.select()}else if(returnFocus&amp;&amp;shell.dataset.n8xHidden!==&#x27;true&#x27;)open.focus()};
-    const setHidden=(hidden)=&gt;{setMenu(false,false);shell.dataset.n8xHidden=String(hidden);writeSetting(&#x27;n8x-hidden&#x27;,String(hidden));if(!hidden)open.focus()};
-    open.addEventListener(&#x27;click&#x27;,()=&gt;setMenu(panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;true&#x27;));
-    document.getElementById(&#x27;n8x-close&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setMenu(false));
-    more.addEventListener(&#x27;click&#x27;,()=&gt;setExpanded(shell.dataset.n8xExpanded!==&#x27;true&#x27;));
-    document.getElementById(&#x27;n8x-move&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const side=shell.dataset.n8xSide===&#x27;left&#x27;?&#x27;right&#x27;:&#x27;left&#x27;;shell.dataset.n8xSide=side;writeSetting(&#x27;n8x-side&#x27;,side);showToast(&#x27;Controls moved &#x27;+side)});
-    document.getElementById(&#x27;n8x-hide&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setHidden(true));
-    document.getElementById(&#x27;n8x-restore&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setHidden(false));
-    search.addEventListener(&#x27;input&#x27;,()=&gt;{const query=search.value.trim().toLowerCase();let shown=0;list.querySelectorAll(&#x27;.n8x-page&#x27;).forEach(link=&gt;{const match=!query||link.dataset.search.includes(query);link.hidden=!match;if(match)shown++});document.getElementById(&#x27;n8x-count&#x27;).textContent=shown+&#x27; page&#x27;+(shown===1?&#x27;&#x27;:&#x27;s&#x27;)});
-    document.getElementById(&#x27;n8x-random&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const choices=pages.filter(file=&gt;file!==&quot;qamomathcore-sci-fi-nexus.html&quot;);location.href=choices[Math.floor(Math.random()*choices.length)]||&#x27;index.html&#x27;});
-    document.getElementById(&#x27;n8x-share&#x27;).addEventListener(&#x27;click&#x27;,async()=&gt;{const data={title:document.title,text:&#x27;Explore &#x27;+document.title,url:location.href};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(location.href);showToast(&#x27;Live page link copied&#x27;)}}catch(error){if(error.name!==&#x27;AbortError&#x27;)showToast(&#x27;Use the address bar to copy this link&#x27;)}});
-    const calm=document.getElementById(&#x27;n8x-calm&#x27;);const saved=localStorage.getItem(&#x27;n8x-calm&#x27;)===&#x27;true&#x27;;document.documentElement.dataset.n8xCalm=String(saved);calm.setAttribute(&#x27;aria-pressed&#x27;,String(saved));calm.addEventListener(&#x27;click&#x27;,()=&gt;{const active=document.documentElement.dataset.n8xCalm!==&#x27;true&#x27;;document.documentElement.dataset.n8xCalm=String(active);calm.setAttribute(&#x27;aria-pressed&#x27;,String(active));localStorage.setItem(&#x27;n8x-calm&#x27;,String(active));showToast(active?&#x27;Calm mode on&#x27;:&#x27;Calm mode off&#x27;)});
-    document.getElementById(&#x27;n8x-full&#x27;).addEventListener(&#x27;click&#x27;,async()=&gt;{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch(error){showToast(&#x27;Fullscreen is unavailable here&#x27;)}});
-    document.getElementById(&#x27;n8x-top&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;scrollTo({top:0,behavior:matchMedia(&#x27;(prefers-reduced-motion: reduce)&#x27;).matches?&#x27;auto&#x27;:&#x27;smooth&#x27;}));
-    const progress=document.getElementById(&#x27;n8x-progress&#x27;);const updateProgress=()=&gt;{const max=document.documentElement.scrollHeight-innerHeight;progress.style.width=(max&gt;0?Math.min(100,scrollY/max*100):0)+&#x27;%&#x27;};addEventListener(&#x27;scroll&#x27;,updateProgress,{passive:true});addEventListener(&#x27;resize&#x27;,updateProgress,{passive:true});updateProgress();
-    document.addEventListener(&#x27;pointerdown&#x27;,event=&gt;{if(panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;false&#x27;&amp;&amp;!shell.contains(event.target))setMenu(false,false)},{capture:true});
-    document.addEventListener(&#x27;keydown&#x27;,event=&gt;{const typing=/input|textarea|select/i.test(document.activeElement?.tagName||&#x27;&#x27;);if(event.key===&#x27;Escape&#x27;&amp;&amp;panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;false&#x27;){event.preventDefault();setMenu(false)}else if(event.key===&#x27;/&#x27;&amp;&amp;!typing){event.preventDefault();setMenu(true)}else if(event.altKey&amp;&amp;event.key.toLowerCase()===&#x27;m&#x27;){event.preventDefault();setMenu(panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;true&#x27;)}else if(event.altKey&amp;&amp;event.key.toLowerCase()===&#x27;h&#x27;){event.preventDefault();location.href=&#x27;index.html&#x27;}else if(event.altKey&amp;&amp;event.key.toLowerCase()===&#x27;r&#x27;){event.preventDefault();document.getElementById(&#x27;n8x-random&#x27;).click()}});
-    document.querySelectorAll(&#x27;a[target=&quot;_blank&quot;]&#x27;).forEach(link=&gt;{const rel=new Set((link.rel||&#x27;&#x27;).split(/s+/).filter(Boolean));rel.add(&#x27;noopener&#x27;);rel.add(&#x27;noreferrer&#x27;);link.rel=[...rel].join(&#x27; &#x27;)});
-  })();
-  &lt;/script&gt;
-  &lt;!-- N8-ENHANCEMENTS:BODY:END --&gt;
+
+
+
+
+
+
+&lt;!-- N8-ENHANCEMENTS:BODY:END --&gt;
 &lt;!-- PRACTICE KIT --&gt;
-&lt;script src=&quot;activity-kit.js&quot; data-activity=&quot;companion-2&quot; data-title=&quot;Qamo Mathcore&quot; data-goals=&quot;[&amp;quot;Solve a problem using the available controls.&amp;quot;, &amp;quot;Check the result with a second method.&amp;quot;, &amp;quot;Write a new example and explain the steps.&amp;quot;]&quot; defer&gt;&lt;/script&gt;
+&lt;script src=&quot;activity-kit.js&quot; data-activity=&quot;companion-2&quot; data-title=&quot;Qamo Mathcore&quot; data-goals=&quot;[&amp;quot;Draw a math diagram with a pen, shape, or text tool.&amp;quot;, &amp;quot;Compare a mirrored sketch or a second notebook page.&amp;quot;, &amp;quot;Export the drawing and explain your reasoning.&amp;quot;]&quot; defer&gt;&lt;/script&gt;
 &lt;!-- /PRACTICE KIT --&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
             <iframe id="app-3" class="" srcdoc="&lt;!DOCTYPE html&gt;
+
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;&gt;
-  &lt;title&gt;Stix Stax Stonz: Cyber Camelot&lt;/title&gt;
-    &lt;style&gt;
+&lt;meta charset=&quot;utf-8&quot;/&gt;
+&lt;meta content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; name=&quot;viewport&quot;/&gt;
+&lt;title&gt;Stix Stax Stonz: Cyber Camelot&lt;/title&gt;
+&lt;style&gt;
         @import url(&#x27;https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;display=swap&#x27;);
 
         :root {
@@ -9644,17 +9592,17 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             --panel-dark: rgba(13, 20, 35, 0.85);
         }
 
-        body { 
-            margin: 0; 
-            background: #060913; 
-            background-image: 
+        body {
+            margin: 0;
+            background: #060913;
+            background-image:
                 radial-gradient(circle at 50% 50%, #0a162b 0%, #060913 80%),
                 linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
             background-size: 100% 100%, 20px 20px, 20px 20px;
-            color: #fff; 
-            font-family: &#x27;Orbitron&#x27;, sans-serif; 
-            text-align: center; 
+            color: #fff;
+            font-family: &#x27;Orbitron&#x27;, sans-serif;
+            text-align: center;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -9664,12 +9612,12 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             padding: 10px;
             overflow-x: hidden;
         }
-        
-        #header { 
+
+        #header {
             width: 100%;
             max-width: 360px;
-            padding: 12px 10px; 
-            background: rgba(6, 10, 20, 0.85); 
+            padding: 12px 10px;
+            background: rgba(6, 10, 20, 0.85);
             border: 1px solid rgba(189, 0, 255, 0.2);
             border-radius: 12px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
@@ -9678,12 +9626,12 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             z-index: 10;
         }
 
-        h1 { 
-            margin: 0 0 2px 0; 
-            color: #fff; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            font-size: 1.3rem; 
+        h1 {
+            margin: 0 0 2px 0;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.3rem;
             font-weight: 900;
             text-shadow: 0 0 10px var(--neon-purple), 0 0 20px rgba(189, 0, 255, 0.5);
         }
@@ -9745,7 +9693,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         .score-box div { font-size: 0.55rem; color: #5a6e85; margin-top: 1px; }
         #score-p1 { color: var(--royal-gold); text-shadow: 0 0 5px rgba(255,170,0,0.4); }
         #score-p2 { color: var(--neon-cyan); text-shadow: 0 0 5px rgba(0,240,255,0.4); }
-        
+
         /* FEATURE 7: Strategic Config Panel Layout */
         .config-row {
             display: flex;
@@ -9754,12 +9702,12 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             margin-bottom: 8px;
         }
         select, .ctrl-btn {
-            background: linear-gradient(to bottom, #251f3b 0%, #0a0614 100%); 
-            border: 1px solid rgba(189, 0, 255, 0.3); 
-            color: #e2bfff; 
-            padding: 6px 10px; 
-            border-radius: 5px; 
-            font-size: 0.65rem; 
+            background: linear-gradient(to bottom, #251f3b 0%, #0a0614 100%);
+            border: 1px solid rgba(189, 0, 255, 0.3);
+            color: #e2bfff;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 0.65rem;
             font-family: &#x27;Orbitron&#x27;, sans-serif;
             font-weight: 700;
             cursor: pointer;
@@ -9783,15 +9731,15 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         }
 
         .controls { display: flex; justify-content: center; gap: 6px; }
-        
-        #arena { 
-            width: 340px; 
+
+        #arena {
+            width: 340px;
             height: 340px;
-            background: linear-gradient(135deg, #0e0a1a 0%, #04030a 100%); 
+            background: linear-gradient(135deg, #0e0a1a 0%, #04030a 100%);
             border: 3px solid #331f4d;
             border-top-color: #794bb3;
-            border-radius: 16px; 
-            padding: 15px; 
+            border-radius: 16px;
+            padding: 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 20px rgba(189, 0, 255, 0.15);
             box-sizing: border-box;
             z-index: 5;
@@ -9806,7 +9754,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             100% { transform: translate(-1px, -2px) rotate(0.5deg); }
         }
 
-        #board { 
+        #board {
             display: grid;
             grid-template-columns: repeat(4, 10px 1fr) 10px;
             grid-template-rows: repeat(4, 10px 1fr) 10px;
@@ -9814,7 +9762,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             height: 300px;
             background: transparent;
         }
-        
+
         .dot {
             width: 10px;
             height: 10px;
@@ -9916,7 +9864,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             0% { transform: scale(0.4); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        
+
         .box.winner-glow {
             animation: hyper-cycle 0.4s infinite alternate;
             border: 1px solid #ffffff;
@@ -9926,11 +9874,11 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             0% { box-shadow: 0 0 5px #fff, inset 0 0 10px var(--neon-cyan); }
             100% { box-shadow: 0 0 25px var(--neon-cyan), inset 0 0 20px #fff; }
         }
-        
-        #status { 
-            margin-top: 10px; 
-            color: var(--royal-gold); 
-            font-weight: 900; 
+
+        #status {
+            margin-top: 10px;
+            color: var(--royal-gold);
+            font-weight: 900;
             font-size: 0.9rem;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -10010,135 +9958,92 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         }
     &lt;/style&gt;
 &lt;!-- N8-ENHANCEMENTS:HEAD:START --&gt;
-  &lt;meta name=&quot;description&quot; content=&quot;Play Stix Stax Stonz: Cyber Camelot, an interactive browser game from the N8 CyberDev collection.&quot;&gt;
-  &lt;meta name=&quot;keywords&quot; content=&quot;Stix Stax Stonz: Cyber Camelot, Games &amp;amp; Simulations, N8 CyberDev, Qamelot, interactive web app, standalone HTML&quot;&gt;
-  &lt;meta name=&quot;author&quot; content=&quot;N8 CyberDev / Qamelot&quot;&gt;
-  &lt;meta name=&quot;creator&quot; content=&quot;N8 CyberDev&quot;&gt;
-  &lt;meta name=&quot;publisher&quot; content=&quot;Qamelot&quot;&gt;
-  &lt;meta name=&quot;robots&quot; content=&quot;index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1&quot;&gt;
-  &lt;meta name=&quot;referrer&quot; content=&quot;strict-origin-when-cross-origin&quot;&gt;
-  &lt;meta name=&quot;theme-color&quot; content=&quot;#070b14&quot;&gt;
-  &lt;meta name=&quot;color-scheme&quot; content=&quot;dark light&quot;&gt;
-  &lt;meta name=&quot;application-name&quot; content=&quot;N8 CyberDev&quot;&gt;
-  &lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;
-  &lt;meta name=&quot;n8-improvement-count&quot; content=&quot;80&quot;&gt;
-  &lt;meta name=&quot;n8-feature-count&quot; content=&quot;16&quot;&gt;
-  &lt;link rel=&quot;canonical&quot; href=&quot;https://qamotech.github.io/DevDashboard/stix-stax-stonz.html&quot;&gt;
-  &lt;link rel=&quot;icon&quot; type=&quot;image/png&quot; sizes=&quot;128x128&quot; href=&quot;n8-icon.png&quot;&gt;
-  &lt;link rel=&quot;shortcut icon&quot; type=&quot;image/png&quot; href=&quot;n8-icon.png&quot;&gt;
-  &lt;link rel=&quot;apple-touch-icon&quot; href=&quot;n8-icon.png&quot;&gt;
-  &lt;link rel=&quot;manifest&quot; href=&quot;qamelot-media-assets/site.webmanifest&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;n8-tools-transformers.css&quot;&gt;
-  &lt;script defer src=&quot;n8-tools-transformers.js&quot;&gt;&lt;/script&gt;
-  &lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;
-  &lt;meta property=&quot;og:site_name&quot; content=&quot;N8 CyberDev&quot;&gt;
-  &lt;meta property=&quot;og:locale&quot; content=&quot;en_US&quot;&gt;
-  &lt;meta property=&quot;og:title&quot; content=&quot;Stix Stax Stonz: Cyber Camelot&quot;&gt;
-  &lt;meta property=&quot;og:description&quot; content=&quot;Play Stix Stax Stonz: Cyber Camelot, an interactive browser game from the N8 CyberDev collection.&quot;&gt;
-  &lt;meta property=&quot;og:url&quot; content=&quot;https://qamotech.github.io/DevDashboard/stix-stax-stonz.html&quot;&gt;
-  &lt;meta name=&quot;twitter:card&quot; content=&quot;summary&quot;&gt;
-  &lt;meta name=&quot;twitter:title&quot; content=&quot;Stix Stax Stonz: Cyber Camelot&quot;&gt;
-  &lt;meta name=&quot;twitter:description&quot; content=&quot;Play Stix Stax Stonz: Cyber Camelot, an interactive browser game from the N8 CyberDev collection.&quot;&gt;
-  &lt;style id=&quot;n8x-styles&quot;&gt;
-    :root{--n8x-cyan:#66e7ff;--n8x-violet:#ae82ff;--n8x-ink:#f4fbff;--n8x-muted:#a8b7c8;--n8x-bg:rgba(5,10,18,.96);--n8x-line:rgba(102,231,255,.28);--n8x-shadow:0 18px 55px rgba(0,0,0,.55)}
-    #n8x-skip{position:fixed;left:12px;top:10px;z-index:2147483647;transform:translateY(-160%);padding:10px 14px;border-radius:9px;color:#031017;background:var(--n8x-cyan);font:800 13px/1.2 system-ui,sans-serif;text-decoration:none;transition:transform .18s}
-    #n8x-skip:focus{transform:none}
-    #n8x-shell,#n8x-shell *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif}
-    #n8x-shell{position:fixed;right:14px;bottom:14px;z-index:2147483000;color:var(--n8x-ink);line-height:1.4;touch-action:manipulation}
-    #n8x-shell[data-n8x-side=&quot;left&quot;]{left:14px;right:auto}
-    #n8x-dock{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:5px;max-width:250px;padding:6px;border:1px solid var(--n8x-line);border-radius:15px;background:var(--n8x-bg);box-shadow:var(--n8x-shadow);backdrop-filter:blur(18px) saturate(1.25);transition:.18s}
-    #n8x-shell:not([data-n8x-expanded=&quot;true&quot;]) .n8x-secondary{display:none}
-    #n8x-shell[data-n8x-hidden=&quot;true&quot;] #n8x-dock,#n8x-shell[data-n8x-hidden=&quot;true&quot;] #n8x-panel{display:none}
-    #n8x-restore{display:none;place-items:center;width:34px;height:44px;border:1px solid var(--n8x-line);border-right:0;border-radius:12px 0 0 12px;color:var(--n8x-cyan);background:var(--n8x-bg);box-shadow:var(--n8x-shadow);font:900 10px/1 ui-monospace,monospace;letter-spacing:-.04em;cursor:pointer}
-    #n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-restore{border:1px solid var(--n8x-line);border-left:0;border-radius:0 12px 12px 0}
-    #n8x-shell[data-n8x-hidden=&quot;true&quot;] #n8x-restore{display:grid}
-    .n8x-btn,.n8x-link{min-width:42px;min-height:42px;display:grid;place-items:center;border:1px solid transparent;border-radius:11px;padding:7px;color:var(--n8x-ink);background:transparent;text-decoration:none;cursor:pointer;font-size:18px;line-height:1;transition:background .18s,border-color .18s,transform .18s}
-    .n8x-btn:hover,.n8x-btn:focus-visible,.n8x-link:hover,.n8x-link:focus-visible{outline:0;border-color:var(--n8x-line);background:rgba(102,231,255,.12);transform:translateY(-2px)}
-    .n8x-primary{color:#041017;background:linear-gradient(135deg,var(--n8x-cyan),#a8f3ff)}
-    #n8x-progress{position:fixed;left:0;top:0;z-index:2147483646;width:0;height:3px;background:linear-gradient(90deg,var(--n8x-cyan),var(--n8x-violet));box-shadow:0 0 12px var(--n8x-cyan);pointer-events:none}
-    #n8x-panel{position:fixed;right:14px;bottom:70px;width:min(400px,calc(100vw - 28px));max-height:min(620px,calc(100vh - 96px));display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;border:1px solid var(--n8x-line);border-radius:18px;background:var(--n8x-bg);box-shadow:var(--n8x-shadow);backdrop-filter:blur(22px) saturate(1.3);overflow:hidden;opacity:0;transform:translateY(18px) scale(.98);pointer-events:none;transition:.2s}
-    #n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-panel{left:14px;right:auto}
-    #n8x-panel[aria-hidden=&quot;false&quot;]{opacity:1;transform:none;pointer-events:auto}
-    .n8x-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 17px 12px}.n8x-head strong{font-size:14px;letter-spacing:.08em;text-transform:uppercase}.n8x-head small{display:block;margin-top:3px;color:var(--n8x-muted);font-size:11px}
-    #n8x-search{width:calc(100% - 28px);min-height:44px;margin:0 14px 10px;border:1px solid var(--n8x-line);border-radius:11px;padding:0 13px;color:var(--n8x-ink);background:rgba(255,255,255,.055);font-size:14px;outline:0}#n8x-search:focus{border-color:var(--n8x-cyan);box-shadow:0 0 0 3px rgba(102,231,255,.1)}
-    #n8x-list{overflow:auto;padding:4px 10px 12px;scrollbar-width:thin}.n8x-page{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;min-height:51px;padding:7px;border-radius:11px;color:var(--n8x-ink);text-decoration:none}.n8x-page:hover,.n8x-page:focus-visible{outline:0;background:rgba(102,231,255,.1)}.n8x-num{display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--n8x-line);border-radius:9px;color:var(--n8x-cyan);font:800 10px/1 ui-monospace,monospace}.n8x-copy{min-width:0}.n8x-copy b,.n8x-copy span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.n8x-copy b{font-size:12px}.n8x-copy span{color:var(--n8x-muted);font-size:9px}.n8x-arrow{color:var(--n8x-muted)}
-    .n8x-foot{display:flex;justify-content:space-between;gap:10px;padding:11px 15px;border-top:1px solid var(--n8x-line);color:var(--n8x-muted);font-size:10px}.n8x-empty{padding:28px 14px;text-align:center;color:var(--n8x-muted);font-size:12px}
-    #n8x-toast{position:fixed;left:50%;bottom:78px;z-index:2147483647;max-width:calc(100vw - 28px);transform:translate(-50%,18px);padding:10px 14px;border:1px solid var(--n8x-line);border-radius:10px;color:var(--n8x-ink);background:var(--n8x-bg);box-shadow:var(--n8x-shadow);font:700 12px/1.3 system-ui,sans-serif;opacity:0;pointer-events:none;transition:.2s}#n8x-toast.n8x-show{opacity:1;transform:translate(-50%,0)}
-    html[data-n8x-calm=&quot;true&quot;] body&gt;*:not(#n8x-shell):not(#n8x-progress):not(#n8x-toast):not(#n8x-skip){filter:saturate(.72) brightness(.86)}
-    html[data-n8x-calm=&quot;true&quot;]{scroll-behavior:auto!important}
-    :focus-visible{outline:2px solid var(--n8x-cyan,#66e7ff);outline-offset:3px}
-    @media(max-width:620px){#n8x-shell{right:0;bottom:max(8px,env(safe-area-inset-bottom))}#n8x-shell[data-n8x-side=&quot;left&quot;]{left:0;right:auto}#n8x-dock{display:grid;grid-template-columns:36px;gap:3px;max-width:none;padding:4px;border-radius:14px 0 0 14px}#n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-dock{border-radius:0 14px 14px 0}#n8x-shell[data-n8x-expanded=&quot;true&quot;] #n8x-dock{grid-template-columns:repeat(2,36px)}.n8x-btn,.n8x-link{min-width:36px;min-height:36px;padding:5px;font-size:15px}#n8x-panel{right:46px;bottom:0;width:min(360px,calc(100vw - 54px));max-height:min(560px,calc(100dvh - 16px));border-radius:16px}#n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-panel{left:46px;right:auto}.n8x-head{padding:12px 13px 9px}#n8x-search{width:calc(100% - 20px);min-height:40px;margin:0 10px 7px}#n8x-list{padding:3px 7px 9px}.n8x-page{grid-template-columns:31px 1fr auto;gap:7px;min-height:44px;padding:5px}.n8x-num{width:28px;height:28px}.n8x-foot{padding:8px 11px}.n8x-foot span:last-child{display:none}}
-    @media(max-width:380px){#n8x-panel{width:calc(100vw - 50px);right:42px}#n8x-shell[data-n8x-side=&quot;left&quot;] #n8x-panel{left:42px;right:auto}.n8x-copy span{display:none}}
-    @media(prefers-reduced-motion:reduce){#n8x-shell *,#n8x-skip,#n8x-toast{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-    @media print{#n8x-shell,#n8x-progress,#n8x-toast,#n8x-skip{display:none!important}}
-  &lt;/style&gt;
-  &lt;!-- N8-ENHANCEMENTS:HEAD:END --&gt;
+&lt;meta content=&quot;Play Stix Stax Stonz: Cyber Camelot, an interactive browser game from the N8 CyberDev collection.&quot; name=&quot;description&quot;/&gt;
+&lt;meta content=&quot;Stix Stax Stonz: Cyber Camelot, Games &amp;amp; Simulations, N8 CyberDev, Qamelot, interactive web app, standalone HTML&quot; name=&quot;keywords&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev / Qamelot&quot; name=&quot;author&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev&quot; name=&quot;creator&quot;/&gt;
+&lt;meta content=&quot;Qamelot&quot; name=&quot;publisher&quot;/&gt;
+&lt;meta content=&quot;index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1&quot; name=&quot;robots&quot;/&gt;
+&lt;meta content=&quot;strict-origin-when-cross-origin&quot; name=&quot;referrer&quot;/&gt;
+&lt;meta content=&quot;#070b14&quot; name=&quot;theme-color&quot;/&gt;
+&lt;meta content=&quot;dark light&quot; name=&quot;color-scheme&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev&quot; name=&quot;application-name&quot;/&gt;
+&lt;meta content=&quot;telephone=no&quot; name=&quot;format-detection&quot;/&gt;
+&lt;meta content=&quot;80&quot; name=&quot;n8-improvement-count&quot;/&gt;
+&lt;meta content=&quot;16&quot; name=&quot;n8-feature-count&quot;/&gt;
+&lt;link href=&quot;https://qamotech.github.io/DevDashboard/stix-stax-stonz.html&quot; rel=&quot;canonical&quot;/&gt;
+&lt;link href=&quot;n8-icon.png&quot; rel=&quot;icon&quot; sizes=&quot;128x128&quot; type=&quot;image/png&quot;/&gt;
+&lt;link href=&quot;n8-icon.png&quot; rel=&quot;shortcut icon&quot; type=&quot;image/png&quot;/&gt;
+&lt;link href=&quot;n8-icon.png&quot; rel=&quot;apple-touch-icon&quot;/&gt;
+&lt;link href=&quot;qamelot-media-assets/site.webmanifest&quot; rel=&quot;manifest&quot;/&gt;
+&lt;link href=&quot;n8-tools-transformers.css&quot; rel=&quot;stylesheet&quot;/&gt;
+&lt;script defer=&quot;&quot; src=&quot;n8-tools-transformers.js&quot;&gt;&lt;/script&gt;
+&lt;meta content=&quot;website&quot; property=&quot;og:type&quot;/&gt;
+&lt;meta content=&quot;N8 CyberDev&quot; property=&quot;og:site_name&quot;/&gt;
+&lt;meta content=&quot;en_US&quot; property=&quot;og:locale&quot;/&gt;
+&lt;meta content=&quot;Stix Stax Stonz: Cyber Camelot&quot; property=&quot;og:title&quot;/&gt;
+&lt;meta content=&quot;Play Stix Stax Stonz: Cyber Camelot, an interactive browser game from the N8 CyberDev collection.&quot; property=&quot;og:description&quot;/&gt;
+&lt;meta content=&quot;https://qamotech.github.io/DevDashboard/stix-stax-stonz.html&quot; property=&quot;og:url&quot;/&gt;
+&lt;meta content=&quot;summary&quot; name=&quot;twitter:card&quot;/&gt;
+&lt;meta content=&quot;Stix Stax Stonz: Cyber Camelot&quot; name=&quot;twitter:title&quot;/&gt;
+&lt;meta content=&quot;Play Stix Stax Stonz: Cyber Camelot, an interactive browser game from the N8 CyberDev collection.&quot; name=&quot;twitter:description&quot;/&gt;
+
+&lt;!-- N8-ENHANCEMENTS:HEAD:END --&gt;
 &lt;/head&gt;
 &lt;body&gt;
-
 &lt;div id=&quot;ele-blast-shield&quot;&gt;&lt;/div&gt;
-
 &lt;div id=&quot;header&quot;&gt;
-    &lt;h1&gt;STIX STAX STONZ&lt;/h1&gt;
-    &lt;div id=&quot;subtitle-node&quot; class=&quot;subtitle&quot;&gt;Excalibur Grid-Lock&lt;/div&gt;
-    
-    &lt;div class=&quot;gauge-matrix&quot;&gt;
-        &lt;div class=&quot;gauge-bar&quot;&gt;
-            &lt;div id=&quot;fill-p1&quot; class=&quot;gauge-fill&quot;&gt;&lt;/div&gt;
-            &lt;div class=&quot;gauge-text&quot;&gt;OVERDRIVE: &lt;span id=&quot;txt-p1&quot;&gt;0&lt;/span&gt;%&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;gauge-bar&quot;&gt;
-            &lt;div id=&quot;fill-p2&quot; class=&quot;gauge-fill&quot;&gt;&lt;/div&gt;
-            &lt;div class=&quot;gauge-text&quot;&gt;OVERDRIVE: &lt;span id=&quot;txt-p2&quot;&gt;0&lt;/span&gt;%&lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-
-    &lt;div id=&quot;score-ledger&quot;&gt;
-        &lt;div class=&quot;score-box&quot;&gt;PENDRACO [P]: &lt;span id=&quot;score-p1&quot;&gt;0&lt;/span&gt;&lt;div id=&quot;live-box-p1&quot;&gt;STAX: 0&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;score-box&quot;&gt;AVALON [A]: &lt;span id=&quot;score-p2&quot;&gt;0&lt;/span&gt;&lt;div id=&quot;live-box-p2&quot;&gt;STAX: 0&lt;/div&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    
-    &lt;div class=&quot;config-row&quot;&gt;
-        &lt;select id=&quot;aiMode&quot; onchange=&quot;window.updateAISettings()&quot;&gt;
-            &lt;option value=&quot;perfect&quot;&gt;MERLIN AI (MAX)&lt;/option&gt;
-            &lt;option value=&quot;aggressive&quot;&gt;LANCELOT AI (AGGR)&lt;/option&gt;
-            &lt;option value=&quot;pvp&quot;&gt;LOCAL CO-OP MODE&lt;/option&gt;
-        &lt;/select&gt;
-        &lt;button id=&quot;burnBtn&quot; class=&quot;ctrl-btn&quot; style=&quot;width: 48%;&quot; onclick=&quot;window.toggleOverdriveBreak()&quot;&gt;OVERDRIVE BREAK&lt;/button&gt;
-    &lt;/div&gt;
-
-    &lt;div class=&quot;controls&quot;&gt;
-        &lt;button onclick=&quot;window.resetMatch()&quot;&gt;RESET MATRIX&lt;/button&gt;
-        &lt;button onclick=&quot;window.undoTurn()&quot;&gt;CHRONO UNDO&lt;/button&gt;
-    &lt;/div&gt;
+&lt;h1&gt;STIX STAX STONZ&lt;/h1&gt;
+&lt;div class=&quot;subtitle&quot; id=&quot;subtitle-node&quot;&gt;Excalibur Grid-Lock&lt;/div&gt;
+&lt;div class=&quot;gauge-matrix&quot;&gt;
+&lt;div class=&quot;gauge-bar&quot;&gt;
+&lt;div class=&quot;gauge-fill&quot; id=&quot;fill-p1&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;gauge-text&quot;&gt;OVERDRIVE: &lt;span id=&quot;txt-p1&quot;&gt;0&lt;/span&gt;%&lt;/div&gt;
 &lt;/div&gt;
-
+&lt;div class=&quot;gauge-bar&quot;&gt;
+&lt;div class=&quot;gauge-fill&quot; id=&quot;fill-p2&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;gauge-text&quot;&gt;OVERDRIVE: &lt;span id=&quot;txt-p2&quot;&gt;0&lt;/span&gt;%&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;score-ledger&quot;&gt;
+&lt;div class=&quot;score-box&quot;&gt;PENDRACO [P]: &lt;span id=&quot;score-p1&quot;&gt;0&lt;/span&gt;&lt;div id=&quot;live-box-p1&quot;&gt;STAX: 0&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;score-box&quot;&gt;AVALON [A]: &lt;span id=&quot;score-p2&quot;&gt;0&lt;/span&gt;&lt;div id=&quot;live-box-p2&quot;&gt;STAX: 0&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;config-row&quot;&gt;
+&lt;select id=&quot;aiMode&quot; onchange=&quot;window.updateAISettings()&quot;&gt;
+&lt;option value=&quot;perfect&quot;&gt;MERLIN AI (MAX)&lt;/option&gt;
+&lt;option value=&quot;aggressive&quot;&gt;LANCELOT AI (AGGR)&lt;/option&gt;
+&lt;option value=&quot;pvp&quot;&gt;LOCAL CO-OP MODE&lt;/option&gt;
+&lt;/select&gt;
+&lt;button class=&quot;ctrl-btn&quot; id=&quot;burnBtn&quot; onclick=&quot;window.toggleOverdriveBreak()&quot; style=&quot;width: 48%;&quot;&gt;OVERDRIVE BREAK&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;controls&quot;&gt;
+&lt;button onclick=&quot;window.resetMatch()&quot;&gt;RESET MATRIX&lt;/button&gt;
+&lt;button onclick=&quot;window.undoTurn()&quot;&gt;CHRONO UNDO&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;div id=&quot;arena&quot;&gt;
-    &lt;div id=&quot;board&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;board&quot;&gt;&lt;/div&gt;
 &lt;/div&gt;
-
 &lt;div id=&quot;status&quot;&gt;PENDRACO&#x27;S TURN&lt;/div&gt;
-
 &lt;div id=&quot;tactical-feed&quot;&gt;&lt;div id=&quot;feed-inner&quot;&gt;SYS READY // MATRIX LOADED // AWAITING NEURAL SEED DEPLOYMENT...&lt;/div&gt;&lt;/div&gt;
-
 &lt;footer class=&quot;cyber-footer&quot;&gt;
-    &lt;div class=&quot;menu-container&quot;&gt;
-        &lt;a href=&quot;stix-stax-stonz.html&quot; class=&quot;menu-link&quot;&gt;Stix Stax Stonz&lt;/a&gt;
-        &lt;a href=&quot;blood-and-gold-panther-arena.html&quot; class=&quot;menu-link&quot;&gt;--C4N8--&lt;/a&gt;
-        &lt;a href=&quot;tri-nexus-grail-matrix.html&quot; class=&quot;menu-link&quot;&gt;--TRINEXUS--&lt;/a&gt;
-        &lt;a href=&quot;games/n8-shift.html&quot; class=&quot;menu-link&quot;&gt;--MENU--&lt;/a&gt;
-    &lt;/div&gt;
+&lt;div class=&quot;menu-container&quot;&gt;
+&lt;a class=&quot;menu-link&quot; href=&quot;stix-stax-stonz.html&quot;&gt;Stix Stax Stonz&lt;/a&gt;
+&lt;a class=&quot;menu-link&quot; href=&quot;blood-and-gold-panther-arena.html&quot;&gt;--C4N8--&lt;/a&gt;
+&lt;a class=&quot;menu-link&quot; href=&quot;tri-nexus-grail-matrix.html&quot;&gt;--TRINEXUS--&lt;/a&gt;
+&lt;a class=&quot;menu-link&quot; href=&quot;games/n8-shift.html&quot;&gt;--MENU--&lt;/a&gt;
+&lt;/div&gt;
 &lt;/footer&gt;
-
 &lt;script&gt;
-    const MATRIX_SIZE = 9; 
+    const MATRIX_SIZE = 9;
 
     // Architectural Properties
-    window.turn = 1; 
-    window.gameState = []; 
-    window.moveHistory = []; 
+    window.turn = 1;
+    window.gameState = [];
+    window.moveHistory = [];
     window.gameOver = false;
-    
+
     let p1Wins = 0;
     let p2Wins = 0;
     let comboCount = 0; // FEATURE 10: Combo Multiplier Tracking
@@ -10215,7 +10120,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         for (let c = 0; c &lt; MATRIX_SIZE; c++) {
             const cell = document.createElement(&#x27;div&#x27;);
             cell.id = `cell-${r}-${c}`;
-            
+
             if (r % 2 === 0 &amp;&amp; c % 2 === 0) {
                 cell.className = &#x27;dot&#x27;;
             } else if (r % 2 === 0 &amp;&amp; c % 2 === 1) {
@@ -10263,10 +10168,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         comboCount = 0;
         generateRoundSeed();
         initMatrix();
-        
+
         document.getElementById(&#x27;arena&#x27;).classList.remove(&#x27;ele-shake&#x27;);
         document.getElementById(&#x27;ele-blast-shield&#x27;).classList.remove(&#x27;ele-active&#x27;);
-        
+
         const statusEl = document.getElementById(&#x27;status&#x27;);
         statusEl.innerHTML = &quot;PENDRACO&#x27;S TURN&quot;;
         statusEl.style.color = &quot;var(--royal-gold)&quot;;
@@ -10279,7 +10184,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     window.handleLineClick = function(r, c) {
         if (window.gameOver) return;
         if (window.gameState[r][c] !== 0) return;
-        
+
         let aiMode = document.getElementById(&#x27;aiMode&#x27;).value;
         if (aiMode !== &#x27;pvp&#x27; &amp;&amp; window.turn === 2) return; // Prevent clicking during AI scheduling
 
@@ -10297,7 +10202,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
         // Set line state to current player index (1 or 2)
         window.gameState[r][c] = window.turn;
-        
+
         if (navigator.vibrate) navigator.vibrate(40);
         SynthAudio.line();
 
@@ -10307,11 +10212,11 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         for (let box of adjacentBoxes) {
             if (countBoxLines(box.r, box.c) === 4 &amp;&amp; (window.gameState[box.r][box.c] === 0 || window.gameState[box.r][box.c] &gt;= 10)) {
                 let anomalyValue = window.gameState[box.r][box.c];
-                
+
                 // Process base ownership
-                window.gameState[box.r][box.c] = (window.turn === 1) ? -1 : -2; 
+                window.gameState[box.r][box.c] = (window.turn === 1) ? -1 : -2;
                 capturedAnyBoxThisTurn = true;
-                
+
                 // FEATURE 4: Process Anomalies Rewards
                 if (anomalyValue === 10) {
                     adjustOverdrive(window.turn, 50);
@@ -10321,7 +10226,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
                     window.gameState[box.r][box.c] = (window.turn === 1) ? -11 : -22;
                     logTactical(`ANOMALY: SACRED STONE EXTRACTED // SCORE MODIFIER ENGAGED`);
                 }
-                
+
                 // FEATURE 10: Combo Tracking Chain Mechanics
                 comboCount++;
                 if (comboCount &gt; 1) {
@@ -10366,13 +10271,13 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
             breakActive = false;
             document.getElementById(&#x27;burnBtn&#x27;).classList.remove(&#x27;burn-active&#x27;);
             logTactical(`OVERDRIVE EXPENDED // EXTRA DEPLOYMENT VECTOR RESOLVED CLEANLY`);
-            
+
             // Check if AI needs to execute its chain immediately following player double placement
             let aiMode = document.getElementById(&#x27;aiMode&#x27;).value;
             if (aiMode !== &#x27;pvp&#x27; &amp;&amp; window.turn === 2) {
                 setTimeout(() =&gt; executeAdaptiveAI(aiMode), 450);
             }
-            return; 
+            return;
         }
 
         if (!capturedAnyBoxThisTurn) {
@@ -10404,10 +10309,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
                 // Scrub dynamic configuration additions clean
                 cell.className = cell.className.split(&#x27; &#x27;)[0];
-                
+
                 // Clear any lingering anomaly text nodes
                 if (r % 2 === 1 &amp;&amp; c % 2 === 1 &amp;&amp; cell.children.length === 0) {
-                    cell.innerHTML = &#x27;&#x27;; 
+                    cell.innerHTML = &#x27;&#x27;;
                 }
 
                 let val = window.gameState[r][c];
@@ -10482,10 +10387,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
     function getAdjacentBoxes(r, c) {
         let boxes = [];
-        if (r % 2 === 0) { 
+        if (r % 2 === 0) {
             if (r &gt; 0) boxes.push({ r: r - 1, c: c });
             if (r &lt; MATRIX_SIZE - 1) boxes.push({ r: r + 1, c: c });
-        } else { 
+        } else {
             if (c &gt; 0) boxes.push({ r: r, c: c - 1 });
             if (c &lt; MATRIX_SIZE - 1) boxes.push({ r: r, c: c + 1 });
         }
@@ -10494,10 +10399,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
 
     function countBoxLines(br, bc) {
         let count = 0;
-        if (window.gameState[br - 1][bc] === 1 || window.gameState[br - 1][bc] === 2) count++; 
-        if (window.gameState[br + 1][bc] === 1 || window.gameState[br + 1][bc] === 2) count++; 
-        if (window.gameState[br][bc - 1] === 1 || window.gameState[br][bc - 1] === 2) count++; 
-        if (window.gameState[br][bc + 1] === 1 || window.gameState[br][bc + 1] === 2) count++; 
+        if (window.gameState[br - 1][bc] === 1 || window.gameState[br - 1][bc] === 2) count++;
+        if (window.gameState[br + 1][bc] === 1 || window.gameState[br + 1][bc] === 2) count++;
+        if (window.gameState[br][bc - 1] === 1 || window.gameState[br][bc - 1] === 2) count++;
+        if (window.gameState[br][bc + 1] === 1 || window.gameState[br][bc + 1] === 2) count++;
         return count;
     }
 
@@ -10538,9 +10443,9 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         if (openLines.length === 0) return;
 
         // Core AI priority filters mappings
-        let immediateCaptures = []; 
-        let safeMoves = []; 
-        let riskyMoves = []; 
+        let immediateCaptures = [];
+        let safeMoves = [];
+        let riskyMoves = [];
 
         for (let line of openLines) {
             let maxLinesCreatedInAdjacentBoxes = 0;
@@ -10590,10 +10495,10 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     // FEATURE 11: Comprehensive Victory Rank Calculation Engine
     function executeELESequence(p1Boxes, p2Boxes) {
         window.gameOver = true;
-        
+
         const shield = document.getElementById(&#x27;ele-blast-shield&#x27;);
         shield.classList.add(&#x27;ele-active&#x27;);
-        
+
         document.getElementById(&#x27;arena&#x27;).classList.add(&#x27;ele-shake&#x27;);
         SynthAudio.win();
 
@@ -10624,7 +10529,7 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
                 let cellVal = window.gameState[br][bc];
                 let isP1Match = (winnerIndex === 1 &amp;&amp; (cellVal === -1 || cellVal === -11));
                 let isP2Match = (winnerIndex === 2 &amp;&amp; (cellVal === -2 || cellVal === -22));
-                
+
                 if (isP1Match || isP2Match) {
                     document.getElementById(`cell-${br}-${bc}`).classList.add(&#x27;winner-glow&#x27;);
                 }
@@ -10669,64 +10574,14 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
     // Fire Init Core Arrays Operations Sequence Maps
     window.resetMatch();
 &lt;/script&gt;
-
 &lt;!-- N8-ENHANCEMENTS:BODY:START --&gt;
-  &lt;a id=&quot;n8x-skip&quot; href=&quot;#n8x-content&quot;&gt;Skip to page content&lt;/a&gt;
-  &lt;div id=&quot;n8x-progress&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-  &lt;div id=&quot;n8x-content&quot; tabindex=&quot;-1&quot;&gt;&lt;/div&gt;
-  &lt;aside id=&quot;n8x-shell&quot; aria-label=&quot;N8 CyberDev navigation&quot;&gt;
-    &lt;section id=&quot;n8x-panel&quot; aria-hidden=&quot;true&quot; aria-label=&quot;All Qamelot pages&quot;&gt;
-      &lt;div class=&quot;n8x-head&quot;&gt;&lt;div&gt;&lt;strong&gt;Qamelot Menu&lt;/strong&gt;&lt;small&gt;Search every live N8 experience&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-close&quot; type=&quot;button&quot; aria-label=&quot;Close menu&quot;&gt;×&lt;/button&gt;&lt;/div&gt;
-      &lt;label for=&quot;n8x-search&quot; style=&quot;position:absolute;clip:rect(0 0 0 0)&quot;&gt;Search pages&lt;/label&gt;&lt;input id=&quot;n8x-search&quot; type=&quot;search&quot; placeholder=&quot;Search tools, games, studios…&quot; autocomplete=&quot;off&quot; spellcheck=&quot;false&quot;&gt;
-      &lt;nav id=&quot;n8x-list&quot; aria-label=&quot;Every Qamelot page&quot;&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;acai-adaptive-cyber-analysis-interface.html&quot; data-search=&quot;acai // adaptive cyber analysis interface acai-adaptive-cyber-analysis-interface.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;01&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;ACAI // Adaptive Cyber Analysis Interface&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · acai-adaptive-cyber-analysis-interface.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8AHub.html&quot; data-search=&quot;n8 asset hub n8ahub.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;02&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 Asset Hub&lt;/b&gt;&lt;span&gt;Developer Studios · n8AHub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8AHubPrime.html&quot; data-search=&quot;n8 asset hub prime n8ahubprime.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 Asset Hub Prime&lt;/b&gt;&lt;span&gt;Developer Studios · n8AHubPrime.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;who-road-convo-lab.html&quot; data-search=&quot;who//road — neon conversation lab who-road-convo-lab.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;04&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;WHO//ROAD — Neon Conversation Lab&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · who-road-convo-lab.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;blood-and-gold-panther-arena.html&quot; data-search=&quot;blood &amp;amp; gold: panther arena blood-and-gold-panther-arena.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;05&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Blood &amp;amp; Gold: Panther Arena&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · blood-and-gold-panther-arena.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;cyber-count-calcun8r-edison-hwy.html&quot; data-search=&quot;cyber-count calcun8r // edison hwy cyber-count-calcun8r-edison-hwy.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;06&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;CYBER-COUNT CALCUN8R // EDISON HWY&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · cyber-count-calcun8r-edison-hwy.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;social-footer.html&quot; data-search=&quot;social footer social-footer.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;07&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Social Footer&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · social-footer.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;cyber-data-multi-team-logistics-engine.html&quot; data-search=&quot;cyber-data // multi-team logistics engine cyber-data-multi-team-logistics-engine.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;08&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;CYBER-DATA // MULTI-TEAM LOGISTICS ENGINE&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · cyber-data-multi-team-logistics-engine.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;contractor-tool-belt-tactical-utility-engine.html&quot; data-search=&quot;contractor tool belt - tactical utility engine contractor-tool-belt-tactical-utility-engine.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Contractor Tool Belt - Tactical Utility Engine&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · contractor-tool-belt-tactical-utility-engine.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qtd-courage-under-fire.html&quot; data-search=&quot;qamelot tower defense: courage under fire qtd-courage-under-fire.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Tower Defense: Courage Under Fire&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · qtd-courage-under-fire.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;css-visuals-library-40.html&quot; data-search=&quot;css visuals library (40) css-visuals-library-40.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;11&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;CSS Visuals Library (40)&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · css-visuals-library-40.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdashboard-hub.html&quot; data-search=&quot;devdashboard hub devdashboard-hub.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDashboard Hub&lt;/b&gt;&lt;span&gt;Developer Studios · devdashboard-hub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;blob-bash-royale.html&quot; data-search=&quot;blob bash royale: ascension blob-bash-royale.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Blob Bash Royale: Ascension&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · blob-bash-royale.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;web-app-dev-dashboard.html&quot; data-search=&quot;⚡ web app dev dashboard web-app-dev-dashboard.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;14&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;⚡ Web App Dev Dashboard&lt;/b&gt;&lt;span&gt;Developer Studios · web-app-dev-dashboard.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8AnimHub.html&quot; data-search=&quot;🪃 n8 animation hub n8animhub.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;🪃 N8 Animation Hub&lt;/b&gt;&lt;span&gt;Developer Studios · n8AnimHub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;MiyagiThrow.html&quot; data-search=&quot;🥷🏾 miyagi throw! miyagithrow.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;🥷🏾 Miyagi Throw!&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · MiyagiThrow.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;push-complete.html&quot; data-search=&quot;push complete push-complete.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Push Complete&lt;/b&gt;&lt;span&gt;Developer Studios · push-complete.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-conquest-super-arcade-edition.html&quot; data-search=&quot;qamelot conquest: super arcade edition qamelot-conquest-super-arcade-edition.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Conquest: Super Arcade Edition&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · qamelot-conquest-super-arcade-edition.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdash-svg-studio.html&quot; data-search=&quot;devdash svg studio devdash-svg-studio.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDash SVG Studio&lt;/b&gt;&lt;span&gt;Developer Studios · devdash-svg-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;svg-sandbox-studio.html&quot; data-search=&quot;svg sandbox studio svg-sandbox-studio.html developer studios&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;SVG Sandbox Studio&lt;/b&gt;&lt;span&gt;Developer Studios · svg-sandbox-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;ecotechcomm-secure-ptt-link.html&quot; data-search=&quot;ecotechcomm // secure ptt link ecotechcomm-secure-ptt-link.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;22&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;EcoTechComm // Secure PTT Link&lt;/b&gt;&lt;span&gt;Featured Sites · ecotechcomm-secure-ptt-link.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;ecotechcomm-secure-frequency.html&quot; data-search=&quot;ecotechcomm | secure frequency ecotechcomm-secure-frequency.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;23&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;EcoTechComm | Secure Frequency&lt;/b&gt;&lt;span&gt;Featured Sites · ecotechcomm-secure-frequency.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdashboard-home.html&quot; data-search=&quot;devdashboard home devdashboard-home.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDashboard Home&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · devdashboard-home.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;homehub.html&quot; data-search=&quot;homehub — command your day. build your future. homehub.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;HomeHub — Command Your Day. Build Your Future.&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · homehub.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;games/n8-shift.html&quot; data-search=&quot;n8 shift: transform protocol games/n8-shift.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;26&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 SHIFT: Transform Protocol&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · games/n8-shift.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;lattice-a-the-ai-context-lab.html&quot; data-search=&quot;lattice — the ai context lab lattice-a-the-ai-context-lab.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Lattice — The AI Context Lab&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · lattice-a-the-ai-context-lab.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;loc-me-in-llc.html&quot; data-search=&quot;loc me in | premium braids &amp;amp; locs artistry edgewood loc-me-in-llc.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;29&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Loc Me In | Premium Braids &amp;amp; Locs Artistry Edgewood&lt;/b&gt;&lt;span&gt;Featured Sites · loc-me-in-llc.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;eco-tech-motion-library.html&quot; data-search=&quot;eco-tech motion library eco-tech-motion-library.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Eco-Tech Motion Library&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · eco-tech-motion-library.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8Prompt.html&quot; data-search=&quot;build//50 — ai webbuilding prompt deck n8prompt.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;31&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;BUILD//50 — AI Webbuilding Prompt Deck&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · n8Prompt.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;neon-pong.html&quot; data-search=&quot;neon pong neon-pong.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Neon Pong&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · neon-pong.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;new-perspective-painting-llc.html&quot; data-search=&quot;new perspective painting llc new-perspective-painting-llc.html featured sites&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;33&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;New Perspective Painting LLC&lt;/b&gt;&lt;span&gt;Featured Sites · new-perspective-painting-llc.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;pulse-productivity-and-biorhythm-studio.html&quot; data-search=&quot;pulse // productivity &amp;amp; biorhythm studio pulse-productivity-and-biorhythm-studio.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;34&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Pulse // Productivity &amp;amp; Biorhythm Studio&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · pulse-productivity-and-biorhythm-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;index.html&quot; data-search=&quot;qamelot menu — every webpage index.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;35&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Menu — Every Webpage&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · index.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;tri-nexus-grail-matrix.html&quot; data-search=&quot;tri-nexus: grail matrix tri-nexus-grail-matrix.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;37&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;TRI-NEXUS: GRAIL MATRIX&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · tri-nexus-grail-matrix.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamomathcore-sci-fi-nexus.html&quot; data-search=&quot;qamomathcore // sci-fi_nexus qamomathcore-sci-fi-nexus.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;QamoMathCore // SCI-FI_NEXUS&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · qamomathcore-sci-fi-nexus.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-math-core.html&quot; data-search=&quot;qamelot // math_core qamelot-math-core.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;39&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;QAMELOT // MATH_CORE&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · qamelot-math-core.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-media-1.html&quot; data-search=&quot;qamelot media component qamelot-media-1.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Media Component&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · qamelot-media-1.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-media-2.html&quot; data-search=&quot;qamelot media component qamelot-media-2.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;41&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Media Component&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · qamelot-media-2.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;qamelot-media-3.html&quot; data-search=&quot;qamelot media - forward flick edition qamelot-media-3.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Media - Forward Flick Edition&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · qamelot-media-3.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;screensaver.html&quot; data-search=&quot;interactive nebula screensaver screensaver.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;43&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Interactive Nebula Screensaver&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · screensaver.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;spriteforge-studio.html&quot; data-search=&quot;spriteforge studio spriteforge-studio.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;SpriteForge Studio&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · spriteforge-studio.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;stix-stax-stonz.html&quot; data-search=&quot;stix stax stonz: cyber camelot stix-stax-stonz.html games &amp;amp; simulations&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;45&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Stix Stax Stonz: Cyber Camelot&lt;/b&gt;&lt;span&gt;Games &amp;amp; Simulations · stix-stax-stonz.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;task-forge.html&quot; data-search=&quot;task forge task-forge.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;46&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Task Forge&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · task-forge.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;n8-tools.html&quot; data-search=&quot;n8 tools — your browser workbench n8-tools.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;47&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;N8 Tools — Your browser workbench&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · n8-tools.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;devdashboard-hub-index.html&quot; data-search=&quot;devdashboard hub devdashboard-hub-index.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;48&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;DevDashboard Hub&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · devdashboard-hub-index.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;funPromptz.html&quot; data-search=&quot;funpromptz — creative media prompt arcade funpromptz.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;49&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;funPromptz — Creative Media Prompt Arcade&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · funPromptz.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;masterPrompt.html&quot; data-search=&quot;masterprompt — animated ai webbuilding command deck masterprompt.html tools &amp;amp; productivity&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;masterPrompt — Animated AI Webbuilding Command Deck&lt;/b&gt;&lt;span&gt;Tools &amp;amp; Productivity · masterPrompt.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;a class=&quot;n8x-page&quot; href=&quot;QamelotMenu.html&quot; data-search=&quot;qamelot menu — compatibility directory qamelotmenu.html experiments &amp;amp; archives&quot;&gt;&lt;span class=&quot;n8x-num&quot;&gt;51&lt;/span&gt;&lt;span class=&quot;n8x-copy&quot;&gt;&lt;b&gt;Qamelot Menu — Compatibility Directory&lt;/b&gt;&lt;span&gt;Experiments &amp;amp; Archives · QamelotMenu.html&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;n8x-arrow&quot; aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;/nav&gt;
-      &lt;div class=&quot;n8x-foot&quot;&gt;&lt;span id=&quot;n8x-count&quot;&gt;48 pages&lt;/span&gt;&lt;span&gt;/ search · Esc close · Alt+M menu&lt;/span&gt;&lt;/div&gt;
-    &lt;/section&gt;
-    &lt;nav id=&quot;n8x-dock&quot; aria-label=&quot;Quick page controls&quot;&gt;
-      &lt;a class=&quot;n8x-link n8x-primary&quot; href=&quot;index.html&quot; aria-label=&quot;Open Qamelot home&quot; title=&quot;Home (Alt+H)&quot;&gt;⌂&lt;/a&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-open&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;n8x-panel&quot; aria-label=&quot;Browse every page&quot; title=&quot;All pages (Alt+M)&quot;&gt;☰&lt;/button&gt;
-      &lt;a class=&quot;n8x-link n8x-secondary&quot; href=&quot;spriteforge-studio.html&quot; aria-label=&quot;Previous page: SpriteForge Studio&quot; title=&quot;Previous page&quot;&gt;←&lt;/a&gt;
-      &lt;a class=&quot;n8x-link n8x-secondary&quot; href=&quot;task-forge.html&quot; aria-label=&quot;Next page: Task Forge&quot; title=&quot;Next page&quot;&gt;→&lt;/a&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-random&quot; type=&quot;button&quot; aria-label=&quot;Open a random page&quot; title=&quot;Random page (Alt+R)&quot;&gt;⚄&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-share&quot; type=&quot;button&quot; aria-label=&quot;Share or copy this page link&quot; title=&quot;Share page&quot;&gt;↗&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-calm&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot; aria-label=&quot;Toggle calm viewing mode&quot; title=&quot;Calm mode&quot;&gt;◐&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-full&quot; type=&quot;button&quot; aria-label=&quot;Toggle fullscreen&quot; title=&quot;Fullscreen&quot;&gt;⛶&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn n8x-secondary&quot; id=&quot;n8x-top&quot; type=&quot;button&quot; aria-label=&quot;Back to top&quot; title=&quot;Back to top&quot;&gt;↑&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-more&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-label=&quot;Show more controls&quot; title=&quot;More controls&quot;&gt;•••&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-move&quot; type=&quot;button&quot; aria-label=&quot;Move controls to the other side&quot; title=&quot;Move controls&quot;&gt;⇆&lt;/button&gt;
-      &lt;button class=&quot;n8x-btn&quot; id=&quot;n8x-hide&quot; type=&quot;button&quot; aria-label=&quot;Hide floating controls&quot; title=&quot;Hide controls&quot;&gt;−&lt;/button&gt;
-    &lt;/nav&gt;
-    &lt;button id=&quot;n8x-restore&quot; type=&quot;button&quot; aria-label=&quot;Show N8 controls&quot; title=&quot;Show controls&quot;&gt;N8&lt;/button&gt;
-  &lt;/aside&gt;
-  &lt;div id=&quot;n8x-toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
-  &lt;script id=&quot;n8x-script&quot;&gt;
-  (()=&gt;{
-    const pages=[&quot;acai-adaptive-cyber-analysis-interface.html&quot;,&quot;n8AHub.html&quot;,&quot;n8AHubPrime.html&quot;,&quot;who-road-convo-lab.html&quot;,&quot;blood-and-gold-panther-arena.html&quot;,&quot;cyber-count-calcun8r-edison-hwy.html&quot;,&quot;social-footer.html&quot;,&quot;cyber-data-multi-team-logistics-engine.html&quot;,&quot;contractor-tool-belt-tactical-utility-engine.html&quot;,&quot;qtd-courage-under-fire.html&quot;,&quot;css-visuals-library-40.html&quot;,&quot;devdashboard-hub.html&quot;,&quot;blob-bash-royale.html&quot;,&quot;web-app-dev-dashboard.html&quot;,&quot;n8AnimHub.html&quot;,&quot;MiyagiThrow.html&quot;,&quot;push-complete.html&quot;,&quot;qamelot-conquest-super-arcade-edition.html&quot;,&quot;devdash-svg-studio.html&quot;,&quot;svg-sandbox-studio.html&quot;,&quot;ecotechcomm-secure-ptt-link.html&quot;,&quot;ecotechcomm-secure-frequency.html&quot;,&quot;devdashboard-home.html&quot;,&quot;homehub.html&quot;,&quot;games/n8-shift.html&quot;,&quot;lattice-a-the-ai-context-lab.html&quot;,&quot;loc-me-in-llc.html&quot;,&quot;eco-tech-motion-library.html&quot;,&quot;n8Prompt.html&quot;,&quot;neon-pong.html&quot;,&quot;new-perspective-painting-llc.html&quot;,&quot;pulse-productivity-and-biorhythm-studio.html&quot;,&quot;index.html&quot;,&quot;tri-nexus-grail-matrix.html&quot;,&quot;qamomathcore-sci-fi-nexus.html&quot;,&quot;qamelot-math-core.html&quot;,&quot;qamelot-media-1.html&quot;,&quot;qamelot-media-2.html&quot;,&quot;qamelot-media-3.html&quot;,&quot;screensaver.html&quot;,&quot;spriteforge-studio.html&quot;,&quot;stix-stax-stonz.html&quot;,&quot;task-forge.html&quot;,&quot;n8-tools.html&quot;,&quot;devdashboard-hub-index.html&quot;,&quot;funPromptz.html&quot;,&quot;masterPrompt.html&quot;,&quot;QamelotMenu.html&quot;];
-    const shell=document.getElementById(&#x27;n8x-shell&#x27;),panel=document.getElementById(&#x27;n8x-panel&#x27;),open=document.getElementById(&#x27;n8x-open&#x27;),search=document.getElementById(&#x27;n8x-search&#x27;),list=document.getElementById(&#x27;n8x-list&#x27;),toast=document.getElementById(&#x27;n8x-toast&#x27;),more=document.getElementById(&#x27;n8x-more&#x27;);
-    const readSetting=(key,fallback)=&gt;{try{return localStorage.getItem(key)??fallback}catch{return fallback}},writeSetting=(key,value)=&gt;{try{localStorage.setItem(key,value)}catch{}};
-    shell.dataset.n8xSide=readSetting(&#x27;n8x-side&#x27;,&#x27;right&#x27;)===&#x27;left&#x27;?&#x27;left&#x27;:&#x27;right&#x27;;shell.dataset.n8xHidden=String(readSetting(&#x27;n8x-hidden&#x27;,&#x27;false&#x27;)===&#x27;true&#x27;);shell.dataset.n8xExpanded=&#x27;false&#x27;;
-    const showToast=(message)=&gt;{toast.textContent=message;toast.classList.add(&#x27;n8x-show&#x27;);clearTimeout(showToast.timer);showToast.timer=setTimeout(()=&gt;toast.classList.remove(&#x27;n8x-show&#x27;),2200)};
-    const setExpanded=(active)=&gt;{shell.dataset.n8xExpanded=String(active);more.setAttribute(&#x27;aria-expanded&#x27;,String(active));more.setAttribute(&#x27;aria-label&#x27;,active?&#x27;Show fewer controls&#x27;:&#x27;Show more controls&#x27;)};
-    const setMenu=(visible,returnFocus=true)=&gt;{if(visible){shell.dataset.n8xHidden=&#x27;false&#x27;;writeSetting(&#x27;n8x-hidden&#x27;,&#x27;false&#x27;);setExpanded(false)}panel.setAttribute(&#x27;aria-hidden&#x27;,String(!visible));open.setAttribute(&#x27;aria-expanded&#x27;,String(visible));if(visible){search.focus();search.select()}else if(returnFocus&amp;&amp;shell.dataset.n8xHidden!==&#x27;true&#x27;)open.focus()};
-    const setHidden=(hidden)=&gt;{setMenu(false,false);shell.dataset.n8xHidden=String(hidden);writeSetting(&#x27;n8x-hidden&#x27;,String(hidden));if(!hidden)open.focus()};
-    open.addEventListener(&#x27;click&#x27;,()=&gt;setMenu(panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;true&#x27;));
-    document.getElementById(&#x27;n8x-close&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setMenu(false));
-    more.addEventListener(&#x27;click&#x27;,()=&gt;setExpanded(shell.dataset.n8xExpanded!==&#x27;true&#x27;));
-    document.getElementById(&#x27;n8x-move&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const side=shell.dataset.n8xSide===&#x27;left&#x27;?&#x27;right&#x27;:&#x27;left&#x27;;shell.dataset.n8xSide=side;writeSetting(&#x27;n8x-side&#x27;,side);showToast(&#x27;Controls moved &#x27;+side)});
-    document.getElementById(&#x27;n8x-hide&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setHidden(true));
-    document.getElementById(&#x27;n8x-restore&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setHidden(false));
-    search.addEventListener(&#x27;input&#x27;,()=&gt;{const query=search.value.trim().toLowerCase();let shown=0;list.querySelectorAll(&#x27;.n8x-page&#x27;).forEach(link=&gt;{const match=!query||link.dataset.search.includes(query);link.hidden=!match;if(match)shown++});document.getElementById(&#x27;n8x-count&#x27;).textContent=shown+&#x27; page&#x27;+(shown===1?&#x27;&#x27;:&#x27;s&#x27;)});
-    document.getElementById(&#x27;n8x-random&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const choices=pages.filter(file=&gt;file!==&quot;stix-stax-stonz.html&quot;);location.href=choices[Math.floor(Math.random()*choices.length)]||&#x27;index.html&#x27;});
-    document.getElementById(&#x27;n8x-share&#x27;).addEventListener(&#x27;click&#x27;,async()=&gt;{const data={title:document.title,text:&#x27;Explore &#x27;+document.title,url:location.href};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(location.href);showToast(&#x27;Live page link copied&#x27;)}}catch(error){if(error.name!==&#x27;AbortError&#x27;)showToast(&#x27;Use the address bar to copy this link&#x27;)}});
-    const calm=document.getElementById(&#x27;n8x-calm&#x27;);const saved=localStorage.getItem(&#x27;n8x-calm&#x27;)===&#x27;true&#x27;;document.documentElement.dataset.n8xCalm=String(saved);calm.setAttribute(&#x27;aria-pressed&#x27;,String(saved));calm.addEventListener(&#x27;click&#x27;,()=&gt;{const active=document.documentElement.dataset.n8xCalm!==&#x27;true&#x27;;document.documentElement.dataset.n8xCalm=String(active);calm.setAttribute(&#x27;aria-pressed&#x27;,String(active));localStorage.setItem(&#x27;n8x-calm&#x27;,String(active));showToast(active?&#x27;Calm mode on&#x27;:&#x27;Calm mode off&#x27;)});
-    document.getElementById(&#x27;n8x-full&#x27;).addEventListener(&#x27;click&#x27;,async()=&gt;{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch(error){showToast(&#x27;Fullscreen is unavailable here&#x27;)}});
-    document.getElementById(&#x27;n8x-top&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;scrollTo({top:0,behavior:matchMedia(&#x27;(prefers-reduced-motion: reduce)&#x27;).matches?&#x27;auto&#x27;:&#x27;smooth&#x27;}));
-    const progress=document.getElementById(&#x27;n8x-progress&#x27;);const updateProgress=()=&gt;{const max=document.documentElement.scrollHeight-innerHeight;progress.style.width=(max&gt;0?Math.min(100,scrollY/max*100):0)+&#x27;%&#x27;};addEventListener(&#x27;scroll&#x27;,updateProgress,{passive:true});addEventListener(&#x27;resize&#x27;,updateProgress,{passive:true});updateProgress();
-    document.addEventListener(&#x27;pointerdown&#x27;,event=&gt;{if(panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;false&#x27;&amp;&amp;!shell.contains(event.target))setMenu(false,false)},{capture:true});
-    document.addEventListener(&#x27;keydown&#x27;,event=&gt;{const typing=/input|textarea|select/i.test(document.activeElement?.tagName||&#x27;&#x27;);if(event.key===&#x27;Escape&#x27;&amp;&amp;panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;false&#x27;){event.preventDefault();setMenu(false)}else if(event.key===&#x27;/&#x27;&amp;&amp;!typing){event.preventDefault();setMenu(true)}else if(event.altKey&amp;&amp;event.key.toLowerCase()===&#x27;m&#x27;){event.preventDefault();setMenu(panel.getAttribute(&#x27;aria-hidden&#x27;)===&#x27;true&#x27;)}else if(event.altKey&amp;&amp;event.key.toLowerCase()===&#x27;h&#x27;){event.preventDefault();location.href=&#x27;index.html&#x27;}else if(event.altKey&amp;&amp;event.key.toLowerCase()===&#x27;r&#x27;){event.preventDefault();document.getElementById(&#x27;n8x-random&#x27;).click()}});
-    document.querySelectorAll(&#x27;a[target=&quot;_blank&quot;]&#x27;).forEach(link=&gt;{const rel=new Set((link.rel||&#x27;&#x27;).split(/s+/).filter(Boolean));rel.add(&#x27;noopener&#x27;);rel.add(&#x27;noreferrer&#x27;);link.rel=[...rel].join(&#x27; &#x27;)});
-  })();
-  &lt;/script&gt;
-  &lt;!-- N8-ENHANCEMENTS:BODY:END --&gt;
+
+
+
+
+
+
+&lt;!-- N8-ENHANCEMENTS:BODY:END --&gt;
 &lt;!-- PRACTICE KIT --&gt;
 &lt;script src=&quot;activity-kit.js&quot; data-activity=&quot;companion-3&quot; data-title=&quot;Stix Stax Stonz&quot; data-goals=&quot;[&amp;quot;Find a possible winning line.&amp;quot;, &amp;quot;Block an immediate threat.&amp;quot;, &amp;quot;Describe a move that sets up your next turn.&amp;quot;]&quot; defer&gt;&lt;/script&gt;
 &lt;!-- /PRACTICE KIT --&gt;
@@ -10736,162 +10591,14 @@ if(C[app.current]){const sec=$(&#x27;#s-&#x27;+app.current);if(sec)make(app.curr
         </div>
     </div>
     <footer>
-        <div>&copy; <span id="year"></span> Omni OS | ⚡ N8 CyberDev Engine</div>
+        <div>&copy; <span id="year"></span> KidHub · Create, learn & play</div>
         <div class="footer-links">
-            <a href="#">Privacy 🛡️</a>
-            <a href="#">Terms 📝</a>
-            <a href="#">Support 🛟</a>
+            <a href="resources.html#privacy" data-library="privacy">Privacy 🛡️</a>
+            <a href="resources.html#credits" data-library="credits">Use & credits 📝</a>
+            <a href="resources.html#help" data-library="help">Support 🛟</a>
         </div>
     </footer>
     <div id="toast">✨ Action completed successfully</div>
-    <div id="api-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-modal">&times;</button>
-            <h2>📚 API & Documentation</h2>
-            <p>Welcome to the Omni OS unified documentation portal.</p>
-            <ul>
-                <li><strong>Unified Theme Engine:</strong> Seamlessly injects data-theme across all sandboxed iframes.</li>
-                <li><strong>Event Bridge:</strong> Secure postMessage bus for inter-app communication.</li>
-                <li><strong>Asset Stack:</strong> Inline SVGs and data URIs ensure zero external dependencies.</li>
-            </ul>
-            <p style="margin-top:20px; font-size:0.9rem; opacity:0.8;">System Architecture version 4.2.0-rc1</p>
-        </div>
-    </div>
-    <script>
-        function init() {
-            document.getElementById('year').textContent = new Date().getFullYear();
-            
-            let toastTimeout;
-            window.showToast = (message) => {
-                const toast = document.getElementById('toast');
-                toast.innerHTML = message;
-                toast.classList.add('show');
-                clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
-            };
-            
-            const canvas = document.getElementById('particles');
-            const ctx = canvas.getContext('2d');
-            var particlesArray = [];
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 0.5;
-                    this.speedX = Math.random() * 0.5 - 0.25;
-                    this.speedY = Math.random() * 0.5 - 0.25;
-                    this.color = 'rgba(100, 100, 100, 0.2)';
-                }
-                update() {
-                    this.x += this.speedX; this.y += this.speedY;
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                }
-                draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            
-            function updateParticles(theme) {
-                let color = 'rgba(100, 100, 100, 0.2)';
-                if (theme === 'dark') color = 'rgba(200, 200, 200, 0.2)';
-                else if (theme === 'cyberpunk') color = 'rgba(0, 255, 204, 0.3)';
-                else if (theme === 'emerald') color = 'rgba(0, 204, 136, 0.3)';
-                particlesArray.forEach(p => p.color = color);
-            }
-            
-            function initParticles() {
-                particlesArray = [];
-                const particleCount = window.innerWidth < 768 ? 30 : 70;
-                for (let i = 0; i < particleCount; i++) { particlesArray.push(new Particle()); }
-                updateParticles(document.documentElement.getAttribute('data-theme'));
-            }
-            
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particlesArray.forEach(p => { p.update(); p.draw(); });
-                requestAnimationFrame(animateParticles);
-            }
-            
-            initParticles();
-            animateParticles();
-            
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                initParticles();
-            });
-
-            const themeSelector = document.getElementById('theme-selector');
-            const applyTheme = (theme) => {
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('omni-theme', theme);
-                themeSelector.value = theme;
-                updateParticles(theme);
-                const iframes = document.querySelectorAll('iframe');
-                iframes.forEach(iframe => {
-                    try {
-                        if(iframe.contentDocument) {
-                            iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
-                        }
-                    } catch(e) {}
-                });
-                showToast(`🎨 Theme applied: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`);
-            };
-            
-            const savedTheme = localStorage.getItem('omni-theme');
-            if (savedTheme) {
-                applyTheme(savedTheme);
-            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                applyTheme('dark');
-            } else {
-                applyTheme('light');
-            }
-            
-            themeSelector.addEventListener('change', (e) => { applyTheme(e.target.value); });
-            
-            document.querySelectorAll('iframe').forEach(iframe => {
-                iframe.addEventListener('load', () => {
-                    try { iframe.contentDocument.documentElement.setAttribute('data-theme', themeSelector.value); } catch(e) {}
-                });
-            });
-            
-            const navBtns = document.querySelectorAll('.nav-btn[data-target]');
-            const iframesList = document.querySelectorAll('iframe');
-            navBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    navBtns.forEach(b => b.classList.remove('active'));
-                    iframesList.forEach(f => f.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(btn.getAttribute('data-target')).classList.add('active');
-                    showToast(`🚀 Launched ${btn.innerText.substring(2)}`);
-                });
-            });
-            
-            const fsBtn = document.getElementById('fullscreen-btn');
-            fsBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().then(() => { showToast('🔲 Entered Fullscreen'); }).catch(err => { console.error(err); });
-                } else {
-                    document.exitFullscreen().then(() => { showToast('🔳 Exited Fullscreen'); });
-                }
-            });
-            
-            const apiBtn = document.getElementById('btn-api-docs');
-            const apiModal = document.getElementById('api-modal');
-            const closeModal = document.getElementById('close-modal');
-            apiBtn.addEventListener('click', () => apiModal.classList.add('show'));
-            closeModal.addEventListener('click', () => apiModal.classList.remove('show'));
-            apiModal.addEventListener('click', (e) => { if(e.target === apiModal) apiModal.classList.remove('show'); });
-        }
-        
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
-</body>
-</html>
+    <dialog id="reload-dialog" aria-labelledby="reload-title"><h2 id="reload-title">Reload <span id="reload-name"></span>?</h2><p>Export or save your work first. Reloading restarts this application and can discard an unsaved canvas, recording, or current round.</p><div class="controls"><button id="reload-cancel" autofocus>Keep working</button><button id="reload-confirm">Reload application</button></div></dialog>
+    <script src="dashboard-shell.js" defer></script><script src="portal-data.js" defer></script><script src="portal.js" defer></script>
+</body></html>

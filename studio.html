@@ -5624,7 +5624,6 @@ window.KidHubPlus={tools:T.length,features:FEATURES.length,improvements:IMPROVEM
 })();
 </script>
 <!-- KIDHUB PLUS END -->
-
 <!-- SRC:arcade -->
 <style id="arcade-css">
 .ar{max-width:1100px;margin:0 auto;padding:0 12px 90px}
@@ -5809,15 +5808,16 @@ async function emailOne(c,msg){
   return"failed";
  }catch(e){return navigator.onLine?"failed":"queued"}}
 async function deliver(msg){
+ if(!S.contacts.some(c=>msg.to.includes(c.id)&&c.email)&&!/^https:\/\//i.test(S.hook.url))return"saved";
  if(!navigator.onLine)return"queued";
  const results=[];
  const mailTo=msg.to.map(id=>S.contacts.find(c=>c.id===id)).filter(c=>c&&c.email);
  msg.res=msg.res||{};
  for(const c of mailTo){if(msg.res[c.id]==="sent")continue;msg.res[c.id]=await emailOne(c,msg);results.push(msg.res[c.id])}
- if(/^https:\/\/[^\s]+$/i.test(S.hook.url))results.push(await deliverHook(msg));
+ if(/^https:\/\/[^\s]+$/i.test(S.hook.url)){if(!["sent","sent?"].includes(msg.hookStatus))msg.hookStatus=await deliverHook(msg);results.push(msg.hookStatus)}
  if(!results.length&&!mailTo.length&&!Object.keys(msg.res).length)return"saved";
  const all=[...Object.values(msg.res),...results];
- return all.includes("activate")?"activate":all.every(r=>r==="sent")?"sent":all.includes("sent")||all.includes("sent?")?"sent?":all.includes("queued")?"queued":"failed"}
+ return all.includes("activate")?"activate":all.every(r=>r==="sent")?"sent":all.some(r=>r==="failed"||r==="queued")?(all.some(r=>r==="sent"||r==="sent?")?"partial":all.includes("queued")?"queued":"failed"):"sent?"}
 async function deliverHook(msg){const u=S.hook.url;
  const names=msg.to.map(id=>(S.contacts.find(c=>c.id===id)||{}).name).filter(Boolean),text=`${msg.sos?"🆘 ":""}${msg.from} → ${names.join(", ")}: ${msg.content}`;
  let init;if(S.hook.fmt==="discord")init={method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:text.slice(0,1900)})};
@@ -5825,12 +5825,12 @@ async function deliverHook(msg){const u=S.hook.url;
  else if(S.hook.fmt==="ntfy")init={method:"POST",headers:{Title:`KidHub: message from ${msg.from}`.replace(/[^\x20-\x7e]/g,""),Priority:msg.sos?"urgent":"default",Tags:msg.sos?"rotating_light":"speech_balloon"},body:text};
  else init={method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({to:names,content:msg.content,from:msg.from,priority:msg.sos?"high":"normal",sentAt:new Date(msg.at).toISOString(),app:"KidHub"})};
  try{const r=await fetch(u,init);if(r.type==="opaque")return"sent?";return r.ok?"sent":"failed"}catch(e){try{await fetch(u,{...init,mode:"no-cors"});return"sent?"}catch(_){return"queued"}}}
-const ST={activate:"📧 Check your inbox to activate (one time)",sent:"✅ Sent",["sent?"]:"📨 Sent (unconfirmed)",saved:"💾 Saved — ask a grown-up to connect messages",queued:"⏳ Waiting for internet",failed:"⚠️ Failed — will retry",quiet:"🌙 Held for quiet hours",sending:"📤 Sending…"};
+const ST={activate:"📧 Ask a grown-up to activate, then retry",partial:"⚠️ Partly delivered — retry waiting destinations",sent:"✅ Sent",["sent?"]:"📨 Sent (unconfirmed)",saved:"💾 Saved — ask a grown-up to connect messages",queued:"⏳ Waiting for internet",failed:"⚠️ Failed — will retry",quiet:"🌙 Held for quiet hours",sending:"📤 Sending…"};
 async function send(content,{sos=false}={}){content=String(content||"").trim().slice(0,500);const to=$$(".cw-chip[aria-pressed=true]").map(b=>b.dataset.c);if(!content)return toast("✍️ Type or say a message first");if(!to.length)return toast("👆 Pick who to send it to");
  const msg={id:Date.now().toString(36),to,content,from:me(),sos,at:Date.now(),status:"sending"};S.outbox.push(msg);S.outbox=S.outbox.slice(-40);render();
- msg.status=inQuiet()&&!sos?"quiet":await deliver(msg);save();render();chime(msg.status==="sent"||msg.status==="sent?");say(msg.status==="sent"||msg.status==="sent?"?"Message sent!":msg.status==="saved"?"Message saved.":"I'll send it soon.");if(sos&&navigator.vibrate)navigator.vibrate([200,100,200])}
+ msg.status=inQuiet()&&!sos?"quiet":await deliver(msg);save();render();chime(msg.status==="sent"||msg.status==="sent?");say(msg.status==="sent"?"Message sent!":msg.status==="saved"?"Message saved on this device.":msg.status==="activate"?"Ask a grown-up to activate email delivery.":"Delivery is not confirmed. Check the Outbox.");if(sos&&navigator.vibrate)navigator.vibrate([200,100,200])}
 /* 6 · Offline outbox with auto-retry */
-let retrying=false;async function retry(){if(retrying||!navigator.onLine)return;retrying=true;for(const m of S.outbox){if(["queued","failed","activate"].includes(m.status)||(m.status==="quiet"&&!inQuiet())){m.status=await deliver(m);save()}}retrying=false;render()}
+let retrying=false;async function retry(includeActivation=false){if(retrying||!navigator.onLine)return;retrying=true;try{for(const m of S.outbox){if((["queued","failed","partial"].includes(m.status)||(includeActivation===true&&m.status==="activate"))||(m.status==="quiet"&&!inQuiet())){m.status=await deliver(m);save()}}}finally{retrying=false;render()}}
 addEventListener("online",retry);
 
 /* 2 · Scheduled reminders */
@@ -5852,7 +5852,7 @@ function render(){const body=$("#cwBody");if(!body)return;$$(".cw-tabs button").
   <label class="cw-sr" for="cwMsg">Message</label><textarea id="cwMsg" rows="3" maxlength="500" placeholder="✍️ Write a message…"></textarea>
   <div class="cw-row"><button type="button" class="pri" id="cwSend">📤 Send</button><button type="button" id="cwMic">🎤 Say it</button><button type="button" class="sos" id="cwSos">🆘 I need a grown-up</button></div>
   <p class="cw-note">⚡ Quick messages:</p><div class="cw-row">${["🌟 Look what I made!","✅ I finished my homework!","🎮 Can I play a game?","🍎 I'm hungry","😴 I'm tired","❤️ Love you!","🏠 I'm home","🤔 Can you help me?"].map(q=>`<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
-  <p class="cw-note">${conn?"📧 Messages are emailed to your grown-ups.":"💾 Not connected yet — messages are saved here until a grown-up connects them in ⚙️."}${inQuiet()?" 🌙 Quiet hours are on.":""}</p>`;
+  <p class="cw-note">${conn?"🔗 Messages use the email or webhook destinations configured by a grown-up.":"💾 Not connected yet — messages are saved here until a grown-up connects them in ⚙️."}${inQuiet()?" 🌙 Quiet hours are on.":""}</p>`;
   $$(".cw-chip",body).forEach(b=>b.onclick=()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true"));
   $$("[data-q]",body).forEach(b=>b.onclick=()=>{$("#cwMsg").value=b.dataset.q;$("#cwMsg").focus()});
   $("#cwSend").onclick=()=>send($("#cwMsg").value).then(()=>{});$("#cwMic").onclick=e=>dictate(e.currentTarget);
@@ -5864,11 +5864,11 @@ function render(){const body=$("#cwBody");if(!body)return;$$(".cw-tabs button").
   $$("[data-x]",body).forEach(b=>b.onclick=()=>{S.reminders.splice(+b.dataset.x,1);save();render()});
   $("#cwNotif").onclick=()=>{if(!("Notification" in window))return toast("Pop-up alerts aren't supported here");Notification.requestPermission().then(p=>toast(p==="granted"?"🔔 Alerts on":"🔕 Alerts off"))}}
  else if(tab==="out"){body.innerHTML=`<ul class="cw-list">${S.outbox.slice().reverse().map(m=>`<li><span>${m.sos?"🆘 ":""}${esc(m.content)}<br><small>to ${esc(m.to.map(id=>(S.contacts.find(c=>c.id===id)||{name:"?"}).name).join(", "))} · ${new Date(m.at).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}</small></span><span class="cw-st">${ST[m.status]||esc(m.status)}</span></li>`).join("")||'<li class="cw-note">📭 No messages yet.</li>'}</ul><div class="cw-row"><button type="button" id="cwRetry">🔁 Retry waiting</button><button type="button" id="cwShare">📤 Share last message</button><button type="button" id="cwClr">🧹 Clear</button></div>`;
-  $("#cwRetry").onclick=retry;$("#cwClr").onclick=()=>{S.outbox=[];save();render()};
+  $("#cwRetry").onclick=()=>retry(true);$("#cwClr").onclick=()=>{S.outbox=[];save();render()};
   $("#cwShare").onclick=()=>{const m=S.outbox[S.outbox.length-1];if(!m)return;const t=`${m.from}: ${m.content}`;if(navigator.share)navigator.share({title:"KidHub message",text:t}).catch(()=>{});else(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("📋 Copied"),()=>toast(t))}}
  else if(tab==="set"){if(!unlocked){if(!gate){const a=2+Math.floor(Math.random()*8),b=3+Math.floor(Math.random()*7);gate={a,b}}body.innerHTML=`<p>🛡️ <b>Grown-ups only.</b> ${S.pinHash?"Enter your PIN.":`What is ${gate.a} × ${gate.b}?`}</p><div class="cw-row"><label class="cw-sr" for="cwGate">Answer</label><input id="cwGate" type="${S.pinHash?"password":"number"}" inputmode="numeric" maxlength="8" style="width:140px"><button type="button" class="pri" id="cwGo">🔓 Unlock</button></div>`;
    const go=async()=>{const v=$("#cwGate").value.trim();const ok=S.pinHash?(await sha(v))===S.pinHash:+v===gate.a*gate.b;if(ok){unlocked=true;gate=null;render()}else{toast("🔒 Not quite");$("#cwGate").value=""}};$("#cwGo").onclick=go;$("#cwGate").onkeydown=e=>{if(e.key==="Enter")go()};return}
-  body.innerHTML=`<p class="cw-note">📧 <b>Email:</b> add each grown-up's email below. Messages are delivered by <b>FormSubmit.co</b>; the very first message to each address sends a one-time <b>Activate</b> email — click it and every message after that arrives normally. Addresses stay on this device only. Tip: after activating, FormSubmit emails you a private alias you can paste here instead of your address.</p>
+  body.innerHTML=`<p class="cw-note">📧 <b>Email:</b> add each grown-up's email below. Messages are delivered by <b>FormSubmit.co</b>; the very first message to each address sends a one-time <b>Activate</b> email — follow its instructions, then use Retry waiting in the Outbox. Delivery still depends on the service and connection. Addresses are stored in this browser and sent to FormSubmit when you send a message. Tip: after activating, FormSubmit emails you a private alias you can paste here instead of your address.</p>
   <p class="cw-note">🔗 <b>Optional extra:</b> also connect a webhook you control. Use an <b>https</b> webhook, such as a Discord or Slack incoming webhook, an ntfy.sh topic, or a Zapier/Make/IFTTT hook (these can forward to text or email). Nothing is sent anywhere until you add one.</p>
   <label class="cw-sr" for="cwUrl">Webhook URL</label><input id="cwUrl" type="url" maxlength="400" placeholder="https://…" value="${esc(S.hook.url)}">
   <div class="cw-row"><label for="cwFmt" style="font-weight:700">Format</label><select id="cwFmt" style="width:auto">${[["json","Generic JSON"],["discord","Discord"],["slack","Slack"],["ntfy","ntfy.sh"]].map(([v,l])=>`<option value="${v}" ${S.hook.fmt===v?"selected":""}>${l}</option>`).join("")}</select><button type="button" id="cwTest">🧪 Send test</button></div>
@@ -5878,7 +5878,7 @@ function render(){const body=$("#cwBody");if(!body)return;$$(".cw-tabs button").
   <p class="cw-note">🔑 <b>Grown-up PIN</b> (optional, replaces the math question)</p><div class="cw-row"><label class="cw-sr" for="cwPin">New PIN</label><input id="cwPin" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits" style="width:140px"><button type="button" id="cwPinSet">💾 Save PIN</button>${S.pinHash?'<button type="button" id="cwPinClr">Remove PIN</button>':""}</div>
   <div class="cw-row"><button type="button" class="pri" id="cwSave">✅ Save settings</button><button type="button" id="cwLock">🔒 Lock</button></div>`;
   const readC=()=>{S.contacts=S.contacts.map((c,i)=>({...c,name:($(`[data-n="${i}"]`).value.trim()||c.name).slice(0,24),emoji:($(`[data-e="${i}"]`).value.trim()||"🙂").slice(0,4),email:(()=>{const v=$(`[data-m="${i}"]`).value.trim();return validMail(v)?v:""})()}))};
-  $("#cwSave").onclick=()=>{const u=$("#cwUrl").value.trim();if(u&&!/^https:\/\/[^\s]+$/i.test(u))return toast("🔗 The webhook must start with https://");S.hook={url:u,fmt:$("#cwFmt").value};readC();S.quiet={on:$("#cwQ").checked,from:$("#cwQF").value||"20:30",to:$("#cwQT").value||"07:00"};S.voice=$("#cwV").checked;save();toast("✅ Cloud settings saved");retry()};
+  $("#cwSave").onclick=()=>{if($$("[data-m]",body).some(i=>i.value.trim()&&!validMail(i.value)))return toast("📧 Check the email address before saving");const u=$("#cwUrl").value.trim();if(u&&!/^https:\/\/[^\s]+$/i.test(u))return toast("🔗 The webhook must start with https://");S.hook={url:u,fmt:$("#cwFmt").value};readC();S.quiet={on:$("#cwQ").checked,from:$("#cwQF").value||"20:30",to:$("#cwQT").value||"07:00"};S.voice=$("#cwV").checked;save();toast("✅ Cloud settings saved");retry()};
   $("#cwTest").onclick=async()=>{$("#cwSave").click();if(!S.hook.url)return;const r=await deliver({to:S.contacts.map(c=>c.id),content:"🧪 Test from KidHub — messages are connected!",from:me(),at:Date.now()});toast(ST[r]||r)};
   $("#cwMailTest").onclick=async()=>{const bad=$$("[data-m]",body).filter(i=>i.value.trim()&&!validMail(i.value));if(bad.length)return toast("📧 Check the email address");$("#cwSave").click();const who=S.contacts.filter(c=>c.email);if(!who.length)return toast("📧 Add an email first");toast("📧 Sending test…");const m={to:who.map(c=>c.id),content:"🧪 Test from KidHub — email messages are connected!",from:me(),at:Date.now()};const r=await deliver(m);toast(ST[r]||r)};
   $("#cwAddC").onclick=()=>{readC();S.contacts.push({id:"c"+Date.now().toString(36).slice(-6),name:"Grown-up",emoji:"🧑",email:""});save();render()};
@@ -6797,7 +6797,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="2026.10.10-2216-d6b80a";
+const BUILD="c86354d0958e8a7d";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6949,5 +6949,15 @@ if(C[app.current]){const sec=$('#s-'+app.current);if(sec)make(app.current,$('.ac
 })();
 </script>
 <!-- /SRC:zzz-adventures -->
+<!-- SRC:zzzz-navigation -->
+<script id="library-navigation">
+(()=>{'use strict';
+window.addEventListener('kidhub:launch',event=>{const d=event.detail;if(!d||typeof d!=='object')return;if(typeof d.tool==='string'&&/^[a-z0-9-]+$/.test(d.tool)&&window.KidHubPlus){app.show('tools');KidHubPlus.openTool(d.tool)}else if(typeof d.screen==='string'&&document.getElementById('s-'+d.screen))app.show(d.screen)});
+// Route footer help to the real resource library. Preserve already configured links.
+document.querySelectorAll('footer a[href="#"]').forEach(a=>{const label=a.textContent.toLowerCase();a.href='resources.html#'+(label.includes('privacy')?'privacy':label.includes('parent')?'start':'help');a.target='_top'});
+const header=document.querySelector('footer');if(header&&!header.querySelector('[data-resource-link]')){const a=document.createElement('a');a.href='resources.html';a.target='_top';a.dataset.resourceLink='1';a.textContent='📚 Applications & resources';a.style.cssText='display:inline-block;margin:8px;padding:6px';header.append(a)}
+})();
+</script>
+<!-- /SRC:zzzz-navigation -->
 </body>
 </html>

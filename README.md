@@ -27,7 +27,7 @@ Every core activity now has an **Adventure trail** with three tailored missions,
 | 🎵 Music Maker | 16 steps across five rows; existing eight-step songs migrate without losing notes. |
 | 📖 Storybook Creator | Up to 24 pages, 800 characters per page, and an imagination mixer. |
 | 🧰 80 toolbox tools | Separate journals and category-specific experiments for math, words, science, time/money, arts, games, wellbeing, and helpers. |
-| 🕹️ 14 arcade games | Tailored practice goals, strategy notes, a session timer, last-20-session history, and JSON export. |
+| 🕹️ 13 current arcade games | Tailored practice goals, strategy notes, a session timer, last-20-session history, and JSON export. |
 | 🎛️ Three companion apps | The same practice companion, with goals suited to KidsBeat, Qamo Mathcore, and Stix Stax Stonz. |
 
 Open an activity and expand **Adventure trail**. In an arcade game or companion app, use **🧭 Practice**. The practice panel does not pause gameplay; use the game's own pause control first. Session times measure elapsed wall-clock time between Start and Finish.
@@ -128,7 +128,7 @@ Then visit `http://localhost:8000`. No package installation is required to use t
 
 ## 🧭 More activities in the hub
 
-The inherited hub includes entry points for Catch the Stars, Story Garden, Music Lab, Math Mission, Memory Match, Code Logic, Space Explorer, Dino Dig, Shapes Puzzle, Farm Friends, Coloring Book, Word Spelling, Telling Time, Music Maker, and Storybook Creator. This release focuses on Art Studio; those other activities have not received a complete functional audit.
+The inherited hub includes entry points for Catch the Stars, Story Garden, Music Lab, Math Mission, Memory Match, Code Logic, Space Explorer, Dino Dig, Shapes Puzzle, Farm Friends, Coloring Book, Word Spelling, Telling Time, Music Maker, and Storybook Creator. The automated suites cover core activity flows, journals, migrations, and the current game manifest; coverage is described below.
 
 ## 💾 Privacy & storage
 
@@ -137,7 +137,7 @@ The inherited hub includes entry points for Catch the Stars, Story Garden, Music
 - 📦 The existing gallery keeps three reduced-size JPEG previews, not editable full-resolution projects.
 - 🧹 Clearing browser data can remove saved progress. Different browser profiles and origins have separate storage.
 - 🌐 Google Fonts requests contact an external service. This is not a completely network-free page.
-- 💬 Existing “Quick Connect” messaging is simulated UI, not a real communication service.
+- 💬 Cloud messaging saves locally unless a grown-up configures email through FormSubmit or an HTTPS webhook. Configured sends leave the device; delivery is not guaranteed.
 - 👪 Existing parent controls are convenience controls, not authenticated access protection.
 
 See [PRIVACY.md](PRIVACY.md) for details.
@@ -155,7 +155,36 @@ See [PRIVACY.md](PRIVACY.md) for details.
 | `PRIVACY.md` | Storage, external resources, and data handling |
 | `SECURITY.md` | Security reporting and scope |
 
-## 🧪 Validation
+## Applications & Resources — October 1, 2026
+
+Open **Applications** or **Resources** in the dashboard, or open `resources.html` directly.
+
+- 113 launchable entries: four applications, 16 core activities, 80 toolbox tools, and 13 current arcade games. Counts follow the shipped manifest, including N8 SHIFT.
+- Search, categories, favorites, recent launches, and direct activity/tool links.
+- A 12-activity session planner with notes, reorder controls, text export, and a separately scoped JSON backup. Imports validate their format and confirm replacement; failed storage is reported.
+- Six printable worksheet types, activity guides, troubleshooting, privacy notes, and developer documentation.
+- Keyboard focus survives favorite changes and planner reordering/removal. Desktop, 390px, and 768px resource layouts are covered by browser tests.
+- Dashboard and resource-page visits now install offline support directly. Cached pages work offline; a page not previously saved shows recovery guidance. Updates ask before refreshing unsaved work.
+
+## Build and verification
+
+Run these from the repository root with Python, Node.js, the existing development dependencies, and Microsoft Edge available:
+
+```sh
+npm run build
+npm test
+npm run test:resources
+npm run test:activities
+npm run test:release
+```
+
+The test runner starts and closes its own loopback server on a free port. `BASE_URL` can select an existing preview. Tests use isolated browser contexts; email/webhook cases are intercepted and never send real messages. Screenshots are generated in the repository.
+
+Normal builds use only this checkout. They synchronize standalone/embedded Studio, practice kits, the catalog, and a content-based offline version. Rebuilding unchanged sources produces identical output. `npm run import:games` is a separate optional operation requiring the original sibling N8DEV/standalone-sites sources; it refreshes shipped games before building.
+
+The 17 browser suites cover art, toolbox, music, games, messaging layout, activity progress/migration, dashboard routing, resources and offline reliability. Core-module accessibility checks exclude contrast; resource-page checks include it. Synthetic delivery tests verify request handling, not actual email receipt. Native touch hardware, assistive-technology behavior and every game strategy remain outside automated coverage.
+
+## 🧪 Art Studio validation scope
 
 The regression script uses Node.js, Playwright, and installed Microsoft Edge:
 
@@ -180,4 +209,4 @@ The public repository publishes from `main` at `/` with HTTPS enforced. `.nojeky
 
 Art Studio history now stores bounded pixel snapshots instead of PNG-encoding the canvas before every stroke. Undo/redo restores synchronously, avoiding asynchronous image-load races. Decorative studio animation pauses in hidden tabs and respects the operating system's reduced-motion preference. Mobile controls stay within the available width; desktop controls scroll beside the canvas.
 
-The Pages deployment and the Art Studio are verified separately. Other apps embedded in the dashboard remain inherited functionality rather than newly audited features.
+The Pages deployment and the Art Studio are verified separately. The companion drawing/export, beat controls, practice panels, routing, and mobile frame layout have focused browser coverage; this is not an exhaustive audit of every inherited app.

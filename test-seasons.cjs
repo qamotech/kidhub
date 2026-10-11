@@ -1,6 +1,6 @@
 const { chromium } = require('playwright');const assert=require('assert');
 (async()=>{const b=await chromium.launch({channel:'msedge',headless:true});const page=await b.newPage({viewport:{width:1280,height:800}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
-const url=process.env.STUDIO_URL||'file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html';
+const url=process.env.STUDIO_URL||(process.env.BASE_URL&&process.env.BASE_URL+'/studio.html')||'file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html';
 await page.goto(url);
 const info=await page.evaluate(()=>({edits:kidSeason.edits.length,n:kidSeason.seasons.length,keys:kidSeason.seasons.map(s=>[s.id,s.stickers.length,s.memory.length,s.catch.length,s.prompts.length,s.swatches.length,s.jokes.length])}));
 assert.equal(info.edits,40,'40 seasonal edit slots');assert(info.n>=12,'a full year of seasons');

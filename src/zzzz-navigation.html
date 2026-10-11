@@ -1,0 +1,8 @@
+<script id="library-navigation">
+(()=>{'use strict';
+window.addEventListener('kidhub:launch',event=>{const d=event.detail;if(!d||typeof d!=='object')return;if(typeof d.tool==='string'&&/^[a-z0-9-]+$/.test(d.tool)&&window.KidHubPlus){app.show('tools');KidHubPlus.openTool(d.tool)}else if(typeof d.screen==='string'&&document.getElementById('s-'+d.screen))app.show(d.screen)});
+// Route footer help to the real resource library. Preserve already configured links.
+document.querySelectorAll('footer a[href="#"]').forEach(a=>{const label=a.textContent.toLowerCase();a.href='resources.html#'+(label.includes('privacy')?'privacy':label.includes('parent')?'start':'help');a.target='_top'});
+const header=document.querySelector('footer');if(header&&!header.querySelector('[data-resource-link]')){const a=document.createElement('a');a.href='resources.html';a.target='_top';a.dataset.resourceLink='1';a.textContent='📚 Applications & resources';a.style.cssText='display:inline-block;margin:8px;padding:6px';header.append(a)}
+})();
+</script>

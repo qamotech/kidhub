@@ -5,7 +5,7 @@ await page.route('https://formsubmit.co/**',r=>{sent.push({url:r.request().url()
 await page.goto('file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html');
 await page.locator('#cwBtn').click({force:true});await page.locator('#cwPanel.open').waitFor();
 await page.locator('#cwPanel [data-t="set"]').click();const q=await page.locator('#cwBody p').first().innerText();const [x,y]=q.match(/(\d+) × (\d+)/).slice(1).map(Number);await page.fill('#cwGate',String(x*y));await page.locator('#cwGo').click();
-await page.fill('[data-m="0"]','mom.test@example.com');await page.fill('[data-m="1"]','not-an-email');await page.locator('#cwSave').click();
+await page.fill('[data-m="0"]','mom.test@example.com');await page.fill('[data-m="1"]','not-an-email');await page.locator('#cwSave').click();assert.notEqual(await page.evaluate(()=>kidCloud.state.contacts[0].email),'mom.test@example.com','invalid email blocks the save');await page.fill('[data-m="1"]','');await page.locator('#cwSave').click();
 assert.equal(await page.evaluate(()=>kidCloud.state.contacts[0].email),'mom.test@example.com');assert.equal(await page.evaluate(()=>kidCloud.state.contacts[1].email),'','invalid email rejected');
 await page.fill('[data-m="1"]','dad.test@example.com');await page.locator('#cwSave').click();
 // first send -> activation needed

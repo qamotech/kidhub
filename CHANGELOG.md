@@ -4,6 +4,16 @@
 
 New `src/seasons.html` module: 40 decoration slots (logo, subtitle, greeting, banner, countdown, falling particles, cursor trail, click bursts, garland, corners, hidden-item hunt + badge, art stickers/prompts/palette, catch + memory collections, jokes, mascot tune, tips, colors, footer, confetti, sky, ground and more) refilled automatically by date: Halloween (Oct) → Thanksgiving (Nov) → Christmas (Dec 1–26) → New Year → Valentine's → St. Patrick's → Spring → Garden → Summer → Fireworks → Late Summer → Back to School. Settings has a season picker (Auto / any season / Off). Respects reduced motion. Test: `test-seasons.cjs`.
 
+## 2026-10-01 — Complete Applications & Resources
+
+- Completed the searchable 113-entry library, guides, six printables, planner, backup/import, help, privacy and developer pages; verified all 96 core/tool routes and companion drawing/export.
+- Matched catalog counts to the current 13-game manifest and retained the pending N8 SHIFT replacement.
+- Preserved keyboard focus after favorites and planner changes; rejected malformed imports, confirmed replacement, and surfaced storage failures.
+- Installed offline support from the dashboard/library; retained cache writes and asset refreshes, handled server failures, and showed an explicit uncached-page fallback.
+- Made normal builds local and reproducible with content-based cache versions; isolated sibling-source game import as an optional command.
+- Fixed duplicate fullscreen requests and duplicate successful webhook delivery during email retries; made activation manual and partial delivery explicit.
+- Added a self-contained test runner and reliability checks using intercepted messaging requests; updated data-handling documentation.
+
 ## 2026-09-30 — Every activity expansion
 
 Added 18 guided trails, separate journals for all 80 tools, 14 arcade practice companions, and three embedded-app practice companions. Expanded stories, spelling, coding, math, memory, catching, music sequencing, and storybook capacity. Added practice questions, a rhythm builder, an imagination mixer, and an SVG quilt export. Preserved saved eight-step songs during migration and made memory restart timers safe.
