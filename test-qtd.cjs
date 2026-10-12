@@ -90,14 +90,16 @@ const toClient = (page, p) => page.evaluate(({ x, y }) => {
       if (placementValid(types[placed], pos)) { selectTower(types[placed]); handleCanvasClick(pos); placed++; }
     }
     const tough = createEnemyForWave; createEnemyForWave = function () { const e = tough.apply(this, arguments); e.hp = e.maxHp = 1e9; return e; };
-    const fired = new Set(), traces = {}; const spawn = spawnProjectile, trace = addShotTrace;
+    const fired = new Set(), traces = {}; const spawn = spawnProjectile, trace = addShotTrace, hurt = damageEnemy; let landed = 0, hits = 0;
+    damageEnemy = function () { hits++; return hurt.apply(this, arguments); };
     spawnProjectile = function (t) { fired.add(t.type); return spawn.apply(this, arguments); };
-    addShotTrace = function (p) { const before = effectAnimations.length; trace.apply(this, arguments); traces[p.kind] = (traces[p.kind] || 0) + (effectAnimations.length - before); };
+    addShotTrace = function (p) { landed++; const before = effectAnimations.length; trace.apply(this, arguments); traces[p.kind] = (traces[p.kind] || 0) + (effectAnimations.length - before); };
     state.speed = 8; startWave();
     await new Promise(r => setTimeout(r, 3500));
-    state.speed = 1; spawnProjectile = spawn; addShotTrace = trace; createEnemyForWave = tough;
-    return { placed, fired: [...fired].sort((x, y) => x - y), traces, muzzles: effectAnimations.filter(f => f.type === 'muzzle').length };
+    state.speed = 1; spawnProjectile = spawn; addShotTrace = trace; createEnemyForWave = tough; damageEnemy = hurt;
+    return { placed, fired: [...fired].sort((x, y) => x - y), traces, muzzles: effectAnimations.filter(f => f.type === 'muzzle').length, landed, hits };
   });
+  assert(live.hits >= live.landed * 0.5, 'shots actually hit at 8x (no overshoot): ' + live.hits + ' hits / ' + live.landed + ' landed');
   assert.equal(live.placed, 12, 'could not place every shooting tower near the path: ' + JSON.stringify(live));
   assert.deepEqual(live.fired, [0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13], 'every shooting tower fires: ' + JSON.stringify(live));
   for (const kind of ['bolt', 'fireball', 'boulder', 'water', 'shard', 'gust', 'orb', 'bullet-pistol', 'bullet-smg', 'bullet-shotgun', 'bullet-rifle', 'bullet-sniper'])
@@ -127,7 +129,7 @@ const toClient = (page, p) => page.evaluate(({ x, y }) => {
   const cdp = await ctx.newCDPSession(m);
   const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
 
-  const mSpot = await freeSpot(m, 0), mTarget = await toClient(m, { x: mSpot.x, y: mSpot.y + 48 }); // finger sits below the lifted tower
+  const mSpot = await freeSpot(m, 0), lift = await m.evaluate(() => qtdLift()), mTarget = await toClient(m, { x: mSpot.x, y: mSpot.y + lift }); // finger sits below the lifted tower
   const mBtn = await m.locator('.shop-btn[data-type="0"]').boundingBox();
   const sx = mBtn.x + mBtn.width / 2, sy = mBtn.y + mBtn.height / 2;
   await touch('touchStart', sx, sy);

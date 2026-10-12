@@ -13,6 +13,7 @@ function record(id){
   try{const raw=JSON.parse(localStorage.getItem(KEY)||'{}'),v=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
     const list=Array.isArray(v.recent)?v.recent.filter(x=>typeof x==='string'&&x!==id):[];v.recent=[id,...list].slice(0,8);localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}
 }
+window.kidhubRecord=id=>{if(typeof id==='string'&&/^(core|tool|game)-[a-z0-9-]+$/.test(id))record(id)};
 if(typeof app==='object'&&app&&typeof app.show==='function'){
   const show=app.show;
   app.show=function(id){const before=this.current,result=show.apply(this,arguments);if(this.current===id&&id!==before&&!HUBS.has(id)&&SAFE.test(id)&&childOpened())record('core-'+id);return result};

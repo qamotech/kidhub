@@ -3,29 +3,33 @@
 // One-time "what's new" popup, shown once per browser in the topmost KidHub page:
 // the dashboard when KidHub is embedded there, otherwise this page.
 const NEWS={
-  id:'cloud-messages-2026-10',
+  id:'cloud-messages-2026-10b',
   title:'☁️ Cloud messages work now!',
-  body:'Send a message to your grown-ups with the ☁️ Cloud button. Every grown-up on the list gets it by email, and if you are offline it waits and sends later. Go ahead and try it out!',
-  note:'Grown-ups: open ☁️ Cloud to add your email address and turn on delivery.',
+  body:'Tap the ☁️ Cloud button, type the email address your message should go to, write your message and press Send. This device remembers the address next time. Go ahead and try it out!',
+  note:'Grown-ups: the first message to a new address asks you to click an Activate link from FormSubmit once.',
   go:'☁️ Try it now',later:'Got it'
 };
 const KEY='kidhubAnnouncementsSeen';
 let host=window;
-try{if(window.parent!==window&&window.parent.KidHubShell)host=window.parent}catch(e){}
+const embedded=(()=>{try{return window.parent!==window&&window.parent.location.href&&true}catch(e){return false}})();
+const pickHost=()=>{try{if(embedded&&window.parent.KidHubShell)return window.parent}catch(e){}return window};
+host=pickHost();
 if(navigator.webdriver)return;   // automated test browsers skip it; test-announce.cjs turns it back on
 let seen=[];
 try{seen=JSON.parse(host.localStorage.getItem(KEY)||'[]')}catch(e){}
 if(!Array.isArray(seen)||seen.includes(NEWS.id))return;
-const doc=host.document;
+let doc=host.document;
 
 function markSeen(){try{host.localStorage.setItem(KEY,JSON.stringify([...seen.filter(x=>typeof x==='string'),NEWS.id].slice(-20)))}catch(e){}}
 function openCloud(){
   try{if(host!==window)host.KidHubShell.launch({frame:0})}catch(e){}
   const b=document.getElementById('cwBtn');
   if(b&&b.getAttribute('aria-expanded')!=='true')b.click();
-  setTimeout(()=>{const m=document.getElementById('cwMsg');if(m)m.focus()},150);
+  setTimeout(()=>{const t=document.getElementById('cwTo'),m=document.getElementById('cwMsg');(t&&!t.value?t:m)?.focus()},150);
 }
 function show(){
+  host=pickHost();doc=host.document;
+  if(embedded&&host===window)return;   // inside the dashboard but its shell isn't ready: the dashboard's load will retry
   if(doc.getElementById('kh-news'))return;
   const style=doc.createElement('style');style.id='kh-news-css';
   style.textContent='#kh-news{border:3px solid #7756bf;border-radius:20px;padding:0;width:min(440px,calc(100vw - 32px));color:#25304a;background:#fff8ed;box-shadow:0 18px 50px rgba(20,16,50,.45);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}'
@@ -36,11 +40,11 @@ function show(){
     +'#kh-news .kn-go{background:#7756bf;color:#fff}#kh-news .kn-later{background:#fff;color:#36265f}#kh-news button:focus-visible{outline:3px solid #ffb400;outline-offset:2px}'
     +'@media (prefers-reduced-motion:no-preference){#kh-news[open]{animation:kn-pop .28s cubic-bezier(.2,.8,.2,1.15)}@keyframes kn-pop{from{opacity:0;transform:translateY(12px) scale(.96)}}}';
   doc.head.append(style);
-  const d=doc.createElement('dialog');d.id='kh-news';d.setAttribute('aria-labelledby','kh-news-title');
+  const d=doc.createElement('dialog');d.id='kh-news';d.setAttribute('aria-labelledby','kh-news-title');d.setAttribute('aria-describedby','kh-news-body kh-news-note');
   const body=doc.createElement('div');body.className='kn-body';
   const h=doc.createElement('h2');h.id='kh-news-title';h.textContent=NEWS.title;
-  const p=doc.createElement('p');p.textContent=NEWS.body;
-  const n=doc.createElement('p');n.className='kn-note';n.textContent=NEWS.note;
+  const p=doc.createElement('p');p.id='kh-news-body';p.textContent=NEWS.body;
+  const n=doc.createElement('p');n.className='kn-note';n.id='kh-news-note';n.textContent=NEWS.note;
   const row=doc.createElement('div');row.className='kn-actions';
   const go=doc.createElement('button');go.type='button';go.className='kn-go';go.textContent=NEWS.go;
   const later=doc.createElement('button');later.type='button';later.className='kn-later';later.textContent=NEWS.later;
@@ -52,6 +56,7 @@ function show(){
   go.focus();
 }
 const start=()=>setTimeout(show,900);
-if(doc.readyState==='complete')start();else host.addEventListener('load',start,{once:true});
+if(document.readyState==='complete')start();else addEventListener('load',start,{once:true});
+if(embedded){try{const P=window.parent;if(P.document.readyState!=='complete')P.addEventListener('load',start,{once:true})}catch(e){}}
 })();
 </script>

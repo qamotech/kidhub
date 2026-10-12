@@ -72,6 +72,13 @@ def main():
         src = SRC / f
         (OUT / f'{slug}.html').write_text(strip(src.read_text(encoding='utf-8'), f), encoding='utf-8')
         meta.append({'slug': slug, 'emoji': emoji, 'title': title, 'blurb': blurb})
+    # Keep games that were added straight to kidhub/games (no N8DEV source, e.g. NeuroPulse).
+    try:
+        old = json.loads((OUT / 'games.json').read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        old = []
+    known = {m['slug'] for m in meta}
+    meta += [g for g in old if isinstance(g, dict) and g.get('slug') not in known and (OUT / f"{g.get('slug')}.html").exists()]
     (OUT / 'games.json').write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding='utf-8')
     print(f'imported {len(meta)} games')
 

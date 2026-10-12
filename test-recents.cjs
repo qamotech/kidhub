@@ -39,12 +39,12 @@ const recent = page => page.$$eval('#nav-recent [data-recent]', bs => bs.map(b =
   const studio = await (await page.$('#app-0')).contentFrame();
   await studio.locator(`[onclick="app.show('draw')"]`).first().click();
   await page.waitForTimeout(100);
-  assert.deepEqual(await recent(page), ['core-draw', 'suite-0', 'suite-1'], 'activities inside KidHub are recorded');
+  assert.deepEqual(await recent(page), ['core-draw', 'suite-1'], 'activities inside KidHub are recorded (the KidHub button itself is not)');
   await studio.evaluate(() => { app.show('tools'); });
   const toolId = await studio.evaluate(() => { const t = document.querySelector('#tools-root [data-t]'); t.click(); return t.dataset.t; });
   await page.waitForTimeout(100);
   const three = await recent(page);
-  assert.deepEqual(three, ['tool-' + toolId, 'core-draw', 'suite-0'], 'only the 3 most recent show: ' + JSON.stringify(three));
+  assert.deepEqual(three, ['tool-' + toolId, 'core-draw', 'suite-1'], 'only the 3 most recent show: ' + JSON.stringify(three));
   assert.equal(await page.locator('#nav-recent .nav-recent-empty').count(), 0, 'empty hint goes away');
 
   // a recent entry launches the app and moves to the top
@@ -55,8 +55,8 @@ const recent = page => page.$$eval('#nav-recent [data-recent]', bs => bs.map(b =
 
   // it persists, and the library's own "recent" view agrees
   await page.reload(); await page.waitForTimeout(800);   // reload re-applies #app=0&screen=draw; that is not a new use
-  assert.deepEqual(await recent(page), ['core-draw', 'tool-' + toolId, 'suite-0'], 'recents persist across reloads');
-  assert.deepEqual(await page.evaluate(() => KidHubPortal.recent().slice(0, 3)), ['core-draw', 'tool-' + toolId, 'suite-0']);
+  assert.deepEqual(await recent(page), ['core-draw', 'tool-' + toolId, 'suite-1'], 'recents persist across reloads');
+  assert.deepEqual(await page.evaluate(() => KidHubPortal.recent().slice(0, 3)), ['core-draw', 'tool-' + toolId, 'suite-1']);
 
   // standalone KidHub and arcade launches feed the same list
   const solo = await ctx.newPage();   // same context = same localStorage

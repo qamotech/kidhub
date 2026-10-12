@@ -137,7 +137,7 @@ The inherited hub includes entry points for Catch the Stars, Story Garden, Music
 - 📦 The existing gallery keeps three reduced-size JPEG previews, not editable full-resolution projects.
 - 🧹 Clearing browser data can remove saved progress. Different browser profiles and origins have separate storage.
 - 🌐 Google Fonts requests contact an external service. This is not a completely network-free page.
-- 💬 Cloud messaging saves locally unless a grown-up configures email through FormSubmit or an HTTPS webhook. Configured sends leave the device; delivery is not guaranteed.
+- 💬 Cloud messaging asks for the email address to send to and remembers it on that device (FormSubmit; the first message to a new address needs a one-time Activate click in that inbox). Grown-ups can also set per-contact emails or an HTTPS webhook in ⚙️. Sends leave the device; delivery is not guaranteed.
 - 👪 Existing parent controls are convenience controls, not authenticated access protection.
 
 See [PRIVACY.md](PRIVACY.md) for details.
@@ -159,7 +159,7 @@ See [PRIVACY.md](PRIVACY.md) for details.
 
 Open **Applications** or **Resources** in the dashboard, or open `resources.html` directly.
 
-- 113 launchable entries: four applications, 16 core activities, 80 toolbox tools, and 13 current arcade games. Counts follow the shipped manifest, including N8 SHIFT.
+- 114 launchable entries: four applications, 16 core activities, 80 toolbox tools, and 14 current arcade games (including N8 SHIFT and NeuroPulse). Counts follow the shipped manifest.
 - Search, categories, favorites, recent launches, and direct activity/tool links.
 - A 12-activity session planner with notes, reorder controls, text export, and a separately scoped JSON backup. Imports validate their format and confirm replacement; failed storage is reported.
 - Six printable worksheet types, activity guides, troubleshooting, privacy notes, and developer documentation.
@@ -182,7 +182,7 @@ The test runner starts and closes its own loopback server on a free port. `BASE_
 
 Normal builds use only this checkout. They synchronize standalone/embedded Studio, practice kits, the catalog, and a content-based offline version. Rebuilding unchanged sources produces identical output. `npm run import:games` is a separate optional operation requiring the original sibling N8DEV/standalone-sites sources; it refreshes shipped games before building.
 
-The 17 browser suites cover art, toolbox, music, games, messaging layout, activity progress/migration, dashboard routing, resources and offline reliability. Core-module accessibility checks exclude contrast; resource-page checks include it. Synthetic delivery tests verify request handling, not actual email receipt. Native touch hardware, assistive-technology behavior and every game strategy remain outside automated coverage.
+The 22 browser suites cover art, toolbox, music, games, messaging layout, activity progress/migration, dashboard routing, resources and offline reliability. Core-module accessibility checks exclude contrast; resource-page checks include it. Synthetic delivery tests verify request handling, not actual email receipt. Native touch hardware, assistive-technology behavior and every game strategy remain outside automated coverage.
 
 ## 🧪 Art Studio validation scope
 

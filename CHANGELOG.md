@@ -1,5 +1,22 @@
 # 🗓️ Changelog
 
+## 2026-10-12 — Cloud messages ask for the address + audit fixes
+
+**Cloud messages** (`src/cloud.html`, popup in `src/zzzzzz-announce.html`)
+- The message screen asks for the email address to send to and remembers it on that device; nothing is built in. A one-time cleanup clears the short-lived shared Mom/Dad default. Each address gets one email even if several contacts share it, and messages waiting for FormSubmit activation are no longer sent twice (FormSubmit delivers them after the Activate click).
+- Popup re-shown once with accurate wording, read fully by screen readers, and always opens in the dashboard (never trapped inside the KidHub frame on a slow first load). README and PRIVACY updated.
+
+**Tower Defense**
+- Shots no longer overshoot at high game speeds (hit rate at 8x went from ~0 to normal). Fire tower level 4 now gains its extra shot.
+- ⬅️ back to KidHub and ⛶ fullscreen buttons in the game bar; leaving fullscreen on purpose is respected; "turn your device sideways" screen for phones held upright.
+- Space/Enter no longer hijack focused buttons and don't start waves while paused; delayed volley shots stop while paused; effects and floating text are capped and glow is dropped when the sky is full.
+- Touch drags lift the tower a fixed 64 screen pixels; the Prime Bomb is aimed (tap or drag to a spot) instead of firing at the centre; C4 levels 6–7 cost less and show their own blast names.
+
+**Menu**: arcade "🎲 Random game" works inside the dashboard; Random game and Toolbox "Surprise me" count as recent; the KidHub button no longer takes a Recent slot; categories stay in the URL and highlight when changed inside the library or when KidsBeat/Mathcore/Stix is open; focus stays on Recent items; "Open KidHub directly" hides when it should; section headings for screen readers; phone menu shows Recent items after the main links.
+
+**Reliability**: the service worker fetches scripts/styles fresh (cache only offline), so a new deploy can't run with old dashboard code; `npm run import:games` keeps games without an N8DEV source (NeuroPulse); README counts updated (114 entries, 14 games, 22 suites).
+
+
 ## 2026-10-11 — Organized menu + cloud messages popup
 
 - **Main menu**: 🕘 Recent sits at the top (last 3 apps used). 🚀 Applications now has 🎮 KidHub followed by category links that open the library already filtered: 📚 Learn, 🎨 Create, 🎲 Play, 💚 Wellbeing, 🧰 Helpers and 🗂️ All applications, each with a live count. The open category is highlighted, the filter is kept in the URL (`#library=applications&category=Play`), and every menu item has an emoji.
@@ -23,14 +40,14 @@ Shipped inside the NeuroPulse commit (`68ef5a5`); recorded here so the work is f
 
 **Qamelot Tower Defense** (`games/qamelot-tower-defense.html`)
 - Real tower art again: the old image files were never in the repo, so every tower fell back to a coloured circle. Towers are now drawn in code and change with each upgrade: wooden hut → stone keep → battlements → gold-trimmed Champion with banners → crowned Legend with orbiting sparks. Each element has its own crown (tesla coil, brazier, boulders, fountain, ice crystals, windmill, magnet); gun towers get an upgrading mount.
-- Two more upgrades for every tower: levels 4 (Champion) and 5 (Legend) add damage, range, speed and an extra shot each. C4 goes to level 7 (Seismic, Doomsday).
-- Every tower fires a projectile you can see: fireballs, tumbling boulders, water drops, ice shards, wind swirls, magnet orbs, electric bolts and tracer bullets, plus muzzle flashes and impact streaks that stay visible at 16x/32x speed.
+- Two more upgrades for every tower: levels 4 (Champion) and 5 (Legend) add damage, range and an extra shot each (and speed, except the Ice tower). C4 goes to level 7 (Seismic, Doomsday); C4 and Flashbang keep their charge artwork at every level.
+- Every shooting tower fires a projectile you can see (C4 and Flashbang are path charges that explode instead): fireballs, tumbling boulders, water drops, ice shards, wind swirls, magnet orbs, electric bolts and tracer bullets, plus muzzle flashes and impact streaks that stay visible at 16x/32x speed.
 - Always fullscreen and game-only: fills the screen, enters fullscreen on the first tap (and again after an accidental exit), keeps the screen awake, hides the KidHub/Practice buttons, and slims the bars on landscape phones.
 - Drag and drop on phones and tablets (towers ride above the finger so they stay visible), plus tap-to-place and mouse drag.
 - Eight more improvements: green/red placement preview, range ring on the selected tower, level pips, next-tier name and price on the upgrade button, keyboard shortcuts (1–7, Space, U, T, P, Esc), auto-pause when the app is hidden, haptic buzz on place/upgrade, and multi-shot volleys that no longer fire from sold towers or at defeated enemies.
 
 **Dashboard Recent menu** (`index.html`, `dashboard-shell.js`, `portal.js`, `src/zzzzz-recents.html`)
-- The three most recently used apps (applications, activities, toolbox tools, arcade games) sit in the sidebar between Applications and Resources, using the library's existing recent list. Studio screens count only when a child opens them, not on deep links or restores.
+- The three most recently used apps (applications, activities, toolbox tools, arcade games) sit in the sidebar (now at the top, above Applications), using the library's existing recent list. Studio screens count only when a child opens them, not on deep links or restores.
 
 Tests: `test-qtd.cjs`, `test-recents.cjs`; `test-games.cjs` allows games that hide the KidHub chrome on purpose.
 

@@ -9,7 +9,7 @@ assert.equal(await page.locator('#arGrid .ar-tile').first().getAttribute('href')
 // cloud: left side, opens, saves offline, sends via webhook
 const bb=await page.locator('#cwBtn').boundingBox();assert(bb.x<60,'cloud on left');
 await page.locator('#cwBtn').click({force:true});await page.locator('#cwPanel.open').waitFor();await page.evaluate(()=>kidCloud.state.contacts.forEach(c=>c.email=''));/* not set up: no inbox */await page.fill('#cwMsg','hello');await page.locator('#cwSend').click();await page.waitForTimeout(200);
-assert.equal(await page.evaluate(()=>kidCloud.state.outbox.at(-1).status),'saved');
+assert.equal(await page.evaluate(()=>kidCloud.state.outbox.length),0,'with no address it asks instead of sending');assert.equal(await page.evaluate(()=>document.activeElement&&document.activeElement.id),'cwTo','the email field is focused');
 await page.locator('#cwPanel [data-t="set"]').click();const q=await page.locator('#cwBody p').first().innerText();const [x,y]=q.match(/(\d+) × (\d+)/).slice(1).map(Number);await page.fill('#cwGate',String(x*y));await page.locator('#cwGo').click();
 await page.fill('#cwUrl','https://hooks.example.test/kid');await page.locator('#cwSave').click();
 await page.locator('#cwPanel [data-t="msg"]').click();await page.locator('#cwBody [data-q]').first().click();await page.locator('#cwSend').click();await page.waitForFunction(()=>kidCloud.state.outbox.at(-1).status==='sent');
