@@ -9,7 +9,7 @@ assert.equal(await page.locator('#kpGrid .kp-tile').count(),80);
 const ids=await page.$$eval('#kpGrid .kp-tile',a=>a.map(x=>x.dataset.t));
 for(const id of ids){await page.evaluate(i=>KidHubPlus.openTool(i),id);const body=page.locator('#kpTool [data-body]');const t=await body.innerText();assert(t.trim().length>0&&!t.includes('snag'),'tool '+id);
  const btn=body.locator('button:not([disabled])').first();if(await btn.count())await btn.click({timeout:2000}).catch(()=>{});}
-await page.fill('#kpSearch','clock');await page.waitForTimeout(250);assert((await page.locator('#kpGrid .kp-tile').count())<80);
+await page.fill('#kpSearch','clock');await page.waitForFunction(()=>document.querySelectorAll('#kpGrid .kp-tile').length<80,null,{timeout:5000});// search is debounced
 for(const a of ['coding','space','dino','puzzle','farm','color','spelling','clock','music-maker','storybook']){await page.evaluate(i=>app.show(i),a);const t=await page.locator(`#s-${a} .panel`).innerText();assert(!t.includes('Loading activity')&&!t.includes('could not load'),a);}
 await page.evaluate(()=>app.show('hub'));
 assert(await page.evaluate(()=>state.badges.includes('kp_first')&&state.badges.includes('kp_forty')));

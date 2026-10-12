@@ -1,14 +1,14 @@
 const { chromium } = require('playwright');const assert=require('assert');
 (async()=>{const b=await chromium.launch({channel:'msedge'});const page=await b.newPage({viewport:{width:1280,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 const posts=[];await page.route('https://hooks.example.test/**',r=>{posts.push(r.request().postDataJSON());r.fulfill({status:200,headers:{'access-control-allow-origin':'*'},body:'ok'})});
-await page.goto('file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html');
+await page.route('https://formsubmit.co/**',r=>r.abort());/* tests must never email the real family inbox */await page.goto('file:///'+process.cwd().split(require('path').sep).join('/')+'/studio.html');
 assert.equal(await page.locator('h1,h2,.brand,body').first().evaluate(()=>/kid ?hub[- ]?64/i.test(document.body.innerText)),false,'no KidHub 64 text');
 // arcade
 await page.locator('[data-id="arcade"]').click();assert.equal(await page.locator('#arGrid .ar-tile').count(),JSON.parse(require('fs').readFileSync('games/games.json','utf8')).length);await page.fill('#arSearch','pong');assert.equal(await page.locator('#arGrid .ar-tile').count(),1);
 assert.equal(await page.locator('#arGrid .ar-tile').first().getAttribute('href'),'games/neon-pong.html');await page.evaluate(()=>app.show('hub'));
 // cloud: left side, opens, saves offline, sends via webhook
 const bb=await page.locator('#cwBtn').boundingBox();assert(bb.x<60,'cloud on left');
-await page.locator('#cwBtn').click({force:true});await page.locator('#cwPanel.open').waitFor();await page.fill('#cwMsg','hello');await page.locator('#cwSend').click();await page.waitForTimeout(200);
+await page.locator('#cwBtn').click({force:true});await page.locator('#cwPanel.open').waitFor();await page.evaluate(()=>kidCloud.state.contacts.forEach(c=>c.email=''));/* not set up: no inbox */await page.fill('#cwMsg','hello');await page.locator('#cwSend').click();await page.waitForTimeout(200);
 assert.equal(await page.evaluate(()=>kidCloud.state.outbox.at(-1).status),'saved');
 await page.locator('#cwPanel [data-t="set"]').click();const q=await page.locator('#cwBody p').first().innerText();const [x,y]=q.match(/(\d+) × (\d+)/).slice(1).map(Number);await page.fill('#cwGate',String(x*y));await page.locator('#cwGo').click();
 await page.fill('#cwUrl','https://hooks.example.test/kid');await page.locator('#cwSave').click();

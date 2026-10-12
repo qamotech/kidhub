@@ -5779,9 +5779,9 @@ return{LIST,BY,ctx,play,get limiter(){ctx();return limiter},get active(){return 
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const KEY="kidHubCloud";
-const DEF={contacts:[{id:"c1",name:"Mom",emoji:"👩"},{id:"c2",name:"Dad",emoji:"👨"}],hook:{url:"",fmt:"json"},pinHash:"",quiet:{on:false,from:"20:30",to:"07:00"},voice:true,outbox:[],reminders:[],unread:0};
+const DEF={contacts:[{id:"c1",name:"Mom",emoji:"👩",email:"nateandshawnaclark@gmail.com"},{id:"c2",name:"Dad",emoji:"👨",email:"nateandshawnaclark@gmail.com"}],hook:{url:"",fmt:"json"},pinHash:"",quiet:{on:false,from:"20:30",to:"07:00"},voice:true,outbox:[],reminders:[],unread:0};
 let S=(()=>{try{const s=JSON.parse(localStorage.getItem(KEY)||"{}");return{...DEF,...s,hook:{...DEF.hook,...(s.hook||{})},quiet:{...DEF.quiet,...(s.quiet||{})}}}catch(e){return JSON.parse(JSON.stringify(DEF))}})();
-S.contacts=(Array.isArray(S.contacts)?S.contacts:DEF.contacts).filter(c=>c&&typeof c.name==="string").slice(0,6).map((c,i)=>({id:String(c.id||"c"+i).replace(/\W/g,"").slice(0,12)||"c"+i,name:c.name.slice(0,24),emoji:String(c.emoji||"🙂").slice(0,4),email:validMail(c.email)?String(c.email).trim():""}));
+S.contacts=(Array.isArray(S.contacts)?S.contacts:DEF.contacts).filter(c=>c&&typeof c.name==="string").slice(0,6).map((c,i)=>({id:String(c.id||"c"+i).replace(/\W/g,"").slice(0,12)||"c"+i,name:c.name.slice(0,24),emoji:String(c.emoji||"🙂").slice(0,4),email:validMail(c.email)?String(c.email).trim():(c.email===undefined&&DEF.contacts[i]?DEF.contacts[i].email:"")}));
 S.outbox=(Array.isArray(S.outbox)?S.outbox:[]).slice(-40);S.reminders=(Array.isArray(S.reminders)?S.reminders:[]).slice(0,20);if(!["json","discord","slack","ntfy"].includes(S.hook.fmt))S.hook.fmt="json";
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 function validMail(v){v=String(v||"").trim();return /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[a-z]{2,}$/i.test(v)||/^[a-z0-9]{20,64}$/i.test(v)}
@@ -6797,7 +6797,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="c182a78dc1bd0be7";
+const BUILD="e63020856e807963";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",

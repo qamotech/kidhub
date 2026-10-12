@@ -6,6 +6,8 @@
 - **"Cloud messages work now!" popup** (`src/zzzzzz-announce.html`): shown once per browser in the dashboard (or in KidHub when opened on its own). "☁️ Try it now" opens the Cloud panel, "Got it" or Esc dismisses it for good. Automated test browsers skip it; `test-announce.cjs` turns it back on.
 - **NeuroPulse practice kit loads**: its Content-Security-Policy blocked the shared `activity-kit.js`; `script-src` now allows `'self'`.
 - Tests updated for the new menu (`test-recents`, `test-resources`, `test-adventures`); `test-adventures` allows immersive games that hide the practice button.
+- **Cloud messages reach the family inbox out of the box**: Mom and Dad default to the family email in `src/cloud.html` (existing contacts without an email get it too; an address a grown-up clears stays cleared).
+- Test hardening: tests block FormSubmit so a run can never email the real inbox (`test-cloud-arcade`), the email test waits for the back-online retry before counting sends, and the Toolbox search check waits for the debounced filter (`test-plus`).
 
 ## 2026-10-11 — KidsBeat Interactive Piano Roll & 24 Songs Library
 
