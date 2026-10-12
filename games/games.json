@@ -82,5 +82,11 @@
   "emoji": "⚡",
   "title": "NeuroPulse Cyberdeck",
   "blurb": "Cybernetic audio-visual synth, 16-step sequencer & 3D holo-deck."
+ },
+ {
+  "slug": "shadow-chassis",
+  "emoji": "🤖",
+  "title": "Project: Shadow Chassis",
+  "blurb": "Midnight-mecha action: swap Shinobi and Cruiser rigs and take down Goliath-01."
  }
 ]

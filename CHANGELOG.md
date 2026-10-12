@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-12 — Project: Shadow Chassis (new arcade game)
+
+- **🤖 Project: Shadow Chassis** (`games/shadow-chassis.html`): single-file Midnight Mecha action-ARPG, all graphics and audio generated in code. Swap between the **Shinobi** bipedal rig (3-stage HF blade combo with a 120 ms deflect window, thermal shurikens that bounce and embed, phase dash with decoy, optical cloak 3x crit) and the **Cruiser** (drift physics at 2.5x speed, ramming, rotary autocannons with heat, 4-target micro-torpedo swarm).
+- Hound packs, shielded Vanguards, Siege Mortar Crawlers, Sniper Valkyries, then the **Goliath-01** two-phase boss (EMP floor grid, armor jettison, ram charges). Four sectors with blast doors, severable power conduits, coolant tanks and fuel cells; salvage terminal offers 3 hardware upgrades after each sector.
+- Fixed-step 60 Hz loop, spatial-hash collisions, high-DPI canvas, procedural Web Audio SFX and a tactical soundtrack; pause menu has volume and screen-shake sliders. Immersive like Tower Defense (own back-to-KidHub and fullscreen buttons, shared chrome hidden). Keyboard + mouse.
+- Registered in `games/games.json`, practice-kit goals (`tools/practice_kits.py`), and the immersive lists in `test-games.cjs` / `test-adventures.cjs`.
+
 ## 2026-10-12 — Cloud messages ask for the address + audit fixes
 
 **Cloud messages** (`src/cloud.html`, popup in `src/zzzzzz-announce.html`)

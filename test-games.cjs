@@ -1,5 +1,5 @@
 const { chromium } = require('playwright');const assert=require('assert');const fs=require('fs');const path=require('path');
-(async()=>{const b=await chromium.launch({channel:'msedge'});const games=JSON.parse(fs.readFileSync('games/games.json','utf8'));const IMMERSIVE=['qamelot-tower-defense'];// fullscreen games hide the KidHub chrome on purpose
+(async()=>{const b=await chromium.launch({channel:'msedge'});const games=JSON.parse(fs.readFileSync('games/games.json','utf8'));const IMMERSIVE=['qamelot-tower-defense','shadow-chassis'];// fullscreen games hide the KidHub chrome on purpose
 const bad=[];
 for(const g of games){const p=await b.newPage({viewport:{width:1280,height:800}});const err=[];p.on('pageerror',e=>err.push(e.message.slice(0,90)));
  await p.goto('file:///'+path.resolve('games',g.slug+'.html').split(path.sep).join('/'));await p.waitForTimeout(1200);await p.mouse.click(640,420);await p.keyboard.press('Space');await p.waitForTimeout(500);

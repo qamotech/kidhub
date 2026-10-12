@@ -16,6 +16,7 @@ GOALS={
 'qamelot-conquest':['Explore movement and attacks in the first area.','Choose a route before entering a crowded encounter.','Record a tactic you would try on the next run.'],
 'qamelot-tower-defense':['Inspect paths before placing a tower.','Compare tower coverage from two positions.','Explain one upgrade or placement choice after a wave.'],
 'stix-stax-stonz':['Identify every line that could win.','Block an immediate threat before planning your own line.','Describe a move that creates two threats.'],
+'shadow-chassis':['Learn the Shinobi controls in a quiet corner before engaging.','Compare how the Shinobi and the Cruiser handle the same group of enemies.','Describe the pattern you used to survive one boss attack.'],
 'neuropulse':['Explore two synthesizer presets and compare their timbre and modulation.','Program a 16-step melody and adjust tempo or swing to change the groove.','Experiment with different 3D hologram visualizer modes and record a session.']}
 COMPANIONS={1:('KidsBeat',['Build a short beat with two contrasting sounds.','Change the tempo and compare the groove.','Record a pattern or describe how to recreate it.']),2:('Qamo Mathcore',['Draw a math diagram with a pen, shape, or text tool.','Compare a mirrored sketch or a second notebook page.','Export the drawing and explain your reasoning.']),3:('Stix Stax Stonz',['Find a possible winning line.','Block an immediate threat.','Describe a move that sets up your next turn.'])}
 def tag(id,title,goals,src):
