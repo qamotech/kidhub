@@ -75,13 +75,14 @@
 
         #screen-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 2, 10, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px);
+            background: rgba(5, 2, 10, 0.85); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 100; backdrop-filter: blur(4px);
+            overflow-y: auto; padding: 12px 10px; box-sizing: border-box;
         }
         #screen-overlay h1 { color: #00ffff; font-size: 56px; text-shadow: 0 0 20px #00d9ff; margin: 0 0 10px 0; letter-spacing: 4px; text-transform: uppercase;}
         #screen-overlay h1.rock-title {
             font-family: Impact, 'Arial Black', 'Segoe UI Black', sans-serif;
-            font-size: clamp(42px, 7vw, 84px);
-            line-height: 0.92;
+            font-size: clamp(32px, 5.5vw, 68px);
+            line-height: 0.95;
             max-width: min(980px, 92vw);
             color: transparent;
             background-image:
@@ -99,17 +100,110 @@
             text-shadow: none;
             letter-spacing: 2px;
             word-spacing: 0.08em;
-        }        #screen-overlay p { font-size: 24px; margin-bottom: 40px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px #ffaa00;}
+        }
+        #screen-overlay p { font-size: 18px; margin-bottom: 12px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px #ffaa00;}
         
+        #menu-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; max-width: 960px; box-sizing: border-box;
+            margin: auto; z-index: 2;
+        }
+        #menu-sections {
+            width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 16px;
+        }
+        #menu-tabs {
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px;
+        }
+        .menu-tab-btn {
+            background: rgba(13, 27, 49, 0.85); border: 1.5px solid rgba(0, 255, 255, 0.4);
+            color: #d0f4ff; font-weight: 800; font-size: 13px; letter-spacing: 1px;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+        .menu-tab-btn:hover {
+            border-color: #00ffff; color: #fff; background: rgba(0, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        .menu-tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(7, 95, 143, 0.6));
+            border-color: #00ffff; color: #ffffff;
+            box-shadow: 0 0 14px rgba(0, 255, 255, 0.5);
+        }
+        .menu-tab-content { display: none; width: 100%; }
+        .menu-tab-content.active { display: block; animation: fadeInMenu 0.25s ease-out; }
+        @keyframes fadeInMenu { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .map-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px; width: 100%;
+        }
+        .map-card {
+            background: rgba(14, 21, 38, 0.88); border: 2px solid rgba(0, 255, 255, 0.25);
+            border-radius: 8px; padding: 12px 14px; cursor: pointer; transition: all 0.2s ease;
+            position: relative; display: flex; flex-direction: column; text-align: left;
+            backdrop-filter: blur(6px);
+        }
+        .map-card:hover {
+            border-color: #00ffff; transform: translateY(-2px);
+            box-shadow: 0 0 16px rgba(0, 255, 255, 0.35);
+        }
+        .map-card.active {
+            border-color: #00ffff; background: rgba(10, 36, 64, 0.92);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 0 12px rgba(0, 255, 255, 0.2);
+        }
+        .map-badge {
+            font-size: 10px; font-weight: 900; letter-spacing: 1px;
+            color: #00ffff; border: 1px solid #00ffff; border-radius: 4px;
+            padding: 2px 6px; width: fit-content; margin-bottom: 6px; text-transform: uppercase;
+        }
+        .map-name { font-size: 16px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
+        .map-desc { font-size: 12px; color: #a4c4de; line-height: 1.35; margin-bottom: 8px; flex-grow: 1; }
+        .map-stat { font-size: 11px; color: #ffd700; font-weight: 600; }
+        .map-stat span { color: #879cb5; font-weight: 400; }
+
+        .difficulty-grid, .mode-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px; width: 100%;
+        }
+        .diff-card, .mode-card {
+            background: rgba(14, 21, 38, 0.88); border: 2px solid rgba(0, 255, 255, 0.25);
+            border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s ease;
+            text-align: left;
+        }
+        .diff-card:hover, .mode-card:hover {
+            border-color: #00ffff; transform: translateY(-2px);
+            box-shadow: 0 0 14px rgba(0, 255, 255, 0.35);
+        }
+        .diff-card.active, .mode-card.active {
+            border-color: #ffd700; background: rgba(30, 38, 20, 0.88);
+            box-shadow: 0 0 18px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.15);
+        }
+        .diff-name, .mode-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .diff-tag { font-size: 10px; font-weight: 900; color: #00ffff; border: 1px solid #00ffff; display: inline-block; padding: 2px 6px; border-radius: 4px; margin-bottom: 6px; }
+        .diff-card p, .mode-card p { font-size: 12px; color: #c4d7ec; line-height: 1.35; margin: 0; }
+
+        .settings-list {
+            display: flex; flex-direction: column; gap: 10px; max-width: 480px; margin: 0 auto;
+            background: rgba(14, 21, 38, 0.85); border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px; padding: 16px 20px;
+        }
+        .setting-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 14px; font-weight: 700; color: #d6e8fa; cursor: pointer;
+        }
+        .setting-row input[type="checkbox"] {
+            width: 20px; height: 20px; accent-color: #00ffff; cursor: pointer;
+        }
+
         #overlay-tutorial {
-            max-width: min(760px, 86vw);
-            margin: -18px 0 26px 0;
+            max-width: min(840px, 90vw);
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(2, minmax(220px, 1fr));
-            gap: 8px 18px;
-            color: rgba(210, 245, 255, 0.92);
+            gap: 10px 18px;
+            color: rgba(210, 245, 255, 0.95);
             font-size: 13px;
-            line-height: 1.35;
+            line-height: 1.4;
             text-align: left;
             text-shadow: 0 0 8px rgba(0,255,255,0.45);
         }
@@ -129,8 +223,11 @@
         }
         #screen-overlay.victory-matrix { background: rgba(0, 16, 12, 0.88); overflow: hidden; }
         #screen-overlay > * { position: relative; z-index: 1; }
-        .action-btn { background: linear-gradient(135deg, #00d9ff, #075f8f); border: 2px solid #00ffff; color: #fff; padding: 15px 40px; font-size: 20px; font-weight: 900; border-radius: 8px; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; transition: 0.2s;}
+        .overlay-actions { display: flex; gap: 14px; margin-top: 8px; justify-content: center; }
+        .action-btn { background: linear-gradient(135deg, #00d9ff, #075f8f); border: 2px solid #00ffff; color: #fff; padding: 14px 36px; font-size: 19px; font-weight: 900; border-radius: 8px; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; transition: 0.2s;}
         .action-btn:hover { background: linear-gradient(135deg, #00ffff, #00cccc); border-color: #00d9ff; box-shadow: 0 0 30px #00d9ff; color: #000; transform: scale(1.05); }
+        .secondary-btn { background: rgba(20, 24, 45, 0.85); border: 2px solid #ffd700; color: #ffd700; padding: 14px 28px; font-size: 16px; font-weight: 900; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.2s; }
+        .secondary-btn:hover { background: #ffd700; color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
         #bottom-panel {
             height: 76px; min-height: 76px;
@@ -344,14 +441,122 @@ body.qtd-dragging, body.qtd-dragging * { cursor: grabbing !important; }
 </div>
 <canvas id="game-canvas"></canvas>
 <div id="screen-overlay">
-<h1 id="overlay-title">QAMELOT TOWER DEFENSE</h1>
-<p id="overlay-desc">Courage Under Fire</p>
-<div id="overlay-tutorial">
-<span><strong>Build:</strong> pick a tower, then click open ground. C4 and Flash go directly on the enemy path.</span>
-<span><strong>Upgrade:</strong> click a placed tower to upgrade, sell, or change targeting.</span>
-<span><strong>Shield:</strong> this is your home-base buffer before HP takes damage.</span>
-<span><strong>Overdrive:</strong> temporary rapid-fire mode. Advanced weapons unlock after Qamelot Prime at wave 30.</span>
-</div> <button class="action-btn" id="overlay-btn" onclick="startGame()">INITIALIZE</button>
+    <div id="menu-container">
+        <h1 id="overlay-title">QAMELOT TOWER DEFENSE</h1>
+        <p id="overlay-desc">Courage Under Fire</p>
+
+        <div class="overlay-actions">
+            <button class="action-btn" id="overlay-btn" onclick="startGame()">INITIALIZE DEFENSE</button>
+            <button class="secondary-btn" id="btn-return-menu" style="display:none;" onclick="returnToStartMenu()">WAR ROOM</button>
+        </div>
+
+        <div id="menu-sections">
+            <div id="menu-tabs">
+                <button type="button" class="menu-tab-btn active" data-tab="maps" onclick="switchMenuTab('maps')">BOARD LAYOUTS</button>
+                <button type="button" class="menu-tab-btn" data-tab="difficulty" onclick="switchMenuTab('difficulty')">DIFFICULTY</button>
+                <button type="button" class="menu-tab-btn" data-tab="modes" onclick="switchMenuTab('modes')">GAME MODE</button>
+                <button type="button" class="menu-tab-btn" data-tab="codex" onclick="switchMenuTab('codex')">TACTICAL CODEX</button>
+                <button type="button" class="menu-tab-btn" data-tab="settings" onclick="switchMenuTab('settings')">SETTINGS</button>
+            </div>
+
+            <!-- Tab 1: 4 Board Layout Variations -->
+            <div class="menu-tab-content active" id="tab-maps">
+                <div class="map-grid">
+                    <div class="map-card active" data-index="0" onclick="selectBoardLayout(0)">
+                        <div class="map-badge">BALANCED</div>
+                        <div class="map-name">Royal Spiral</div>
+                        <div class="map-desc">Canonical fortress labyrinth winding inward through outer ramparts directly into the keep.</div>
+                        <div class="map-stat"><span>Strategy:</span> Crowd control & elemental towers</div>
+                    </div>
+                    <div class="map-card" data-index="1" onclick="selectBoardLayout(1)">
+                        <div class="map-badge" style="color:#ffd700; border-color:#ffd700;">LONG RANGE</div>
+                        <div class="map-name">Dragon S-Curves</div>
+                        <div class="map-desc">Triple sweeping serpentine straightaways spanning edge-to-edge across the realm.</div>
+                        <div class="map-stat"><span>Strategy:</span> Snipers, rifles & linear piercing</div>
+                    </div>
+                    <div class="map-card" data-index="2" onclick="selectBoardLayout(2)">
+                        <div class="map-badge" style="color:#ff5a18; border-color:#ff5a18;">TACTICAL BOX</div>
+                        <div class="map-name">Iron Citadel Coils</div>
+                        <div class="map-desc">Concentric perimeter coils funneling invaders through intersecting 90° angular killzones.</div>
+                        <div class="map-stat"><span>Strategy:</span> C4 jams, flash traps & cluster fire</div>
+                    </div>
+                    <div class="map-card" data-index="3" onclick="selectBoardLayout(3)">
+                        <div class="map-badge" style="color:#a7f7ff; border-color:#a7f7ff;">CHOKEPOINTS</div>
+                        <div class="map-name">Valley of Knights</div>
+                        <div class="map-desc">Mountain flank passes converging through narrow high-impact choke bottleneck passes.</div>
+                        <div class="map-stat"><span>Strategy:</span> Fire/Rock AOE splash & slowing ice fields</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Difficulty -->
+            <div class="menu-tab-content" id="tab-difficulty">
+                <div class="difficulty-grid">
+                    <div class="diff-card active" data-diff="cadet" onclick="selectDifficulty('cadet')">
+                        <div class="diff-name">KNIGHT CADET</div>
+                        <div class="diff-tag">NORMAL</div>
+                        <p>25 Castle Lives · $600 Starting Gold · Standard enemy pacing & bounties.</p>
+                    </div>
+                    <div class="diff-card" data-diff="paladin" onclick="selectDifficulty('paladin')">
+                        <div class="diff-name">PALADIN</div>
+                        <div class="diff-tag" style="color:#ffaa00; border-color:#ffaa00;">HARD</div>
+                        <p>15 Castle Lives · $500 Starting Gold · +15% Enemy Speed · 1.2x Wave Rewards.</p>
+                    </div>
+                    <div class="diff-card" data-diff="grandmaster" onclick="selectDifficulty('grandmaster')">
+                        <div class="diff-name">GRANDMASTER</div>
+                        <div class="diff-tag" style="color:#ff3366; border-color:#ff3366;">EXTREME</div>
+                        <p>5 Castle Lives · $450 Starting Gold · +25% Enemy Speed · 1.5x Wave Rewards.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Game Modes -->
+            <div class="menu-tab-content" id="tab-modes">
+                <div class="mode-grid">
+                    <div class="mode-card active" data-mode="standard" onclick="selectGameMode('standard')">
+                        <div class="mode-title">ROYAL CAMPAIGN</div>
+                        <p>100 handcrafted waves with boss encounters every 5/10 waves and unlockable ballistic weaponry at Wave 30.</p>
+                    </div>
+                    <div class="mode-card" data-mode="blitz" onclick="selectGameMode('blitz')">
+                        <div class="mode-title">TURBO BLITZ</div>
+                        <p>Accelerated wave spawning with faster overdrive recharge bonuses for relentless tactical defense.</p>
+                    </div>
+                    <div class="mode-card" data-mode="arsenal" onclick="selectGameMode('arsenal')">
+                        <div class="mode-title">WAR ARSENAL</div>
+                        <p>Start with $1,400 gold and immediately unlocked ballistic arsenal (Eagle, P90, AA12, Barrett) from Wave 1.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Tactical Codex -->
+            <div class="menu-tab-content" id="tab-codex">
+                <div id="overlay-tutorial">
+                    <span><strong>Build:</strong> Pick an elemental tower, then click open ground. C4 and Flash go directly on the enemy path.</span>
+                    <span><strong>Upgrade:</strong> Click a placed tower to upgrade (up to Tier 5/7), sell, or switch targeting modes.</span>
+                    <span><strong>Shield Buffer:</strong> Home-base shield absorbs incursions before castle HP is impacted.</span>
+                    <span><strong>Boss Screen Shake:</strong> Down formidable bosses to trigger epic shockwaves and claim royal bounties.</span>
+                </div>
+            </div>
+
+            <!-- Tab 5: Settings -->
+            <div class="menu-tab-content" id="tab-settings">
+                <div class="settings-list">
+                    <label class="setting-row">
+                        <span>Audio Sound Effects:</span>
+                        <input type="checkbox" id="cfg-sfx" checked onchange="toggleSetting('sfx', this.checked)">
+                    </label>
+                    <label class="setting-row">
+                        <span>Auto-Advance Next Wave:</span>
+                        <input type="checkbox" id="cfg-autowave" onchange="toggleSetting('autowave', this.checked)">
+                    </label>
+                    <label class="setting-row">
+                        <span>High-Fidelity FX (Novae & Bloom):</span>
+                        <input type="checkbox" id="cfg-fx" checked onchange="toggleSetting('fx', this.checked)">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 <div id="bottom-panel">
@@ -503,13 +708,67 @@ const canvas = document.getElementById('game-canvas');
         });
     }
 
-    const pathNodes = [
-        {x: 0, y: 120}, {x: 1150, y: 120}, {x: 1150, y: 620},
-        {x: 100, y: 620}, {x: 100, y: 280}, {x: 900, y: 280},
-        {x: 900, y: 480}, {x: 350, y: 480}, {x: 350, y: 380},
-        {x: 640, y: 380}
+    const BOARD_LAYOUTS = [
+        {
+            id: 'spiral',
+            name: 'Royal Spiral',
+            tag: 'Balanced',
+            desc: 'Canonical fortress labyrinth winding inward through outer ramparts directly into the keep.',
+            nodes: [
+                {x: 0, y: 120}, {x: 1150, y: 120}, {x: 1150, y: 620},
+                {x: 100, y: 620}, {x: 100, y: 280}, {x: 900, y: 280},
+                {x: 900, y: 480}, {x: 350, y: 480}, {x: 350, y: 380},
+                {x: 640, y: 380}
+            ]
+        },
+        {
+            id: 'serpentine',
+            name: 'Dragon S-Curves',
+            tag: 'Long Range',
+            desc: 'Triple sweeping serpentine straightaways spanning edge-to-edge across the realm.',
+            nodes: [
+                {x: 0, y: 140}, {x: 1160, y: 140}, {x: 1160, y: 260},
+                {x: 120, y: 260}, {x: 120, y: 500}, {x: 1160, y: 500},
+                {x: 1160, y: 620}, {x: 640, y: 620}, {x: 640, y: 380}
+            ]
+        },
+        {
+            id: 'citadel',
+            name: 'Iron Citadel Coils',
+            tag: 'Tactical Box',
+            desc: 'Concentric perimeter coils funneling invaders through intersecting 90° angular killzones.',
+            nodes: [
+                {x: 0, y: 100}, {x: 1180, y: 100}, {x: 1180, y: 630},
+                {x: 100, y: 630}, {x: 100, y: 220}, {x: 1040, y: 220},
+                {x: 1040, y: 520}, {x: 240, y: 520}, {x: 240, y: 380},
+                {x: 640, y: 380}
+            ]
+        },
+        {
+            id: 'valley',
+            name: 'Valley of Knights',
+            tag: 'Chokepoints',
+            desc: 'Mountain flank passes converging through narrow high-impact choke bottleneck passes.',
+            nodes: [
+                {x: 0, y: 110}, {x: 1160, y: 110}, {x: 160, y: 240},
+                {x: 1160, y: 240}, {x: 1160, y: 620}, {x: 160, y: 620},
+                {x: 160, y: 490}, {x: 1160, y: 490}, {x: 950, y: 380},
+                {x: 640, y: 380}
+            ]
+        }
     ];
+
+    let currentLayoutIndex = 0;
+    let pathNodes = BOARD_LAYOUTS[0].nodes;
     const corePos = { x: 640, y: 380, radius: 65 };
+
+    const GAME_CONFIG = {
+        difficulty: 'cadet',
+        mode: 'standard',
+        sfx: true,
+        autowave: false,
+        fx: true
+    };
 
     let audioCtx = null;
     function getAudioCtx() {
@@ -521,6 +780,7 @@ const canvas = document.getElementById('game-canvas');
     }
 
     function playSound(freq, duration, type = 'sine', volume = 0.3) {
+        if (!GAME_CONFIG.sfx) return;
         const ctx = getAudioCtx();
         if (!ctx) return;
         try {
@@ -539,6 +799,7 @@ const canvas = document.getElementById('game-canvas');
     }
 
     function playSoundEffect(name) {
+        if (!GAME_CONFIG.sfx) return;
         switch(name) {
             case 'kill': playSound(800, 0.08, 'sine', 0.2); playSound(1200, 0.12, 'sine', 0.25); break;
             case 'combo': playSound(1000, 0.1, 'square', 0.3); playSound(1500, 0.15, 'square', 0.25); break;
@@ -552,45 +813,234 @@ const canvas = document.getElementById('game-canvas');
         ctx.save();
         ctx.scale(scale, scale);
 
-        ctx.fillStyle = 'rgba(0, 255, 255, 0.18)';
+        const time = (typeof frameCount !== 'undefined') ? frameCount : 0;
+        const crystalPulse = Math.sin(time * 0.08) * 3;
+
+        // Multi-ring Arcane Energy Foundation & Protective Ley-Lines
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.12)';
         ctx.beginPath();
-        ctx.arc(0, 0, 30, 0, Math.PI * 2);
+        ctx.arc(0, 0, 34, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#24334a';
-        ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(0, 255, 255, 0.35)';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(-24, -2);
-        ctx.lineTo(0, -24);
-        ctx.lineTo(24, -2);
+        ctx.arc(0, 0, 36, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Hexagonal Runic Ward Marks
+        ctx.strokeStyle = 'rgba(177, 0, 255, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const ang = (i * Math.PI / 3) + (time * 0.008);
+            const rx = Math.cos(ang) * 33;
+            const ry = Math.sin(ang) * 33;
+            if (i === 0) ctx.moveTo(rx, ry);
+            else ctx.lineTo(rx, ry);
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        // 1. Lower Stone Bastion Plinth (Base Foundations)
+        ctx.fillStyle = '#101726';
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(-28, 18, 56, 10, 3);
+        ctx.fill();
+        ctx.stroke();
+
+        // Stone course masonry lines on base
+        ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-28, 23); ctx.lineTo(28, 23);
+        ctx.moveTo(-10, 18); ctx.lineTo(-10, 23);
+        ctx.moveTo(10, 18); ctx.lineTo(10, 23);
+        ctx.moveTo(0, 23); ctx.lineTo(0, 28);
+        ctx.stroke();
+
+        // 2. Main Fortress Curtain Wall
+        ctx.fillStyle = '#1c2b3e';
+        ctx.strokeStyle = '#3a88c8';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(-17, -2, 34, 21);
+        ctx.strokeRect(-17, -2, 34, 21);
+
+        // Curtain wall stone brick texture
+        ctx.strokeStyle = 'rgba(78, 168, 222, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-17, 5); ctx.lineTo(17, 5);
+        ctx.moveTo(-17, 12); ctx.lineTo(17, 12);
+        ctx.moveTo(-6, -2); ctx.lineTo(-6, 5);
+        ctx.moveTo(6, -2); ctx.lineTo(6, 5);
+        ctx.moveTo(0, 5); ctx.lineTo(0, 12);
+        ctx.stroke();
+
+        // Curtain wall battlements (4 merlons)
+        ctx.fillStyle = '#263b54';
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1;
+        [-16, -8, 2, 10].forEach(bx => {
+            ctx.fillRect(bx, -6, 6, 4);
+            ctx.strokeRect(bx, -6, 6, 4);
+        });
+
+        // 3. Left Flanking Bastion Tower
+        ctx.fillStyle = '#22344c';
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(-25, -13, 11, 32);
+        ctx.strokeRect(-25, -13, 11, 32);
+
+        // Left tower machicolations / corbel ledge
+        ctx.fillStyle = '#314c6d';
+        ctx.fillRect(-27, -16, 15, 4);
+        ctx.strokeRect(-27, -16, 15, 4);
+
+        // Left tower crenellations
+        ctx.fillRect(-27, -20, 5, 4);
+        ctx.strokeRect(-27, -20, 5, 4);
+        ctx.fillRect(-17, -20, 5, 4);
+        ctx.strokeRect(-17, -20, 5, 4);
+
+        // 4. Right Flanking Bastion Tower
+        ctx.fillStyle = '#22344c';
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(14, -13, 11, 32);
+        ctx.strokeRect(14, -13, 11, 32);
+
+        // Right tower machicolations / corbel ledge
+        ctx.fillStyle = '#314c6d';
+        ctx.fillRect(12, -16, 15, 4);
+        ctx.strokeRect(12, -16, 15, 4);
+
+        // Right tower crenellations
+        ctx.fillRect(12, -20, 5, 4);
+        ctx.strokeRect(12, -20, 5, 4);
+        ctx.fillRect(22, -20, 5, 4);
+        ctx.strokeRect(22, -20, 5, 4);
+
+        // 5. Central High Keep (Great Citadel Spire)
+        ctx.fillStyle = '#172437';
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(-10, -22, 20, 24);
+        ctx.strokeRect(-10, -22, 20, 24);
+
+        // High keep corbel overhang
+        ctx.fillStyle = '#38557c';
+        ctx.strokeStyle = '#b8f7ff';
+        ctx.lineWidth = 1.2;
+        ctx.fillRect(-12, -25, 24, 4);
+        ctx.strokeRect(-12, -25, 24, 4);
+
+        // High keep crenellations (3 merlons)
+        [-12, -4, 5].forEach(kx => {
+            ctx.fillStyle = '#2d4463';
+            ctx.fillRect(kx, -30, 6, 5);
+            ctx.strokeRect(kx, -30, 6, 5);
+        });
+
+        // 6. Mystical Citadel Power Spire & Floating Arcane Crystal
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, -30); ctx.lineTo(0, -37);
+        ctx.stroke();
+
+        // Pulsing floating mana crystal atop keep
+        ctx.save();
+        ctx.translate(0, -40 + crystalPulse * 0.4);
+        ctx.fillStyle = '#00ffff';
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(4, 0);
+        ctx.lineTo(0, 6);
+        ctx.lineTo(-4, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        // Royal Pennants on Bastion Towers
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(-20, -20); ctx.lineTo(-20, -26);
+        ctx.moveTo(20, -20); ctx.lineTo(20, -26);
+        ctx.stroke();
+        ctx.fillStyle = '#ffd700';
+        ctx.beginPath();
+        ctx.moveTo(-20, -26); ctx.lineTo(-14, -23.5); ctx.lineTo(-20, -21); ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(20, -26); ctx.lineTo(26, -23.5); ctx.lineTo(20, -21); ctx.closePath(); ctx.fill();
+
+        // 7. Arched Grand Gatehouse & Portcullis
+        ctx.fillStyle = '#0a101b';
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(-7, 22);
+        ctx.lineTo(-7, 10);
+        ctx.arc(0, 10, 7, Math.PI, 0, false);
+        ctx.lineTo(7, 22);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = '#36506d';
-        ctx.strokeStyle = '#b8f7ff';
+        // Portcullis heavy iron lattice bars
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.75)';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.roundRect(-19, -2, 38, 28, 4);
+        ctx.moveTo(-3.5, 6); ctx.lineTo(-3.5, 22);
+        ctx.moveTo(3.5, 6); ctx.lineTo(3.5, 22);
+        ctx.moveTo(-6, 12); ctx.lineTo(6, 12);
+        ctx.moveTo(-6, 17); ctx.lineTo(6, 17);
+        ctx.stroke();
+
+        // Glowing arcane threshold runes at gate base
+        ctx.fillStyle = '#00ffff';
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 5;
+        ctx.fillRect(-5, 20.5, 10, 1.5);
+
+        // 8. Glowing Arrow-Slit Embrasures
+        ctx.fillRect(-2, -18, 4, 8);
+        ctx.fillRect(-21, -6, 3, 7);
+        ctx.fillRect(18, -6, 3, 7);
+        ctx.shadowBlur = 0;
+
+        // 9. Royal Qamelot Round Table Shield Crest
+        ctx.fillStyle = '#ffd700';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, -1);
+        ctx.lineTo(4.5, 2.5);
+        ctx.lineTo(0, 7);
+        ctx.lineTo(-4.5, 2.5);
+        ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = '#101827';
-        ctx.strokeStyle = '#ffd700';
+        // Golden center chevron
+        ctx.fillStyle = '#101726';
         ctx.beginPath();
-        ctx.roundRect(-6, 8, 12, 18, 2);
+        ctx.arc(0, 2.5, 1.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.stroke();
 
-        ctx.fillStyle = '#9beeff';
-        ctx.fillRect(-15, 5, 8, 7);
-        ctx.fillRect(7, 5, 8, 7);
-
+        // 10. Outer Boundary Energy Aura Ring
         ctx.strokeStyle = 'rgba(0, 255, 255, 0.45)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.arc(0, 0, 35, 0, Math.PI * 2);
+        ctx.arc(0, 0, 36, 0, Math.PI * 2);
         ctx.stroke();
+
         ctx.restore();
     }
     function drawDuckEnemy(context, scale=1, enemy=null) {
@@ -880,10 +1330,14 @@ const canvas = document.getElementById('game-canvas');
         const desc = document.getElementById('overlay-desc');
         const btn = document.getElementById('overlay-btn');
         const tutorial = document.getElementById('overlay-tutorial');
+        const menuSections = document.getElementById('menu-sections');
+        const returnBtn = document.getElementById('btn-return-menu');
 
         overlay.classList.toggle('victory-matrix', state.gameState === 'victory');
         title.classList.toggle('rock-title', state.gameState === 'menu');
-        if (tutorial) tutorial.style.display = state.gameState === 'menu' ? 'grid' : 'none';
+        if (menuSections) menuSections.style.display = state.gameState === 'menu' ? 'flex' : 'none';
+        if (tutorial) tutorial.style.display = (state.gameState === 'menu' && !menuSections) ? 'grid' : (menuSections ? 'grid' : 'none');
+        if (returnBtn) returnBtn.style.display = (state.gameState === 'gameover' || state.gameState === 'victory') ? 'inline-block' : 'none';
 
         if (state.gameState === 'playing') {
             overlay.style.display = 'none';
@@ -892,20 +1346,68 @@ const canvas = document.getElementById('game-canvas');
             if (state.gameState === 'menu') {
                 title.textContent = 'QAMELOT TOWER DEFENSE';
                 desc.textContent = 'Courage Under Fire';
-                btn.textContent = 'INITIALIZE';
-                btn.style.display = 'block';
+                btn.textContent = 'INITIALIZE DEFENSE';
+                btn.style.display = 'inline-block';
             } else if (state.gameState === 'gameover') {
                 title.textContent = 'SYSTEM FAILURE';
                 desc.textContent = `Defenses Breached on Wave ${state.wave}`;
                 btn.textContent = 'REBOOT SEQUENCE';
-                btn.style.display = 'block';
+                btn.style.display = 'inline-block';
             } else if (state.gameState === 'victory') {
                 title.textContent = 'VICTORY SECURED';
                 desc.textContent = 'You have been knighted a new member of the Round Table!';
                 btn.textContent = 'PLAY AGAIN';
-                btn.style.display = 'block';
+                btn.style.display = 'inline-block';
             }
         }
+    }
+
+    function selectBoardLayout(index) {
+        if (index < 0 || index >= BOARD_LAYOUTS.length) return;
+        currentLayoutIndex = index;
+        state.layoutIndex = index;
+        pathNodes = BOARD_LAYOUTS[index].nodes;
+        document.querySelectorAll('.map-card').forEach((card, idx) => {
+            card.classList.toggle('active', idx === index);
+        });
+        playSoundEffect('place');
+    }
+
+    function selectDifficulty(diff) {
+        GAME_CONFIG.difficulty = diff;
+        document.querySelectorAll('.diff-card').forEach(c => {
+            c.classList.toggle('active', c.getAttribute('data-diff') === diff);
+        });
+        playSoundEffect('place');
+    }
+
+    function selectGameMode(mode) {
+        GAME_CONFIG.mode = mode;
+        document.querySelectorAll('.mode-card').forEach(c => {
+            c.classList.toggle('active', c.getAttribute('data-mode') === mode);
+        });
+        playSoundEffect('place');
+    }
+
+    function toggleSetting(key, val) {
+        GAME_CONFIG[key] = val;
+        playSoundEffect('place');
+    }
+
+    function switchMenuTab(tabId) {
+        document.querySelectorAll('.menu-tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+        });
+        document.querySelectorAll('.menu-tab-content').forEach(content => {
+            content.classList.toggle('active', content.id === `tab-${tabId}`);
+        });
+        playSoundEffect('place');
+    }
+
+    function returnToStartMenu() {
+        state.gameState = 'menu';
+        updateOverlay();
+        playSoundEffect('place');
     }
 
     function updateUI() {
@@ -1200,7 +1702,6 @@ const canvas = document.getElementById('game-canvas');
         }
     }
     function detonatePrimeBomb(x, y, def) {
-        state.screenShake = 75;
         addFCT(x, y - 20, 'QAMELOT PRIME BOMB', '#b100ff');
         addEffect(x, y, '#b100ff', 420, 'explosion');
         addEffect(C_WIDTH * 0.5, C_HEIGHT * 0.5, '#ffffff', 760, 'nova');
@@ -1227,7 +1728,6 @@ const canvas = document.getElementById('game-canvas');
         if (def.tactical === 'c4') {
             const blast = (t.splash || def.splash) * (1 + Math.max(0, t.level - 1) * 0.2);
             addEffect(t.x, t.y, def.color, blast, 'explosion');
-            state.screenShake = t.level >= 5 ? 48 : (t.level >= 4 ? 38 : 28);
             roadJams.push({x: t.x, y: t.y, r: 70 + t.level * 18, life: Infinity, wave: state.wave, persistent: true, slowMult: t.jamMult || 0.35, level: t.level});
             let hits = 0;
             enemies.forEach(e => {
@@ -1247,7 +1747,6 @@ const canvas = document.getElementById('game-canvas');
         } else if (def.tactical === 'flash') {
             const burst = (t.splash || def.splash) * (1 + (t.level - 1) * 0.22);
             addEffect(t.x, t.y, '#ffffff', burst, 'nova');
-            state.screenShake = 14;
             enemies.forEach(e => {
                 if (Math.hypot(e.x - t.x, e.y - t.y) <= burst) {
                     damageEnemy(e, t.damage, def.color, t.x, t.y);
@@ -1315,7 +1814,6 @@ const canvas = document.getElementById('game-canvas');
                 if (p.splash > 0) {
                     let splashRad = p.splash * (1 + (p.level*0.2));
                     addEffect(p.x, p.y, p.color, splashRad, 'explosion');
-                    state.screenShake = p.level * 4;
                     scorchMarks.push({x: p.x, y: p.y, r: splashRad*0.8, life: 1000});
 
                     enemies.forEach(e => {
@@ -1375,6 +1873,7 @@ const canvas = document.getElementById('game-canvas');
                     state.gold += bossBonus;
                     state.shield = Math.min(state.maxShield, state.shield + 1);
                     state.overdriveCooldown = Math.max(0, state.overdriveCooldown - 420);
+                    state.screenShake = 35;
                     addFCT(e.x, e.y - 44, 'BOSS BOUNTY +$' + bossBonus, '#ffd700');
                     addFCT(corePos.x, corePos.y - 150, 'SHIELD RESTORED', '#9beeff');
                 }
@@ -1394,7 +1893,6 @@ const canvas = document.getElementById('game-canvas');
                 } else {
                     state.lives--;
                 }
-                state.screenShake = 15;
                 addEffect(corePos.x, corePos.y, '#ff3366', 150, 'nova');
                 enemies.splice(i, 1);
                 updateUI();
@@ -2017,6 +2515,7 @@ const canvas = document.getElementById('game-canvas');
         if (state.screenShake > 0) {
             ctx.translate((Math.random()-0.5)*state.screenShake, (Math.random()-0.5)*state.screenShake);
             state.screenShake *= 0.9;
+            if (state.screenShake < 0.2) state.screenShake = 0;
         }
 
         // Draw scorch marks
@@ -2255,12 +2754,62 @@ const canvas = document.getElementById('game-canvas');
 
     function startGame() {
         if(state.gameState === 'menu' || state.gameState === 'gameover' || state.gameState === 'victory') {
-            state = { ...state, lives: 25, gold: 600, wave: 0, gameState: 'playing', waveActive: false, waveTimer: 0, enemiesSpawned: 0, selectedShopType: null, selectedTower: null, screenShake: 0,
-        shield: 5, maxShield: 5, overdrive: 0, overdriveCooldown: 0, critChance: 0.12, critMult: 1.75, interestRate: 0.04, advancedUnlocked: false, killStreak: 0, waveLeaks: 0
-    };
+            const diff = GAME_CONFIG.difficulty;
+            const mode = GAME_CONFIG.mode;
+
+            let startLives = 25;
+            let startGold = 600;
+            let enemySpeedMult = 1;
+            let rewardMult = 1;
+
+            if (diff === 'paladin') {
+                startLives = 15;
+                startGold = 500;
+                enemySpeedMult = 1.15;
+                rewardMult = 1.2;
+            } else if (diff === 'grandmaster') {
+                startLives = 5;
+                startGold = 450;
+                enemySpeedMult = 1.25;
+                rewardMult = 1.5;
+            }
+
+            if (mode === 'arsenal') {
+                startGold = 1400;
+            }
+
+            pathNodes = BOARD_LAYOUTS[currentLayoutIndex || 0].nodes;
+
+            state = { 
+                ...state, 
+                lives: startLives, 
+                gold: startGold, 
+                wave: 0, 
+                gameState: 'playing', 
+                waveActive: false, 
+                waveTimer: 0, 
+                enemiesSpawned: 0, 
+                selectedShopType: null, 
+                selectedTower: null, 
+                screenShake: 0,
+                shield: 5, 
+                maxShield: 5, 
+                overdrive: 0, 
+                overdriveCooldown: 0, 
+                critChance: 0.12, 
+                critMult: 1.75, 
+                interestRate: 0.04, 
+                advancedUnlocked: mode === 'arsenal', 
+                killStreak: 0, 
+                waveLeaks: 0,
+                enemySpeedMult,
+                rewardMult,
+                layoutIndex: currentLayoutIndex
+            };
             towers = []; enemies = []; projectiles = []; effectAnimations = []; particles = []; fcts = []; scorchMarks = []; roadJams = []; spriteParticles = [];
             updateOverlay();
             updateUI();
+            playSoundEffect('combo');
         }
     }
 

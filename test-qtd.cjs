@@ -106,6 +106,106 @@ const toClient = (page, p) => page.evaluate(({ x, y }) => {
     assert(live.traces[kind] > 0, 'landed shots leave a visible trace at 8x: ' + kind + ' ' + JSON.stringify(live.traces));
   await page.evaluate(() => { enemies = []; projectiles = []; state.waveActive = false; towers = []; deselectAll(); });
 
+  // verify castle art and boss-only screen shake
+  const checks = await page.evaluate(() => {
+    const c = document.createElement('canvas'); c.width = c.height = 120; const x = c.getContext('2d');
+    x.save(); x.translate(60, 60); drawHomeBase(x, 1.35); x.restore();
+    const d = x.getImageData(0, 0, 120, 120).data, set = new Set();
+    for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 40) set.add(d[i] >> 4 << 8 | d[i + 1] >> 4 << 4 | d[i + 2] >> 4);
+
+    state.screenShake = 0;
+    enemies = [{ x: 500, y: 300, hp: 0, maxHp: 10, reward: 5, type: 'basic', pathIdx: 0, speed: 1 }];
+    processCombat(1);
+    const nonBossKillShake = state.screenShake;
+
+    state.screenShake = 0;
+    enemies = [{ x: 640, y: 380, hp: 10, maxHp: 10, reward: 5, type: 'basic', pathIdx: pathNodes.length - 1, speed: 1 }];
+    processCombat(1);
+    const leakShake = state.screenShake;
+
+    state.screenShake = 0;
+    const c4Def = TOWER_DEFS[7] || Object.values(TOWER_DEFS).find(def => def && def.tactical === 'c4');
+    const dummyC4 = { x: 500, y: 300, level: 3, armed: true, range: 100, splash: 100, jamMult: 0.35 };
+    enemies = [{ x: 500, y: 300, hp: 10, maxHp: 10, reward: 5, type: 'basic', pathIdx: 0, speed: 1 }];
+    triggerTactical(dummyC4, c4Def);
+    const c4Shake = state.screenShake;
+
+    state.screenShake = 0;
+    enemies = [{ x: 500, y: 300, hp: 0, maxHp: 100, reward: 50, type: 'boss', pathIdx: 0, speed: 0.5 }];
+    processCombat(1);
+    const bossKillShake = state.screenShake;
+
+    enemies = [];
+    return { castleColors: set.size, nonBossKillShake, leakShake, c4Shake, bossKillShake };
+  });
+
+  assert(checks.castleColors >= 20, 'castle in the middle should be richly detailed: ' + checks.castleColors + ' colors');
+  assert.equal(checks.nonBossKillShake, 0, 'non-boss kill must not trigger screen shake');
+  assert.equal(checks.leakShake, 0, 'base leaks must not trigger screen shake');
+  assert.equal(checks.c4Shake, 0, 'tactical explosions must not trigger screen shake');
+  assert(checks.bossKillShake > 0, 'boss kill must trigger screen shake: ' + checks.bossKillShake);
+
+  // verify start menu sequence options and 4 board layout variations
+  const menuChecks = await page.evaluate(() => {
+    const layoutCount = typeof BOARD_LAYOUTS !== 'undefined' ? BOARD_LAYOUTS.length : 0;
+    const names = BOARD_LAYOUTS.map(l => l.name);
+    const initialNodes = pathNodes.length;
+
+    // test switching to Dragon S-Curves (layout index 1)
+    selectBoardLayout(1);
+    const layout1Nodes = pathNodes.length;
+    const layout1FirstX = pathNodes[0].x;
+    const layout1LastX = pathNodes[pathNodes.length - 1].x;
+    const layout1LastY = pathNodes[pathNodes.length - 1].y;
+
+    // test switching to Iron Citadel Coils (layout index 2)
+    selectBoardLayout(2);
+    const layout2Nodes = pathNodes.length;
+
+    // test switching to Valley of Knights (layout index 3)
+    selectBoardLayout(3);
+    const layout3Nodes = pathNodes.length;
+
+    // test switching back to default Royal Spiral (index 0)
+    selectBoardLayout(0);
+    const defaultNodes = pathNodes.length;
+
+    // test difficulty selection
+    selectDifficulty('paladin');
+    const paladinDiff = GAME_CONFIG.difficulty;
+    selectDifficulty('cadet');
+    const cadetDiff = GAME_CONFIG.difficulty;
+
+    // test game mode selection
+    selectGameMode('arsenal');
+    const arsenalMode = GAME_CONFIG.mode;
+    selectGameMode('standard');
+
+    return {
+      layoutCount,
+      names,
+      initialNodes,
+      layout1Nodes,
+      layout1FirstX,
+      layout1LastX,
+      layout1LastY,
+      layout2Nodes,
+      layout3Nodes,
+      defaultNodes,
+      paladinDiff,
+      cadetDiff,
+      arsenalMode
+    };
+  });
+
+  assert.equal(menuChecks.layoutCount, 4, 'must provide 4 board layout variations (classic + 3 new)');
+  assert.deepEqual(menuChecks.names, ['Royal Spiral', 'Dragon S-Curves', 'Iron Citadel Coils', 'Valley of Knights']);
+  assert.equal(menuChecks.layout1LastX, 640, 'layout 1 must converge at the center castle core');
+  assert.equal(menuChecks.layout1LastY, 380, 'layout 1 must converge at the center castle core');
+  assert.equal(menuChecks.paladinDiff, 'paladin', 'difficulty selection must update config');
+  assert.equal(menuChecks.cadetDiff, 'cadet', 'difficulty reset must update config');
+  assert.equal(menuChecks.arsenalMode, 'arsenal', 'game mode selection must update config');
+
   if (SHOTS) {
     await page.evaluate(() => {
       towers = []; let i = 0;
