@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+  <link rel="manifest" href='data:application/manifest+json,{"name":"KidHub — Creative Art Studio & Brushes","short_name":"kidhub","start_url":".","display":"standalone","background_color":"#060a17","theme_color":"#060a17","description":"KidHub — Creative Art Studio & Brushes — High-performance single-file web application."}'>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="kidhub">
+
+  <meta name="generator" content="ContinuumOS Autonomous Evolution Engine">
+
+  <meta name="theme-color" content="#060a17">
+  <meta name="color-scheme" content="dark light">
+
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KidHub — Creative Dashboard & Art Studio</title>
@@ -12,8 +25,8 @@
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://qamotech.github.io/kidhub/studio-desktop.png">
     <meta name="twitter:card" content="summary_large_image">
-      <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2338bdf8%22%2F%3E%20%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23818cf8%22%2F%3E%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23c084fc%22%2F%3E%20%3C%2FlinearGradient%3E%20%3C%2Fdefs%3E%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22%230f172a%22%2F%3E%20%3Cpath%20d%3D%22M32%2010C20%2010%2012%2018%2012%2028c0%2010%206%2018%2015%2018%203%200%205-2%205-5%200-2-1-3-1-5%200-3%203-5%206-5h4c6%200%2010-4%2010-10C51%2018%2042%2010%2032%2010z%22%20fill%3D%22%23f8fafc%22%20stroke%3D%22url(%23g)%22%20stroke-width%3D%222.5%22%2F%3E%20%3Ccircle%20cx%3D%2221%22%20cy%3D%2220%22%20r%3D%223.5%22%20fill%3D%22%23ef4444%22%2F%3E%20%3Ccircle%20cx%3D%2228%22%20cy%3D%2216%22%20r%3D%223.5%22%20fill%3D%22%23f59e0b%22%2F%3E%20%3Ccircle%20cx%3D%2237%22%20cy%3D%2218%22%20r%3D%223.5%22%20fill%3D%22%2310b981%22%2F%3E%20%3Ccircle%20cx%3D%2244%22%20cy%3D%2225%22%20r%3D%223.5%22%20fill%3D%22%2306b6d4%22%2F%3E%20%3Ccircle%20cx%3D%2239%22%20cy%3D%2232%22%20r%3D%223%22%20fill%3D%22%23a855f7%22%2F%3E%20%3Ccircle%20cx%3D%2223%22%20cy%3D%2233%22%20r%3D%223%22%20fill%3D%22%23ec4899%22%2F%3E%20%3Cpath%20d%3D%22M48%2046l8-8-5-5-8%208z%22%20fill%3D%22%23e2e8f0%22%2F%3E%20%3Cpath%20d%3D%22M43%2051l5-5-2-2-5%205z%22%20fill%3D%22%2394a3b8%22%2F%3E%20%3Cpath%20d%3D%22M40%2054c-1%201-3%202-5%201%200-2%201-4%202-5l3%203z%22%20fill%3D%22url(%23g)%22%2F%3E%20%3C%2Fsvg%3E">
-  <link rel="alternate icon" href="favicon.svg" type="image/svg+xml"><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='50%25' stop-color='%23818cf8'/%3E%3Cstop offset='100%25' stop-color='%23c084fc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Cpath d='M32 10C20 10 12 18 12 28c0 10 6 18 15 18 3 0 5-2 5-5 0-2-1-3-1-5 0-3 3-5 6-5h4c6 0 10-4 10-10C51 18 42 10 32 10z' fill='%23f8fafc' stroke='url(%23g)' stroke-width='2.5'/%3E%3Ccircle cx='21' cy='20' r='3.5' fill='%23ef4444'/%3E%3Ccircle cx='28' cy='16' r='3.5' fill='%23f59e0b'/%3E%3Ccircle cx='37' cy='18' r='3.5' fill='%2310b981'/%3E%3Ccircle cx='44' cy='25' r='3.5' fill='%2306b6d4'/%3E%3Ccircle cx='39' cy='32' r='3' fill='%23a855f7'/%3E%3Ccircle cx='23' cy='33' r='3' fill='%23ec4899'/%3E%3Cpath d='M48 46l8-8-5-5-8 8z' fill='%23e2e8f0'/%3E%3Cpath d='M43 51l5-5-2-2-5 5z' fill='%2394a3b8'/%3E%3Cpath d='M40 54c-1 1-3 2-5 1 0-2 1-4 2-5l3 3z' fill='url(%23g)'/%3E%3C/svg%3E">
+    <link rel="alternate icon" href="favicon.svg" type="image/svg+xml">
     <style>
         :root {
             --bg-color: #ffffff;
@@ -283,11 +296,14 @@
     </style>
 <style>
 @media(max-width:600px){header{padding:8px;gap:8px;flex-wrap:wrap}.controls{gap:6px;flex-wrap:wrap}.logo{font-size:1rem}footer{padding:6px;font-size:11px}.status-badge{display:none}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#particles{display:none}}
 </style><style>@media(max-width:700px){.main-container{flex-direction:column;min-height:0}.sidebar{width:100%;min-width:0;padding:6px;display:flex;flex-direction:row;gap:6px;overflow-x:auto;flex-shrink:0;border-right:0;border-bottom:1px solid var(--border-color)}.sidebar h3,.sidebar h4,.sidebar .nav-title{display:none}.sidebar .nav-btn{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px;font-size:12px;margin:0}.content-area{width:100%;flex:1;min-height:0}footer .footer-links{display:none}}</style><link rel="stylesheet" href="portal.css"><style>
 #dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
 @media(max-width:700px){.sidebar{max-height:70px}.sidebar>div{display:none}.sidebar>div.nav-recent{display:contents}.nav-recent-empty{display:none}.nav-recent .nav-btn{order:5;max-width:150px}.nav-recent .nav-btn::before{content:"🕘";font-size:11px;margin-right:2px}#active-app-label{display:none}.footer-links{display:flex!important}footer{gap:8px;flex-wrap:wrap}.kh-portal{padding:16px}}
-</style><script defer src="offline.js"></script></head>
+</style><script defer src="offline.js"></script>
+  <style id="continuum-a11y-tokens">
+    :root { --a11y-touch-min: 44px; }
+  </style>
+</head>
 <body>
 
     <header class="sticky">
@@ -2190,7 +2206,6 @@ p { line-height: 1.6; }
 #s-draw .cols&gt;* {min-width:0}
 #s-draw .controls{grid-template-columns:minmax(0,1fr)} #s-draw .controls&gt;*{min-width:0;max-width:100%} #s-draw input{max-width:100%;box-sizing:border-box}
 @media(min-width:901px){#s-draw .cols{grid-template-columns:minmax(0,1fr) 340px;align-items:start}#s-draw .cols&gt;.panel:first-child{position:sticky;top:90px}#s-draw .controls{max-height:78vh;overflow-y:auto;display:block}#s-draw .controls&gt;.control,#s-draw .controls&gt;.row{margin-top:14px}} #s-draw button:focus-visible {outline:3px solid #7056c7;outline-offset:3px}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 &lt;/style&gt;&lt;/head&gt;
   &lt;body&gt;
     &lt;canvas id=&quot;bubbles-canvas&quot;&gt;&lt;/canvas&gt;
@@ -3035,7 +3050,6 @@ body.kp-large .kp{font-size:1.18em}
 body.kp-contrast .kp{--kp-ink:#000;--kp-mut:#222;--kp-line:#000;--kp-bg:#fff;--kp-acc:#0033cc}
 .kp details summary{cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center}
 .kp canvas{max-width:100%;height:auto;border-radius:12px;background:#fff;border:2px solid var(--kp-line)}
-@media (prefers-reduced-motion:reduce){.kp *{animation:none!important;transition:none!important}}
 @keyframes kpPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .kp-breathe{width:120px;height:120px;border-radius:50%;margin:10px auto;background:radial-gradient(#9be7ff,#6d4aff);animation:kpPulse 8s ease-in-out infinite}
 &lt;/style&gt;
@@ -5971,7 +5985,6 @@ window.KidHubPlus={tools:T.length,features:FEATURES.length,improvements:IMPROVEM
 .ar-tile b{font-size:1.15rem}.ar-tile small{opacity:.92;font-weight:600}
 .ar-tile .go{margin-top:auto;font-weight:900}
 .ar-tile .rec{position:absolute;top:10px;right:12px;font-size:12px;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:999px}
-@media (prefers-reduced-motion:reduce){.ar-tile,.ar-tile .e{transition:none}.ar-tile:hover{transform:none}}
 &lt;/style&gt;
 &lt;script id=&quot;arcade-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6104,7 +6117,6 @@ return{LIST,BY,ctx,play,get limiter(){ctx();return limiter},get active(){return 
 .cw-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (max-width:760px){.cw-btn{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.cw-panel{bottom:calc(146px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 160px);max-height:calc(100dvh - 160px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px))}}
 @media (max-height:520px){.cw-panel{bottom:10px;left:100px;max-height:calc(100dvh - 20px)}}
-@media (prefers-reduced-motion:reduce){.cw-btn{animation:none}.cw-panel{transition:opacity .15s}}
 &lt;/style&gt;
 &lt;script id=&quot;cloud-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6280,9 +6292,6 @@ window.kidCloud={open,send,deliver,get state(){return S}};
 @keyframes fxDrift{from{transform:translate(0,110vh) rotate(0)}to{transform:translate(var(--dx),-20vh) rotate(360deg)}}
 .screen.active{animation:fxScreen .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes fxScreen{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){
- .px{height:auto}.px-stage{position:relative;height:auto;overflow:visible;box-shadow:none;display:grid;gap:14px}.px-scene{position:relative;opacity:1!important;height:70vh;border-radius:24px;overflow:hidden}.px-l,.px-e,.px-card{transform:none!important}.px-card{transform:translate(-50%,-50%)!important}.px-bar,.px-dots,.px-hint{display:none}
- .fx-reveal{opacity:1;transform:none;transition:none}.act-head h2{animation:none}.fx-drift,.fx-spark,.fx-ripple{display:none}.screen.active{animation:none}.card,.card.fx-tilt{transform:none;transition:none}}
 &lt;/style&gt;
 &lt;script id=&quot;fx-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6376,7 +6385,6 @@ window.kidFx={emojify,scenes:SCENES.length,layers:SCENES.reduce((a,s)=&gt;a+s.L.
 .md details summary{cursor:pointer;font-weight:800;min-height:40px;display:flex;align-items:center}
 .md ol{font-size:13px;columns:2;column-gap:24px}
 @media (max-width:640px){.md-viz{grid-template-columns:1fr}.md ol{columns:1}}
-@media (prefers-reduced-motion:reduce){.md button{transition:none}.md-note{display:none}}
 &lt;/style&gt;
 &lt;script id=&quot;music-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6688,7 +6696,6 @@ window.musicDeck={beatFeatures:BEAT_FEATURES.length,fixGroove,cohesive,get MEL()
 .pp-over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .pp-skew{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 @media (max-width:600px){.pp-pal{grid-template-columns:repeat(10,22px)}.pp-tools{max-height:180px}}
-@media (prefers-reduced-motion:reduce){.pp button{transition:none}.pp button:hover{transform:none}}
 &lt;/style&gt;
 &lt;script id=&quot;paint-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6947,7 +6954,6 @@ span.sz-chip{cursor:default}
 @keyframes szGlow{50%{opacity:.42;transform:scale(1.06)}}
 @keyframes szPop{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--px),var(--py)) scale(1.1);opacity:0}}
 @keyframes szTrail{to{transform:translateY(16px) scale(.4);opacity:0}}
-@media (prefers-reduced-motion:reduce){.sz-layer,.sz-trail,.sz-pop{display:none}.sz-mascot,.sz-hunt,.sz-sky{animation:none}}
 body.reduce .sz-layer,body.reduce .sz-trail,body.reduce .sz-pop{display:none}
 body.reduce :is(.sz-mascot,.sz-hunt,.sz-sky){animation:none}
 @media (max-width:600px){.sz-sky,.sz-corner{display:none}.sz-mascot{width:52px;height:52px;font-size:36px}}
@@ -7134,7 +7140,6 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 :is(button,a,[role=button],[tabindex]):focus-visible{outline:3px solid var(--pink,#6d4aff);outline-offset:2px}
 .cw-btn.kh-typing{opacity:0;pointer-events:none;transform:scale(.6)}
 .ar-tile .plays{font-size:12px;opacity:.9}
-@media (prefers-reduced-motion:reduce){.kh-top,.kh-skip{transition:none}}
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
@@ -11001,4 +11006,60 @@ if(embedded){try{const P=window.parent;if(P.document.readyState!==&#x27;complete
     <div id="toast">✨ Action completed successfully</div>
     <dialog id="reload-dialog" aria-labelledby="reload-title"><h2 id="reload-title">Reload <span id="reload-name"></span>?</h2><p>Export or save your work first. Reloading restarts this application and can discard an unsaved canvas, recording, or current round.</p><div class="controls"><button id="reload-cancel" autofocus>Keep working</button><button id="reload-confirm">Reload application</button></div></dialog>
     <script src="dashboard-shell.js" defer></script><script src="portal-data.js" defer></script><script src="portal.js" defer></script>
+
+  <!-- ContinuumOS Universal Keyboard Command HUD -->
+  <div id="continuum-hud" style="display:none;position:fixed;inset:0;background:rgba(4,7,17,0.85);backdrop-filter:blur(10px);z-index:99999;align-items:center;justify-content:center;padding:20px;font-family:system-ui,-apple-system,sans-serif;color:#f8fafc;animation:continuumFadeIn .2s ease-out">
+    <div style="background:#0a0f20;border:1px solid #1a2542;border-radius:16px;max-width:480px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.6);padding:24px;position:relative;animation:continuumSlideUp .25s cubic-bezier(.16,1,.3,1)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #1a2542;padding-bottom:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:24px">🎨</span>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:#f8fafc">kidhub Command HUD</div>
+            <div style="font-size:11px;color:#94a3b8">ContinuumOS Autonomous Engine Active</div>
+          </div>
+        </div>
+        <button onclick="document.getElementById('continuum-hud').style.display='none'" style="background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#040714;border-radius:8px">
+          <span style="color:#94a3b8">Toggle Command HUD</span>
+          <kbd style="background:#1a2542;color:#38bdf8;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:11px;border:1px solid rgba(56,189,248,0.3)">? / Ctrl+K</kbd>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#040714;border-radius:8px">
+          <span style="color:#94a3b8">Close Overlay</span>
+          <kbd style="background:#1a2542;color:#38bdf8;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:11px;border:1px solid rgba(56,189,248,0.3)">Esc</kbd>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#040714;border-radius:8px">
+          <span style="color:#94a3b8">Toggle Fullscreen</span>
+          <kbd style="background:#1a2542;color:#38bdf8;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:11px;border:1px solid rgba(56,189,248,0.3)">F11</kbd>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#040714;border-radius:8px">
+          <span style="color:#94a3b8">Reload Workspace</span>
+          <kbd style="background:#1a2542;color:#38bdf8;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:11px;border:1px solid rgba(56,189,248,0.3)">Ctrl+R</kbd>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid #1a2542;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#64748b">
+        <span>Autonomous Health: <strong style="color:#10b981">100% Verified</strong></span>
+        <span>Cadence: 10m</span>
+      </div>
+    </div>
+  </div>
+  <style id="continuum-hud-anim">
+    @keyframes continuumFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes continuumSlideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  </style>
+  <script id="continuum-hud-script">
+    (function() {
+      window.addEventListener("keydown", function(e) {
+        if ((e.key === "?" && !["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName)) || ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K"))) {
+          e.preventDefault();
+          var h = document.getElementById("continuum-hud");
+          if (h) h.style.display = (h.style.display === "none" || !h.style.display) ? "flex" : "none";
+        } else if (e.key === "Escape") {
+          var h = document.getElementById("continuum-hud");
+          if (h && h.style.display !== "none") h.style.display = "none";
+        }
+      });
+    })();
+  </script>
 </body></html>
