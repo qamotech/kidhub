@@ -6795,7 +6795,7 @@ window.kidVoice={best,get pref(){return pref}};
 .kh-top.on{opacity:1;transform:none;pointer-events:auto}
 .kh-top:focus-visible{outline:3px solid var(--pink,#6d4aff);outline-offset:3px}
 .kh-update{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483500;display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:16px;background:#25304a;color:#fff;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.kh-update button{font:inherit;border:0;border-radius:10px;padding:6px 12px;cursor:pointer;background:#ffe066;color:#25304a;font-weight:900;min-height:36px}
+.kh-update button{font:inherit;border:0;border-radius:10px;padding:6px 12px;cursor:pointer;background:#ffe066;color:#25304a;font-weight:900;min-height:44px}
 html[data-theme="space"] .top,html[data-theme="midnight"] .top{background:rgba(24,21,60,.9)!important;border-bottom-color:var(--line)!important}
 html[data-theme="space"] :is(.pill,.round),html[data-theme="midnight"] :is(.pill,.round){background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important}
 html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:var(--ink)}
@@ -6806,7 +6806,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="142f0fd925c71914";
+const BUILD="7f1abeaa88e9d348";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6887,6 +6887,21 @@ window.kidPolish={improvements:IMPROVEMENTS.length,build:BUILD};
 })();
 </script>
 <!-- /SRC:zz-polish -->
+<!-- SRC:zz-refine -->
+<style id="refine-css">
+/* UI/style refinements layered on the base studio styles (loads after zz-polish). */
+:root{--kh-tap:44px}
+/* Touch targets: every round icon button and phone pill reaches the 44px minimum */
+.round{width:var(--kh-tap);height:var(--kh-tap);min-width:var(--kh-tap)}
+@media (max-width:620px){.pill{height:var(--kh-tap)}}
+/* Friendlier empty states: a soft dashed card instead of tiny grey text */
+div.empty{font-size:.9rem;line-height:1.45;padding:16px 14px;border:2px dashed color-mix(in srgb,var(--muted) 30%,transparent);border-radius:16px;background:color-mix(in srgb,var(--card) 60%,transparent)}
+div.empty::before{content:"✨";display:block;font-size:1.4rem;margin-bottom:4px}
+/* Typography: balanced headings and no lonely last words in paragraphs */
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+</style>
+<!-- /SRC:zz-refine -->
 <!-- SRC:zzz-adventures -->
 <style id="adventure-css">
 .adv{margin:18px 0;padding:18px;border:2px solid var(--purple,#8a6ee7);border-radius:20px;background:var(--card,#fff);color:var(--ink,#25304a);text-align:left;min-width:0}

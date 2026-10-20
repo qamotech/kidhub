@@ -1,0 +1,13 @@
+<style id="refine-css">
+/* UI/style refinements layered on the base studio styles (loads after zz-polish). */
+:root{--kh-tap:44px}
+/* Touch targets: every round icon button and phone pill reaches the 44px minimum */
+.round{width:var(--kh-tap);height:var(--kh-tap);min-width:var(--kh-tap)}
+@media (max-width:620px){.pill{height:var(--kh-tap)}}
+/* Friendlier empty states: a soft dashed card instead of tiny grey text */
+div.empty{font-size:.9rem;line-height:1.45;padding:16px 14px;border:2px dashed color-mix(in srgb,var(--muted) 30%,transparent);border-radius:16px;background:color-mix(in srgb,var(--card) 60%,transparent)}
+div.empty::before{content:"✨";display:block;font-size:1.4rem;margin-bottom:4px}
+/* Typography: balanced headings and no lonely last words in paragraphs */
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+</style>

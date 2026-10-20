@@ -20,5 +20,6 @@ await page.waitForTimeout(900);await page.evaluate(()=>scrollTo(0,3000));await p
 await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();await page.evaluate(()=>navigator.serviceWorker.ready);await page.waitForTimeout(500);
 await ctx.setOffline(true);await page.reload();assert.equal(await page.evaluate(()=>typeof app),'object','works offline');await ctx.setOffline(false);
 const man=await page.evaluate(()=>fetch('manifest.webmanifest').then(r=>r.json()));assert.equal(man.short_name,'KidHub');
-assert.deepEqual(errors,[]);console.log('PASS polish: 40 improvements, 8 themes, dark dim, deep links, back button, titles, Esc guard, count, toast cap, back-to-top, offline SW, manifest');
+const ref=await page.evaluate(()=>{const r=document.querySelector('.round'),e=document.querySelector('div.empty');return{round:r?r.getBoundingClientRect().width||parseFloat(getComputedStyle(r).width):0,empty:e?getComputedStyle(e).borderTopStyle:'missing',wrap:getComputedStyle(document.querySelector('h1,h2')).textWrap||'balance'}});assert(ref.round>=44,'round button '+ref.round);assert.equal(ref.empty,'dashed','empty state card');assert(/balance/.test(ref.wrap),'heading wrap '+ref.wrap);
+assert.deepEqual(errors,[]);console.log('PASS polish: 44px round buttons, dashed empty states, balanced headings, 40 improvements, 8 themes, dark dim, deep links, back button, titles, Esc guard, count, toast cap, back-to-top, offline SW, manifest');
 }catch(e){console.error(e);process.exitCode=1}finally{await b.close();srv?.kill()}})();

@@ -2206,6 +2206,7 @@ p { line-height: 1.6; }
 #s-draw .cols&gt;* {min-width:0}
 #s-draw .controls{grid-template-columns:minmax(0,1fr)} #s-draw .controls&gt;*{min-width:0;max-width:100%} #s-draw input{max-width:100%;box-sizing:border-box}
 @media(min-width:901px){#s-draw .cols{grid-template-columns:minmax(0,1fr) 340px;align-items:start}#s-draw .cols&gt;.panel:first-child{position:sticky;top:90px}#s-draw .controls{max-height:78vh;overflow-y:auto;display:block}#s-draw .controls&gt;.control,#s-draw .controls&gt;.row{margin-top:14px}} #s-draw button:focus-visible {outline:3px solid #7056c7;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 &lt;/style&gt;&lt;/head&gt;
   &lt;body&gt;
     &lt;canvas id=&quot;bubbles-canvas&quot;&gt;&lt;/canvas&gt;
@@ -3050,6 +3051,7 @@ body.kp-large .kp{font-size:1.18em}
 body.kp-contrast .kp{--kp-ink:#000;--kp-mut:#222;--kp-line:#000;--kp-bg:#fff;--kp-acc:#0033cc}
 .kp details summary{cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center}
 .kp canvas{max-width:100%;height:auto;border-radius:12px;background:#fff;border:2px solid var(--kp-line)}
+@media (prefers-reduced-motion:reduce){.kp *{animation:none!important;transition:none!important}}
 @keyframes kpPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .kp-breathe{width:120px;height:120px;border-radius:50%;margin:10px auto;background:radial-gradient(#9be7ff,#6d4aff);animation:kpPulse 8s ease-in-out infinite}
 &lt;/style&gt;
@@ -5985,6 +5987,7 @@ window.KidHubPlus={tools:T.length,features:FEATURES.length,improvements:IMPROVEM
 .ar-tile b{font-size:1.15rem}.ar-tile small{opacity:.92;font-weight:600}
 .ar-tile .go{margin-top:auto;font-weight:900}
 .ar-tile .rec{position:absolute;top:10px;right:12px;font-size:12px;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:999px}
+@media (prefers-reduced-motion:reduce){.ar-tile,.ar-tile .e{transition:none}.ar-tile:hover{transform:none}}
 &lt;/style&gt;
 &lt;script id=&quot;arcade-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6117,6 +6120,7 @@ return{LIST,BY,ctx,play,get limiter(){ctx();return limiter},get active(){return 
 .cw-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (max-width:760px){.cw-btn{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.cw-panel{bottom:calc(146px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 160px);max-height:calc(100dvh - 160px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px))}}
 @media (max-height:520px){.cw-panel{bottom:10px;left:100px;max-height:calc(100dvh - 20px)}}
+@media (prefers-reduced-motion:reduce){.cw-btn{animation:none}.cw-panel{transition:opacity .15s}}
 &lt;/style&gt;
 &lt;script id=&quot;cloud-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6292,6 +6296,9 @@ window.kidCloud={open,send,deliver,get state(){return S}};
 @keyframes fxDrift{from{transform:translate(0,110vh) rotate(0)}to{transform:translate(var(--dx),-20vh) rotate(360deg)}}
 .screen.active{animation:fxScreen .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes fxScreen{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+ .px{height:auto}.px-stage{position:relative;height:auto;overflow:visible;box-shadow:none;display:grid;gap:14px}.px-scene{position:relative;opacity:1!important;height:70vh;border-radius:24px;overflow:hidden}.px-l,.px-e,.px-card{transform:none!important}.px-card{transform:translate(-50%,-50%)!important}.px-bar,.px-dots,.px-hint{display:none}
+ .fx-reveal{opacity:1;transform:none;transition:none}.act-head h2{animation:none}.fx-drift,.fx-spark,.fx-ripple{display:none}.screen.active{animation:none}.card,.card.fx-tilt{transform:none;transition:none}}
 &lt;/style&gt;
 &lt;script id=&quot;fx-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6385,6 +6392,7 @@ window.kidFx={emojify,scenes:SCENES.length,layers:SCENES.reduce((a,s)=&gt;a+s.L.
 .md details summary{cursor:pointer;font-weight:800;min-height:40px;display:flex;align-items:center}
 .md ol{font-size:13px;columns:2;column-gap:24px}
 @media (max-width:640px){.md-viz{grid-template-columns:1fr}.md ol{columns:1}}
+@media (prefers-reduced-motion:reduce){.md button{transition:none}.md-note{display:none}}
 &lt;/style&gt;
 &lt;script id=&quot;music-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6696,6 +6704,7 @@ window.musicDeck={beatFeatures:BEAT_FEATURES.length,fixGroove,cohesive,get MEL()
 .pp-over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .pp-skew{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 @media (max-width:600px){.pp-pal{grid-template-columns:repeat(10,22px)}.pp-tools{max-height:180px}}
+@media (prefers-reduced-motion:reduce){.pp button{transition:none}.pp button:hover{transform:none}}
 &lt;/style&gt;
 &lt;script id=&quot;paint-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;
@@ -6954,6 +6963,7 @@ span.sz-chip{cursor:default}
 @keyframes szGlow{50%{opacity:.42;transform:scale(1.06)}}
 @keyframes szPop{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--px),var(--py)) scale(1.1);opacity:0}}
 @keyframes szTrail{to{transform:translateY(16px) scale(.4);opacity:0}}
+@media (prefers-reduced-motion:reduce){.sz-layer,.sz-trail,.sz-pop{display:none}.sz-mascot,.sz-hunt,.sz-sky{animation:none}}
 body.reduce .sz-layer,body.reduce .sz-trail,body.reduce .sz-pop{display:none}
 body.reduce :is(.sz-mascot,.sz-hunt,.sz-sky){animation:none}
 @media (max-width:600px){.sz-sky,.sz-corner{display:none}.sz-mascot{width:52px;height:52px;font-size:36px}}
@@ -7133,17 +7143,18 @@ window.kidVoice={best,get pref(){return pref}};
 .kh-top.on{opacity:1;transform:none;pointer-events:auto}
 .kh-top:focus-visible{outline:3px solid var(--pink,#6d4aff);outline-offset:3px}
 .kh-update{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483500;display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:16px;background:#25304a;color:#fff;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.kh-update button{font:inherit;border:0;border-radius:10px;padding:6px 12px;cursor:pointer;background:#ffe066;color:#25304a;font-weight:900;min-height:36px}
+.kh-update button{font:inherit;border:0;border-radius:10px;padding:6px 12px;cursor:pointer;background:#ffe066;color:#25304a;font-weight:900;min-height:44px}
 html[data-theme=&quot;space&quot;] .top,html[data-theme=&quot;midnight&quot;] .top{background:rgba(24,21,60,.9)!important;border-bottom-color:var(--line)!important}
 html[data-theme=&quot;space&quot;] :is(.pill,.round),html[data-theme=&quot;midnight&quot;] :is(.pill,.round){background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important}
 html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot;] .brand h1{color:var(--ink)}
 :is(button,a,[role=button],[tabindex]):focus-visible{outline:3px solid var(--pink,#6d4aff);outline-offset:2px}
 .cw-btn.kh-typing{opacity:0;pointer-events:none;transform:scale(.6)}
 .ar-tile .plays{font-size:12px;opacity:.9}
+@media (prefers-reduced-motion:reduce){.kh-top,.kh-skip{transition:none}}
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;142f0fd925c71914&quot;;
+const BUILD=&quot;7f1abeaa88e9d348&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7224,6 +7235,21 @@ window.kidPolish={improvements:IMPROVEMENTS.length,build:BUILD};
 })();
 &lt;/script&gt;
 &lt;!-- /SRC:zz-polish --&gt;
+&lt;!-- SRC:zz-refine --&gt;
+&lt;style id=&quot;refine-css&quot;&gt;
+/* UI/style refinements layered on the base studio styles (loads after zz-polish). */
+:root{--kh-tap:44px}
+/* Touch targets: every round icon button and phone pill reaches the 44px minimum */
+.round{width:var(--kh-tap);height:var(--kh-tap);min-width:var(--kh-tap)}
+@media (max-width:620px){.pill{height:var(--kh-tap)}}
+/* Friendlier empty states: a soft dashed card instead of tiny grey text */
+div.empty{font-size:.9rem;line-height:1.45;padding:16px 14px;border:2px dashed color-mix(in srgb,var(--muted) 30%,transparent);border-radius:16px;background:color-mix(in srgb,var(--card) 60%,transparent)}
+div.empty::before{content:&quot;✨&quot;;display:block;font-size:1.4rem;margin-bottom:4px}
+/* Typography: balanced headings and no lonely last words in paragraphs */
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+&lt;/style&gt;
+&lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;
 &lt;style id=&quot;adventure-css&quot;&gt;
 .adv{margin:18px 0;padding:18px;border:2px solid var(--purple,#8a6ee7);border-radius:20px;background:var(--card,#fff);color:var(--ink,#25304a);text-align:left;min-width:0}

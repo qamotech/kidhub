@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 19:29 — Touch, tokens & tidy empty states
+
+- **UI:** Round icon buttons, phone-sized top pills, Library tabs and the "new KidHub is ready" Refresh button are now at least 44px tall, so they're easy to tap.
+- **Style:** Empty lists ("Your latest activities will appear here", saved art) show as a soft dashed card with a ✨ instead of tiny grey text.
+- **Style:** Headings balance their line breaks and paragraphs avoid a lonely last word.
+- **Organization:** `portal.css` colors now come from `--p-*` tokens (link, line, field, muted), so the Halloween, Thanksgiving and Christmas themes recolor Library cards, buttons, inputs, tabs, notes and tables instead of leaving them white.
+
 ## 2026-10-12 — Project: Shadow Chassis (new arcade game)
 
 - **🤖 Project: Shadow Chassis** (`games/shadow-chassis.html`): single-file Midnight Mecha action-ARPG, all graphics and audio generated in code. Swap between the **Shinobi** bipedal rig (3-stage HF blade combo with a 120 ms deflect window, thermal shurikens that bounce and embed, phase dash with decoy, optical cloak 3x crit) and the **Cruiser** (drift physics at 2.5x speed, ramming, rotary autocannons with heat, 4-target micro-torpedo swarm).
