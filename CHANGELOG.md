@@ -1,5 +1,11 @@
 # 🗓️ Changelog
 
+## 2026-10-21 00:40 — Touch-safe hover, Library type tokens & tidy wrapping
+- **UI:** On touch screens, tapping a Library card or a music/paint button no longer leaves it stuck in its raised hover pose (keyboard focus still lifts cards).
+- **UI:** Library tabs that aren't the current page now tint toward the accent on hover, so it's clearer which ones you can click.
+- **Style:** Library headings wrap into even lines and paragraphs avoid a lonely last word, matching the studio.
+- **Organization:** portal.css gains `--p-fs-h1`/`--p-fs-h2`/`--p-fs-icon` type tokens; Library headings and card icons size from them instead of hard-coded numbers.
+
 ## 2026-10-21 00:05 — Solid glass, shadow tokens, list markers & notch-safe Library
 
 - **Style:** If the device is set to reduce transparency, the studio and the Library swap frosted-glass blur for solid surfaces, so text over panels stays crisp.

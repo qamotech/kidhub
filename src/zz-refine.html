@@ -68,4 +68,6 @@ html{scrollbar-gutter:stable}
 @media (prefers-reduced-transparency:reduce){*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.glass-panel,.top{background:var(--card,#fff)!important}}
 /* Themed list markers: bullets and numbers take the theme color (seasons recolor --pink), so lists match their headings */
 :where(ul,ol) > li::marker{color:var(--pink)}
+/* Touch screens: tapping a music or paint button no longer leaves it stuck raised in its hover pose */
+@media (hover:none){:is(.md,.pp) button:hover{transform:none}.pp button:not(.on):hover{box-shadow:none}}
 </style>
