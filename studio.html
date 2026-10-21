@@ -6806,7 +6806,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="3f767212b25d0a5c";
+const BUILD="2ece1c482972f8a3";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6975,6 +6975,14 @@ kbd{display:inline-block;min-width:1.6em;padding:.05em .45em;border:1px solid va
 @media (prefers-reduced-motion:no-preference){body:not(.reduce) .toast{animation:kh-toast-in .22s cubic-bezier(.2,.7,.3,1)}}
 /* Narrow phones: long words in card text break with a hyphen instead of leaving ragged gaps */
 @media (max-width:420px){:where(.card,.panel,div.empty) :where(p,li,small){hyphens:auto;-webkit-hyphens:auto}}
+/* File pickers: "Choose file" buttons (Import picture, Import kit) become theme-colored 44px pills instead of grey browser boxes */
+input[type=file]{max-width:100%;font:inherit}
+input[type=file]::file-selector-button{min-height:var(--kh-tap);margin-inline-end:10px;padding:0 16px;border:0;border-radius:999px;background:var(--pink);color:#fff;font:700 .9rem/1 inherit;cursor:pointer}
+input[type=file]::file-selector-button:hover{background:color-mix(in srgb,var(--pink) 85%,#000)}
+/* Dividers: section lines are a soft theme-tinted rule instead of the browser's grey groove (seasons recolor --pink) */
+hr{height:2px;border:0;border-radius:2px;background:color-mix(in srgb,var(--pink) 45%,transparent)}
+/* Touch fields: on touch screens text boxes, number boxes and dropdowns are at least 44px tall, so they're easy to tap */
+@media (pointer:coarse){:where(input:not([type=range],[type=checkbox],[type=radio],[type=color],[type=file],[type=hidden]),select){min-height:var(--kh-tap)}}
 </style>
 <!-- /SRC:zz-refine -->
 <!-- SRC:zzz-adventures -->

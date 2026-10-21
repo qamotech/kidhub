@@ -181,7 +181,7 @@ See [PRIVACY.md](PRIVACY.md) for details.
 | `build.py` | Build step: syncs standalone/embedded Studio, practice kits, the catalog and the offline version |
 | `resources.html` / `portal.css` | Applications & Resources library page and its styles (`--p-*` color, radius and motion tokens) |
 | `games/` | Shipped arcade games and the `games.json` registry |
-| `tools/` | Build helpers and `run-tests.cjs`, the browser test runner |
+| `tools/` | Build helpers and `run-tests.cjs`, the browser test runner (see [`tools/README.md`](tools/README.md)) |
 | `test-*.cjs` | Browser test suites run by `tools/run-tests.cjs` |
 | `studio-desktop.png` / `studio-mobile.png` | Screenshots captured during browser verification |
 | `CHANGELOG.md` | Release scope and behavior changes |

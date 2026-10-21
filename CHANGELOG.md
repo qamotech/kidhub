@@ -1,5 +1,11 @@
 # 🗓️ Changelog
 
+## 2026-10-21 02:17 — File-picker pills, soft dividers, touch fields & a tools map
+- **Style:** "Choose file" buttons in the studio (Import picture, Import kit) are theme-colored, 44px tall pills instead of grey browser boxes, and darken on hover.
+- **Style:** Divider lines between sections are a soft theme-tinted rule instead of the browser's grey groove (seasonal themes recolor them too).
+- **UI:** On touch screens, text boxes, number boxes and dropdowns in the studio are at least 44px tall, so they're easier to tap.
+- **Organization:** New `tools/README.md` explains each helper script (what it does, when it runs, which one never to run casually) plus the build-and-test loop; the README's project table links to it.
+
 ## 2026-10-21 01:55 — Gentle toasts, phone-fit messages & a style map
 - **UI:** Pop-up messages in the studio slide up and fade in instead of blinking on (instant with reduced motion or the Reduce motion switch).
 - **UI:** On phones, pop-up messages never run wider than the screen, wrap long words, and sit above the home-indicator bar on notched phones.
