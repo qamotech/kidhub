@@ -6806,7 +6806,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="2073e049f75831e2";
+const BUILD="8ba17008505108da";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6922,6 +6922,11 @@ body::after{display:none}
 /* Clear unavailable and busy states */
 html :is(button,input,select,textarea,.btn):disabled,[aria-disabled="true"]{cursor:not-allowed}
 [aria-busy="true"]{cursor:progress}
+/* Themed text highlight and scrollbars (seasons keep their own via html[data-season]) */
+::selection{background:color-mix(in srgb,var(--pink) 80%,#000);color:#fff}
+html{scrollbar-color:color-mix(in srgb,var(--pink) 55%,transparent) transparent}
+/* Jump links and deep links land with breathing room instead of flush against the top edge */
+:is(section,.panel,.card,h1,h2,h3)[id]{scroll-margin-top:16px}
 </style>
 <!-- /SRC:zz-refine -->
 <!-- SRC:zzz-adventures -->

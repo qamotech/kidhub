@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 21:30 — Radius tokens, highlights & scrollbars
+
+- **Organization:** Library corner radii come from two `portal.css` tokens (`--p-r` 12px, `--p-r-lg` 18px) instead of five hand-typed sizes, so cards, fields, notes and panels match.
+- **Style:** Selecting text in the studio or the Library highlights it in the theme color with white text instead of the browser's default blue.
+- **Style:** Page scrollbars (and the Library's wide-table scrollers) take a soft theme tint; seasonal themes keep their own colors.
+- **UI:** Jump links and deep links stop 16px below the top edge, so the heading you jumped to isn't jammed against the screen edge.
+
 ## 2026-10-20 21:05 — Press feedback & steady numbers
 
 - **UI:** Buttons, pills, tools and round icon buttons sink slightly while pressed, so taps feel answered; hover lifts still work and the effect turns off with reduced motion.

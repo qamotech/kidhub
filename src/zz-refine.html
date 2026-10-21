@@ -32,4 +32,9 @@ body::after{display:none}
 /* Clear unavailable and busy states */
 html :is(button,input,select,textarea,.btn):disabled,[aria-disabled="true"]{cursor:not-allowed}
 [aria-busy="true"]{cursor:progress}
+/* Themed text highlight and scrollbars (seasons keep their own via html[data-season]) */
+::selection{background:color-mix(in srgb,var(--pink) 80%,#000);color:#fff}
+html{scrollbar-color:color-mix(in srgb,var(--pink) 55%,transparent) transparent}
+/* Jump links and deep links land with breathing room instead of flush against the top edge */
+:is(section,.panel,.card,h1,h2,h3)[id]{scroll-margin-top:16px}
 </style>
