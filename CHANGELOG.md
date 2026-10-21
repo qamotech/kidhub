@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 22:50 — Contained scrolling, dark native controls & clear disabled states
+
+- **UI:** Scrolling to the end of a side panel, the cloud panel, paint toolbars or the music grid no longer drags the whole page along with it (the Library's wide tables too).
+- **Style:** In the dark Halloween, Thanksgiving and Christmas themes, the Library's date pickers, dropdown lists and scrollbars turn dark to match instead of flashing bright white.
+- **UI:** Unavailable Library buttons and fields look dimmed, show a "not allowed" pointer and no longer light up on hover.
+- **Organization:** The README's "🏗️ Project structure" table now lists `src/` modules, `build.py`, `resources.html`/`portal.css`, `games/`, `tools/` and the `test-*.cjs` suites.
+
 ## 2026-10-20 22:40 — Readable hints, tappable sections & print-ready pages
 
 - **Style:** Placeholder hints in text boxes use the theme's muted ink (in the studio and the Library), so they stay readable in dark and seasonal themes instead of faint browser grey.

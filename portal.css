@@ -26,3 +26,8 @@ html:has(.kh-portal){-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){.kh-portal :target{animation:none}}
 /* Readable hints: Library placeholders use the muted token so seasonal themes keep them legible */
 .kh-portal ::placeholder{color:var(--p-muted);opacity:.85}
+/* Native controls match the theme: date pickers, dropdown lists and scrollbars turn dark in the dark seasonal themes */
+.kh-portal{color-scheme:light}[data-theme="halloween"] :is(.kh-portal,body.portal-page),[data-theme="thanksgiving"] :is(.kh-portal,body.portal-page),[data-theme="christmas"] :is(.kh-portal,body.portal-page){color-scheme:dark}
+/* Contained scrolling for wide tables; unavailable Library controls look and act unavailable */
+.kh-portal .kh-scroll{overscroll-behavior-x:contain}
+.kh-portal :is(button,input,select,textarea):disabled{opacity:.55;cursor:not-allowed}.kh-portal button:disabled:hover{background:var(--p-bg)}.kh-portal .primary:disabled:hover{background:var(--p-accent)}

@@ -57,4 +57,6 @@ body::after{display:none!important}
 html[data-theme] body,body{background:#fff!important;color:#000;transition:none!important}
 .card,.panel,div.empty{break-inside:avoid;box-shadow:none}
 }
+/* Contained scrolling: reaching the end of a panel, toolbar or wide grid no longer drags the whole page along */
+:where(.controls,.cw-body,.pp-tools,.pp-stage,.md-grid,.md-kb){overscroll-behavior:contain}
 </style>

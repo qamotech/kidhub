@@ -160,6 +160,12 @@ See [PRIVACY.md](PRIVACY.md) for details.
 | `index.html` | Multi-app dashboard with the enhanced KidHub app embedded |
 | `studio.html` | Direct standalone KidHub activity hub and Art Studio |
 | `test.cjs` | Playwright regression checks for the expanded Art Studio |
+| `src/*.html` | Studio feature and polish modules, injected into `studio.html` in alphabetical order by `build.py` |
+| `build.py` | Build step: syncs standalone/embedded Studio, practice kits, the catalog and the offline version |
+| `resources.html` / `portal.css` | Applications & Resources library page and its styles (`--p-*` color, radius and motion tokens) |
+| `games/` | Shipped arcade games and the `games.json` registry |
+| `tools/` | Build helpers and `run-tests.cjs`, the browser test runner |
+| `test-*.cjs` | Browser test suites run by `tools/run-tests.cjs` |
 | `studio-desktop.png` / `studio-mobile.png` | Screenshots captured during browser verification |
 | `CHANGELOG.md` | Release scope and behavior changes |
 | `CONTRIBUTING.md` | Development and validation expectations |
