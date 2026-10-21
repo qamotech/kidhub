@@ -72,4 +72,8 @@ html{scrollbar-gutter:stable}
 @media (hover:none){:is(.md,.pp) button:hover{transform:none}.pp button:not(.on):hover{box-shadow:none}}
 /* Keycaps: keyboard hints like Esc and A–K look like real keys in the theme's colors */
 kbd{display:inline-block;min-width:1.6em;padding:.05em .45em;border:1px solid var(--line,#ccc);border-bottom-width:3px;border-radius:6px;background:var(--soft,#f6f6f6);color:var(--ink,inherit);font:700 .85em/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;vertical-align:.08em}
+/* Touch sliders: on touch screens every slider (brush size, volume, tempo...) gets a 44px tall hit area */
+@media (pointer:coarse){input[type=range]{min-height:44px}}
+/* Smooth sections: collapsible sections slide open and closed where supported (instant with reduced motion or the in-app switch) */
+@media (prefers-reduced-motion:no-preference){:root{interpolate-size:allow-keywords}body:not(.reduce) details::details-content{block-size:0;overflow:clip;transition:block-size .22s cubic-bezier(.2,.7,.3,1),content-visibility .22s allow-discrete}body:not(.reduce) details[open]::details-content{block-size:auto}}
 </style>

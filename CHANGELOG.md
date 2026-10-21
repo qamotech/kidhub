@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-21 01:15 — Dark Library, touch sliders, smooth sections & token docs
+- **Style:** The Library panel in the dashboard now turns dark with the Dark, Cyberpunk and Emerald themes instead of staying bright white, with readable links and buttons in each theme's colors.
+- **Style:** The standalone Library page follows the device's dark mode when no theme is picked: dark page, header, cards, fields and native controls.
+- **UI:** On touch screens, sliders in the studio and the Library (brush size, volume, tempo…) get a 44px tall hit area, so they're easier to grab.
+- **Style:** Collapsible sections in the studio and the Library slide open and closed smoothly where the browser supports it (instant with reduced motion or the Reduce motion switch).
+- **Organization:** The README has a new "🎨 Library design tokens" section listing every `--p-*` token in `portal.css` and where the theme overrides live, plus a dark-mode note under Comfort settings.
+
 ## 2026-10-21 01:00 — Page-chrome tokens, sticky Library header, keycaps & gentle validation
 - **Organization:** The Library's page background, header bar, header line and header links come from four `portal.css` tokens (`--p-page`, `--p-head-bg`, `--p-head-line`, `--p-head-link`); seasonal themes now just swap tokens, and their header links switch to a readable light color on the dark bar.
 - **UI:** The Library's "Back to KidHub" header stays pinned at the top while you scroll long pages, and jump links land just below it instead of underneath.

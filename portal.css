@@ -52,3 +52,14 @@ body.portal-page>header{position:sticky;top:0;z-index:5}html:has(body.portal-pag
 /* Gentle validation: a Library field the child has edited into an invalid value (e.g. minutes outside 1-60) gets a warning outline */
 .kh-portal{--p-warn:#b3261e}[data-theme="halloween"] .kh-portal,[data-theme="thanksgiving"] .kh-portal,[data-theme="christmas"] .kh-portal{--p-warn:#ff8a80}
 .kh-portal :is(input,select,textarea):user-invalid{border-color:var(--p-warn);box-shadow:0 0 0 2px color-mix(in srgb,var(--p-warn) 30%,transparent);background:color-mix(in srgb,var(--p-warn) 6%,var(--p-bg))}
+/* Dark-theme parity: the dashboard's Dark, Cyberpunk and Emerald themes recolor the Library panel through the --p-* tokens (white button text stays AA on each accent) */
+[data-theme="dark"] .kh-portal{--p-ink:#f0f0f0;--p-bg:#121212;--p-soft:#222;--p-accent:#0b5ed7;--p-link:#8bb9fe;--p-line:#333;--p-field:#555;--p-muted:#c4c4c4;--p-focus:#8bb9fe;--p-warn:#ff8a80}
+[data-theme="cyberpunk"] .kh-portal{--p-ink:#00ffcc;--p-bg:#0d0221;--p-soft:#26074a;--p-accent:#b000b0;--p-link:#ff8cff;--p-line:#5c1a8c;--p-field:#ff00ff;--p-muted:#9ff5e3;--p-focus:#ffe066;--p-warn:#ff8a80}
+[data-theme="emerald"] .kh-portal{--p-ink:#88ffcc;--p-bg:#021a11;--p-soft:#033322;--p-accent:#00704f;--p-link:#7dffc4;--p-line:#006644;--p-field:#2f8f68;--p-muted:#b6f5d9;--p-focus:#ffe066;--p-warn:#ff8a80}
+:is([data-theme="dark"],[data-theme="cyberpunk"],[data-theme="emerald"]) .kh-portal{color-scheme:dark}
+/* OS dark mode: the standalone Library follows the device's dark setting when no theme is chosen */
+@media (prefers-color-scheme:dark){html:not([data-theme]) .kh-portal{--p-ink:#ece8f6;--p-bg:#1b1726;--p-soft:#2a2440;--p-accent:#6545b5;--p-link:#c4b2ff;--p-line:#3d3557;--p-field:#5a5078;--p-muted:#bdb4d0;--p-focus:#c4b2ff;--p-warn:#ff8a80;color-scheme:dark}html:not([data-theme]) body.portal-page{--p-page:#120f1b;--p-head-bg:#1b1726;--p-head-line:#3d3557;--p-head-link:#c4b2ff;color-scheme:dark}html:not([data-theme]):has(body.portal-page){scrollbar-color:#5a5078 transparent}}
+/* Touch sliders: on touch screens Library sliders get a 44px tall hit area */
+@media (pointer:coarse){.kh-portal input[type=range]{min-height:44px}}
+/* Smooth sections: Library details slide open and closed where supported (instant with reduced motion) */
+@media (prefers-reduced-motion:no-preference){.kh-portal{interpolate-size:allow-keywords}.kh-portal details::details-content{block-size:0;overflow:clip;transition:block-size var(--p-dur) var(--p-ease),content-visibility var(--p-dur) allow-discrete}.kh-portal details[open]::details-content{block-size:auto}}

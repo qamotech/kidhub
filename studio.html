@@ -6806,7 +6806,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="5f2958eab7c0c91e";
+const BUILD="102dc1744528dc1f";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6962,6 +6962,10 @@ html{scrollbar-gutter:stable}
 @media (hover:none){:is(.md,.pp) button:hover{transform:none}.pp button:not(.on):hover{box-shadow:none}}
 /* Keycaps: keyboard hints like Esc and A–K look like real keys in the theme's colors */
 kbd{display:inline-block;min-width:1.6em;padding:.05em .45em;border:1px solid var(--line,#ccc);border-bottom-width:3px;border-radius:6px;background:var(--soft,#f6f6f6);color:var(--ink,inherit);font:700 .85em/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;vertical-align:.08em}
+/* Touch sliders: on touch screens every slider (brush size, volume, tempo...) gets a 44px tall hit area */
+@media (pointer:coarse){input[type=range]{min-height:44px}}
+/* Smooth sections: collapsible sections slide open and closed where supported (instant with reduced motion or the in-app switch) */
+@media (prefers-reduced-motion:no-preference){:root{interpolate-size:allow-keywords}body:not(.reduce) details::details-content{block-size:0;overflow:clip;transition:block-size .22s cubic-bezier(.2,.7,.3,1),content-visibility .22s allow-discrete}body:not(.reduce) details[open]::details-content{block-size:auto}}
 </style>
 <!-- /SRC:zz-refine -->
 <!-- SRC:zzz-adventures -->

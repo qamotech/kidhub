@@ -4,7 +4,7 @@
 
 **A colorful browser activity hub with an expanded Art Studio for drawing, storytelling, and creative exploration.** Open one HTML file, choose Art Studio, and start making something imaginative. The application is self-contained HTML, CSS, and JavaScript; there is no build step or application server.
 
-**On this page:** [🚀 Quick start](#-quick-start) · [🆕 Latest release](#-latest-release) · [♿ Comfort settings](#-comfort-settings) · [💾 Privacy & storage](#-privacy--storage) · [Build and verification](#build-and-verification) · [🤝 Contributing & support](#-contributing--support) · [🗓️ Changelog](CHANGELOG.md)
+**On this page:** [🚀 Quick start](#-quick-start) · [🆕 Latest release](#-latest-release) · [♿ Comfort settings](#-comfort-settings) · [🎨 Library design tokens](#-library-design-tokens) · [💾 Privacy & storage](#-privacy--storage) · [Build and verification](#build-and-verification) · [🤝 Contributing & support](#-contributing--support) · [🗓️ Changelog](CHANGELOG.md)
 
 ## 🧭 All-activity expansion — September 30, 2026
 
@@ -140,6 +140,21 @@ KidHub follows the device's own accessibility settings, no setup needed:
 - 🔲 **Increase contrast** (OS setting or ⚙️ High contrast): thicker, darker card borders.
 - 🖥️ **Windows High Contrast / forced colors**: cards, pills and buttons keep visible outlines, keyboard focus uses the system highlight color, and decorative seasonal effects step aside.
 - 🖨️ **Printing**: printed pages leave out the floating cloud and back-to-top buttons, toasts and sky effects, use a plain white background, and keep each card on one page.
+- 🌙 **Dark mode** (OS setting): the standalone Library (`resources.html`) turns dark when no theme is picked; the dashboard's Dark, Cyberpunk and Emerald themes recolor the Library panel too.
+
+## 🎨 Library design tokens
+
+The Library (`resources.html` and the dashboard's Applications panel) is styled by `portal.css`, and every color, size and timing comes from a `--p-*` custom property. Themes only swap tokens, so new rules should use them instead of literal values.
+
+| Group | Tokens | Used for |
+|---|---|---|
+| Color | `--p-ink` `--p-bg` `--p-soft` `--p-accent` `--p-link` `--p-line` `--p-field` `--p-muted` `--p-focus` `--p-warn` | Text, surfaces, buttons, borders, focus ring, invalid fields |
+| Page chrome | `--p-page` `--p-head-bg` `--p-head-line` `--p-head-link` | Standalone page background and the sticky header (set on `body.portal-page`) |
+| Shape | `--p-r` `--p-r-lg` `--p-shadow` `--p-shadow-lg` | Corner radii; resting and lifted shadows |
+| Spacing & type | `--p-gap` `--p-gap-lg` `--p-fs-h1` `--p-fs-h2` `--p-fs-icon` | Gaps, heading and card-icon sizes |
+| Motion | `--p-dur` `--p-ease` | Card lifts, jump glow, sections opening |
+
+Theme overrides live at the bottom of `portal.css`: seasonal (`halloween`, `thanksgiving`, `christmas`), dashboard (`dark`, `cyberpunk`, `emerald`) and OS dark mode (`prefers-color-scheme: dark` when no `data-theme` is set). Keep white button text at WCAG AA contrast on any new `--p-accent`.
 
 ## 💾 Privacy & storage
 
