@@ -42,7 +42,9 @@ h2{margin:8px 0;color:#f6f0ce;font-size:clamp(17px,3vw,27px)}
 .statBox{padding:10px;border-radius:11px;background:#020711;border:1px solid #3a577d;text-align:center;color:#dbe5f0}
 .statBox strong{display:block;color:#ffe180;font-size:19px;margin-top:4px}
 #fsBtn{position:absolute;top:10px;right:10px;background:#050b18eb;color:#65e7ff;border:1px solid #65e7ff;border-radius:8px;padding:8px 12px;font-size:18px;z-index:9;cursor:pointer;box-shadow:0 0 10px #65e7ff44}
-#sndBtn{position:absolute;top:10px;right:62px;background:#050b18eb;color:#ffd700;border:1px solid #ffd700;border-radius:8px;padding:8px 12px;font-size:18px;z-index:9;cursor:pointer;box-shadow:0 0 10px #ffd70044}
+#sndBtn{position:absolute;top:10px;right:62px;background:#050b18eb;color:#ffd700;border:1px solid #ffd700;border-radius:8px;padding:8px 10px;font-size:16px;z-index:9;cursor:pointer;box-shadow:0 0 10px #ffd70044;display:inline-flex;align-items:center;gap:5px}
+#eqBars{display:inline-flex;align-items:flex-end;gap:2px;height:13px}
+.eqBar{width:2.5px;background:#ffd700;border-radius:1px;transition:height .08s ease}
 #btnChi,#btnSwd{position:absolute;bottom:30px;width:70px;height:70px;border-radius:50%;background:#020711ee;border:2px solid;font-size:28px;font-weight:900;z-index:9;cursor:pointer;display:flex;justify-content:center;align-items:center}
 #btnChi{left:20px;border-color:#65e7ff;color:#65e7ff;box-shadow:0 0 20px #65e7ff66}
 #btnSwd{right:20px;border-color:#ff755d;color:#ff755d;box-shadow:0 0 20px #ff755d66}
@@ -66,7 +68,7 @@ h2{margin:8px 0;color:#f6f0ce;font-size:clamp(17px,3vw,27px)}
 <canvas id="c"></canvas>
 <div id="ui">
   <div id="aura"></div>
-  <button id="sndBtn" aria-label="Toggle Audio">🔊</button>
+  <button id="sndBtn" aria-label="Toggle Audio"><span id="sndIcon">🔊</span><span id="eqBars"><span class="eqBar" style="height:5px"></span><span class="eqBar" style="height:10px"></span><span class="eqBar" style="height:7px"></span></span></button>
   <button id="fsBtn" aria-label="Toggle Fullscreen">⛶</button>
   <button id="btnChi">氣</button>
   <button id="btnSwd">⚔</button>
@@ -728,6 +730,15 @@ function ui(){
   }
   const bC = q("#btnChi");
   if(bC) bC.classList.toggle("primed", chi >= 100);
+  const eq = document.querySelectorAll(".eqBar");
+  if(eq.length && MiyagiAudioEngine.isMuted && !MiyagiAudioEngine.isMuted()){
+    let bp = (performance.now() * 0.007) % (Math.PI * 2);
+    eq[0].style.height = (3 + Math.abs(Math.sin(bp)) * 9) + "px";
+    eq[1].style.height = (3 + Math.abs(Math.sin(bp + 1.2)) * 10) + "px";
+    eq[2].style.height = (3 + Math.abs(Math.sin(bp + 2.3)) * 8) + "px";
+  } else if(eq.length) {
+    eq.forEach(b => b.style.height = "2px");
+  }
 }
 
 function note(t,c="#ffe782"){M.textContent=t;M.style.color=c;M.style.opacity=1;clearTimeout(note.t);note.t=setTimeout(()=>M.style.opacity=0,1050);if(t.includes("WAVE")||t.includes("CHAMPION")||t.includes("BOSS"))MiyagiAudioEngine.play("gong");}
@@ -771,6 +782,9 @@ function sht(){
   if(combo>=7){
     stars.push({x:player.x+38,y:player.y-18,vx:12,vy:-520-throwLv*18,r:6+throwLv*.3,dmg:0.8+throwLv*.25,sp:0});
   }
+  if(combo>=8){
+    spawnRipple(player.x, player.y, "rgba(255, 215, 0, 0.4)");
+  }
 }
 
 function swd(){if(state!==ST.PLAYING||player.sword>0)return;player.sword=Math.max(330,650-swordLv*25);MiyagiAudioEngine.play('sword', { pitch: 1 + Math.min(combo - 1, 10) * 0.04 });spawnRipple(player.x,player.y,"#ff9d7e");slashes.push({x:player.x,y:player.y,r:10,m:72+swordLv*12,l:.25});ptc(player.x,player.y-15,"e",18);vib(40);let parried=false;enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<88+swordLv*12){e.hp-=2+swordLv*1.35;e.vy-=75;ptc(e.x,e.y,"e",7);if(e.hp<=0)spawnKanji("斬",e.x,e.y,"#ff6b4a",32);if(!parried&&e.y>player.y-45){parried=true;score+=75*combo;chi=Math.min(100,chi+8);ptc(player.x,player.y-20,"cl",12);MiyagiAudioEngine.play('bell');spawnKanji("覇",player.x,player.y-35,"#ffd700",38)}}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<108+swordLv*10)o.hp-=3+swordLv*2});makiwaras.forEach(m=>{if(Math.hypot(m.x-player.x,m.y-player.y)<88+swordLv*12){m.hp-=3+swordLv*1.5;m.h=0.1;m.tilt=(player.x<m.x?0.3:-0.3);ptc(m.x,m.y,"cl",10);MiyagiAudioEngine.play('wood');spawnKanji("極",m.x,m.y,"#e0c362",24);if(m.hp<=0){score+=60*combo;ptc(m.x,m.y,"cl",16);makiwaras.splice(makiwaras.indexOf(m),1)}}})}
@@ -791,9 +805,14 @@ function mE(){ecoOrbs.push({x:R(W*.2,W*.8),y:-20,r:14,vy:60+wave*1.5,p:R(0,7)})}
 
 function rH(s,o){return s.x>o.x-o.w/2&&s.x<o.x+o.w/2&&s.y>o.y-o.h/2&&s.y<o.y+o.h/2}
 function aC(){
-  kills++;comboT=3e3;combo=Math.min(8,1+(kills/4|0));chi=Math.min(100,chi+8);
-  if(combo===4)spawnKanji("分身",player.x-32,player.y-25,"#00f0ff",28);
-  if(combo===7)spawnKanji("影分身",player.x+32,player.y-25,"#00f0ff",30);
+  kills++;comboT=3e3;let oldCombo=combo;combo=Math.min(10,1+(kills/3|0));chi=Math.min(100,chi+8);
+  if(combo>oldCombo){
+    if(combo===4)spawnKanji("分身",player.x-32,player.y-25,"#00f0ff",28);
+    else if(combo===5){note("⚡ 5× FLOW STATE!","#65e7ff");spawnKanji("神速",player.x,player.y-45,"#65e7ff",42);MiyagiAudioEngine.play('bell');}
+    else if(combo===7)spawnKanji("影分身",player.x+32,player.y-25,"#00f0ff",30);
+    else if(combo===8){note("🥋 8× MASTER COMBO!","#ffd700");spawnKanji("無双",player.x,player.y-45,"#ffd700",48);MiyagiAudioEngine.play('gong');rings.push({x:player.x,y:player.y,r:20,l:.8,m:.8});}
+    else if(combo===10){note("👑 10× ZEN SUPREME!","#ff755d");spawnKanji("極意",player.x,player.y-45,"#ff755d",54);MiyagiAudioEngine.play('gong');spawnRipple(player.x,player.y,"#ffd700");}
+  }
   if(kills===10){note("🥋 SHINOBI DISCIPLE!","#ffe58b");spawnKanji("忍",player.x,player.y-45,"#ffe58b",42);}
   else if(kills===25){note("⚡ THUNDER BLADE!","#65e7ff");rings.push({x:player.x,y:player.y,r:15,l:.6,m:.6});spawnRipple(player.x,player.y,"#65e7ff");spawnKanji("雷",player.x,player.y-45,"#65e7ff",46);MiyagiAudioEngine.play('gong');}
   else if(kills===50){note("🐉 DRAGON MASTER!","#ff755d");rings.push({x:player.x,y:player.y,r:20,l:.8,m:.8});spawnRipple(player.x,player.y,"#ff755d");spawnKanji("龍",player.x,player.y-45,"#ff755d",50);MiyagiAudioEngine.play('gong');}
@@ -827,6 +846,9 @@ function uE(dt,ms){
   if(spawn<=0){emy();if(wave>5&&Math.random()<.1)emy();spawn=Math.max(430,1250-wave*40)}
   if(waveT>22e3){
     wave++;waveT=0;note("WAVE "+wave);
+    spawnKanji("段", W * 0.5, Q * 0.22, "#ffe58b", 42);
+    MiyagiAudioEngine.play('bell');
+    ptc(W * 0.5, Q * 0.22, "cl", 20);
     if(wave%8===0){
       setTimeout(()=>note("DRAGON BOSS!","#ff3c1c"),250);
       enemies.push({t:3,x:W/2,y:Q*.16,baseX:W/2,phase:0,hp:80+wave*8,m:80+wave*8,breathCooldown:1800,r:40,h:0,sh:0,vx:0,vy:0});
@@ -1061,6 +1083,13 @@ function rd(){
   X.beginPath();
   X.moveTo(l - 50, 12); X.lineTo(r + 50, 12); X.lineTo(r + 38, 28); X.lineTo(l - 38, 28);
   X.closePath(); X.fill();
+  // Celestial Kasagi Gold Moonlight Rim
+  X.strokeStyle = "rgba(255, 230, 140, 0.55)";
+  X.lineWidth = 1.8;
+  X.beginPath();
+  X.moveTo(l - 50, 12);
+  X.quadraticCurveTo(W * 0.5, 9, r + 50, 12);
+  X.stroke();
   // Torii Lower Shimaki Beam
   X.fillStyle = "#801818";
   X.fillRect(l - 28, 35, (r - l) + 56, 10);
@@ -1090,10 +1119,19 @@ function rd(){
   });
   X.restore();
 
-  // Stone Lanterns (Toro) with Flickering Flame Glow
+  // Stone Lanterns (Toro) with Flickering Flame Glow & Ground Halo
   let flamePulse = Math.sin(t * 0.25) * 5;
-  [l - 42, r + 42].forEach(lx => {
+  [l - 42, r + 42].forEach((lx, idx) => {
     X.save();
+    let haloGrad = X.createRadialGradient(lx, Q * 0.55 + 40, 2, lx, Q * 0.55 + 40, 65 + flamePulse * 2);
+    haloGrad.addColorStop(0, "rgba(255, 195, 80, 0.28)");
+    haloGrad.addColorStop(0.5, "rgba(255, 170, 50, 0.12)");
+    haloGrad.addColorStop(1, "rgba(255, 160, 40, 0)");
+    X.fillStyle = haloGrad;
+    X.beginPath();
+    X.ellipse(lx + (idx === 0 ? 15 : -15), Q * 0.55 + 45, 60, 24, 0, 0, Math.PI * 2);
+    X.fill();
+
     X.fillStyle = "#1e293b";
     X.fillRect(lx - 10, Q * 0.55, 20, 60);
     X.fillStyle = "#0f172a";
@@ -1220,25 +1258,25 @@ function pD(){
   if(combo>=4){
     X.save();
     X.translate(-38, 4);
-    X.globalAlpha = 0.55;
+    let bob = Math.sin(performance.now() * 0.009) * 2.5;
+    X.translate(0, bob);
+    X.globalAlpha = 0.68;
     X.shadowColor = "#00f0ff";
-    X.shadowBlur = 12;
-    X.fillStyle = "#122a42";
-    X.beginPath(); X.arc(0, 0, 15, 0, Math.PI * 2); X.fill();
-    X.strokeStyle = "#00f0ff"; X.lineWidth = 1.5; X.stroke();
+    X.shadowBlur = 14;
+    MiyagiAssets.drawShadowNinja(X, 0, 0, 0.72, { hit: 0, hp: 1 });
     sA(16, -2, 0.55);
     X.restore();
   }
   if(combo>=7){
     X.save();
     X.translate(38, 4);
-    X.globalAlpha = 0.55;
+    let bob = Math.cos(performance.now() * 0.009) * 2.5;
+    X.translate(0, bob);
+    X.globalAlpha = 0.68;
     X.shadowColor = "#00f0ff";
-    X.shadowBlur = 12;
-    X.fillStyle = "#122a42";
-    X.beginPath(); X.arc(0, 0, 15, 0, Math.PI * 2); X.fill();
-    X.strokeStyle = "#00f0ff"; X.lineWidth = 1.5; X.stroke();
-    sA(16, -2, 0.55);
+    X.shadowBlur = 14;
+    MiyagiAssets.drawShadowNinja(X, 0, 0, 0.72, { hit: 0, hp: 1 });
+    sA(-16, -2, 0.55);
     X.restore();
   }
   if(player.dragonBuff>0){
@@ -1453,7 +1491,7 @@ q("#again").onclick=()=>{reset();setSt(ST.PLAYING);last=performance.now()};
 q("#restart").onclick=()=>{reset();setSt(ST.PLAYING);last=performance.now()};
 q("#resume").onclick=()=>{if(state===ST.PLAYING){setSt(ST.PAUSED);q("#pThrow").textContent=throwLv;q("#pRate").textContent=tps().toFixed(1);q("#pSword").textContent=swordLv;q("#pCombo").textContent="×"+combo;q("#pChi").textContent=Math.floor(chi)+"%";q("#pWave").textContent=wave}else if(state===ST.PAUSED){setSt(ST.PLAYING);last=performance.now()}};
 q("#fsBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
-q("#sndBtn").onclick=()=>{const unmuted = MiyagiAudioEngine.toggleMute(); q("#sndBtn").textContent = unmuted ? "🔊" : "🔇";};
+q("#sndBtn").onclick=()=>{const unmuted = MiyagiAudioEngine.toggleMute(); const si = q("#sndIcon"); if(si) si.textContent = unmuted ? "🔊" : "🔇";};
 q("#btnChi").onpointerdown=e=>{e.preventDefault();blst()};
 q("#btnSwd").onpointerdown=e=>{e.preventDefault();swd()};
 addEventListener("keydown",e=>{keys[e.key]=1;if(e.code==="Space"||e.key==="w"||e.key==="W"||e.key==="ArrowUp"){e.preventDefault();swd()}if(e.key==="e"||e.key==="E"||e.key==="q"||e.key==="Q")blst();if(e.key==="p"||e.key==="P"||e.key==="Escape")q("#resume").onclick()});
