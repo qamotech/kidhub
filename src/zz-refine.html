@@ -37,4 +37,13 @@ html :is(button,input,select,textarea,.btn):disabled,[aria-disabled="true"]{curs
 html{scrollbar-color:color-mix(in srgb,var(--pink) 55%,transparent) transparent}
 /* Jump links and deep links land with breathing room instead of flush against the top edge */
 :is(section,.panel,.card,h1,h2,h3)[id]{scroll-margin-top:16px}
+/* Snappy taps: no double-tap-zoom delay on controls, and the press-sink replaces the grey tap flash */
+:where(button,a,.btn,.tool,.pill,.round,.chip,.card,label,summary,select){touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+/* Phone fit: phones keep the chosen text size, and long words or links wrap inside cards instead of pushing the page sideways */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:where(.card,.panel,div.empty,#toasts>*) :where(h1,h2,h3,h4,p,li,small,a){overflow-wrap:anywhere}
+/* Jump targets: the card or heading a link lands on glows once in the theme color (screens are excluded; off with reduced motion) */
+@keyframes kh-target{from{box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 60%,transparent)}to{box-shadow:0 0 0 4px transparent}}
+:is(.panel,.card,h2,h3)[id]:target{animation:kh-target 1.6s ease-out;border-radius:12px}
+body.reduce :target{animation:none}
 </style>

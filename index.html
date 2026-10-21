@@ -7154,7 +7154,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;8ba17008505108da&quot;;
+const BUILD=&quot;d17841dd8725b670&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7275,6 +7275,15 @@ html :is(button,input,select,textarea,.btn):disabled,[aria-disabled=&quot;true&q
 html{scrollbar-color:color-mix(in srgb,var(--pink) 55%,transparent) transparent}
 /* Jump links and deep links land with breathing room instead of flush against the top edge */
 :is(section,.panel,.card,h1,h2,h3)[id]{scroll-margin-top:16px}
+/* Snappy taps: no double-tap-zoom delay on controls, and the press-sink replaces the grey tap flash */
+:where(button,a,.btn,.tool,.pill,.round,.chip,.card,label,summary,select){touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+/* Phone fit: phones keep the chosen text size, and long words or links wrap inside cards instead of pushing the page sideways */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:where(.card,.panel,div.empty,#toasts&gt;*) :where(h1,h2,h3,h4,p,li,small,a){overflow-wrap:anywhere}
+/* Jump targets: the card or heading a link lands on glows once in the theme color (screens are excluded; off with reduced motion) */
+@keyframes kh-target{from{box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 60%,transparent)}to{box-shadow:0 0 0 4px transparent}}
+:is(.panel,.card,h2,h3)[id]:target{animation:kh-target 1.6s ease-out;border-radius:12px}
+body.reduce :target{animation:none}
 &lt;/style&gt;
 &lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;

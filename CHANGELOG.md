@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 22:10 — Snappy taps, phone fit & jump glow
+
+- **UI:** Buttons, links, cards and pills respond to taps right away on phones and tablets (no double-tap-zoom delay), and the grey tap flash is gone because buttons already sink when pressed.
+- **UI:** On phones, long words and links wrap inside cards, empty states and toasts instead of pushing the page sideways, and turning the phone sideways no longer inflates the text size.
+- **Style:** When a link jumps to a card or heading, it glows once in the theme color so you can see where you landed (in the studio and the Library; off with reduced motion).
+- **Organization:** Library motion comes from two `portal.css` tokens (`--p-dur`, `--p-ease`), so card lifts and the new jump glow share one timing and easing curve.
+
 ## 2026-10-20 21:30 — Radius tokens, highlights & scrollbars
 
 - **Organization:** Library corner radii come from two `portal.css` tokens (`--p-r` 12px, `--p-r-lg` 18px) instead of five hand-typed sizes, so cards, fields, notes and panels match.
