@@ -135,6 +135,7 @@ h2{margin:8px 0;color:#f6f0ce;font-size:clamp(17px,3vw,27px)}
         </div>
       </div>
       <p id="goHiscore" style="color:#ffe37b;font-weight:bold;margin-top:6px;text-align:center"></p>
+      <div id="goBadge" style="display:flex;justify-content:center;gap:8px;margin:8px 0 14px;flex-wrap:wrap"></div>
       <div class="actions">
         <button class="btn" id="again">TRAIN AGAIN</button>
       </div>
@@ -682,6 +683,23 @@ const MiyagiAudioEngine = (() => {
           osc.start(nextBeatTime);
           osc.stop(nextBeatTime + 0.05);
         }
+        if (currentStep === 0 && Math.random() < 0.5) {
+          const notes = [293.66, 329.63, 349.23, 440.0, 493.88];
+          const fluteFreq = notes[Math.floor(Math.random() * notes.length)];
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(fluteFreq, nextBeatTime);
+          osc.frequency.linearRampToValueAtTime(fluteFreq * 1.015, nextBeatTime + 0.35);
+          osc.frequency.linearRampToValueAtTime(fluteFreq, nextBeatTime + 0.7);
+          gain.gain.setValueAtTime(0.001, nextBeatTime);
+          gain.gain.linearRampToValueAtTime(0.14, nextBeatTime + 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.0001, nextBeatTime + 0.85);
+          osc.connect(gain);
+          gain.connect(musicGain);
+          osc.start(nextBeatTime);
+          osc.stop(nextBeatTime + 0.85);
+        }
       }
       currentStep = (currentStep + 1) % 16;
       nextBeatTime += beatLen;
@@ -790,7 +808,29 @@ function sht(){
 
 function swd(){if(state!==ST.PLAYING||player.sword>0)return;player.sword=Math.max(330,650-swordLv*25);MiyagiAudioEngine.play('sword', { pitch: 1 + Math.min(combo - 1, 10) * 0.04 });spawnRipple(player.x,player.y,"#ff9d7e");slashes.push({x:player.x,y:player.y,r:10,m:72+swordLv*12,l:.25});if(combo>=5){slashes.push({x:player.x,y:player.y,r:14,m:90+swordLv*14,l:.28});ptc(player.x,player.y-18,"cl",8);}ptc(player.x,player.y-15,"e",18);vib(40);let parried=false;enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<88+swordLv*12){e.hp-=2+swordLv*1.35;e.vy-=75;ptc(e.x,e.y,"e",7);if(e.hp<=0)spawnKanji("斬",e.x,e.y,"#ff6b4a",32);if(!parried&&e.y>player.y-45){parried=true;score+=75*combo;chi=Math.min(100,chi+8);ptc(player.x,player.y-20,"cl",12);MiyagiAudioEngine.play('bell');spawnKanji("覇",player.x,player.y-35,"#ffd700",38)}}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<108+swordLv*10)o.hp-=3+swordLv*2});makiwaras.forEach(m=>{if(Math.hypot(m.x-player.x,m.y-player.y)<88+swordLv*12){m.hp-=3+swordLv*1.5;m.h=0.1;m.tilt=(player.x<m.x?0.3:-0.3);ptc(m.x,m.y,"cl",10);MiyagiAudioEngine.play('wood');spawnKanji(["極","技","錬","道","誠"][Math.floor(Math.random()*5)],m.x,m.y,"#e0c362",24);if(m.hp<=0){score+=60*combo;ptc(m.x,m.y,"cl",16);spawnKanji("破",m.x,m.y,"#ffd700",34);makiwaras.splice(makiwaras.indexOf(m),1)}}})}
 
-function blst(){if(state!==ST.PLAYING||chi<100)return;chi=0;MiyagiAudioEngine.play('chi');spawnRipple(player.x,player.y,"#65e7ff");spawnKanji("氣",player.x,player.y-45,"#65e7ff",48);rings.push({x:player.x,y:player.y,r:10,l:.55,m:.55});ptc(player.x,player.y,"c",42);vib([50,50,80]);enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<300){e.hp-=7+wave*.35;e.y-=70;e.vy*=.55;ptc(e.x,e.y,"c",10)}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<320)o.hp-=10});shake=12;note("CHI BLAST","#76efff")}
+function blst(){
+  if(state!==ST.PLAYING||chi<100)return;
+  chi=0;
+  MiyagiAudioEngine.play('chi');
+  spawnRipple(player.x,player.y,"#65e7ff");
+  setTimeout(()=>spawnRipple(player.x,player.y,"#a0f4ff"), 80);
+  setTimeout(()=>spawnRipple(player.x,player.y,"#ffffff"), 160);
+  spawnKanji("氣",player.x,player.y-45,"#65e7ff",48);
+  rings.push({x:player.x,y:player.y,r:10,l:.55,m:.55});
+  ptc(player.x,player.y,"c",42);
+  vib([50,50,80]);
+  enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<320){e.hp-=7+wave*.35;e.y-=70;e.vy*=.55;ptc(e.x,e.y,"c",10)}});
+  walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<340)o.hp-=10});
+  makiwaras.forEach(m=>{
+    if(Math.hypot(m.x-player.x,m.y-player.y)<320){
+      m.hp-=15; m.h=0.15;
+      ptc(m.x,m.y,"w",14); ptc(m.x,m.y,"cl",12);
+      if(m.hp<=0){score+=60*combo; ptc(m.x,m.y,"w",18); spawnKanji("破",m.x,m.y,"#ffd700",34); makiwaras.splice(makiwaras.indexOf(m),1);}
+    }
+  });
+  shake=14;
+  note("CHI BLAST","#76efff");
+}
 
 function emy(ty=0,ox=null,oy=null,ovy=null){
   let t=Math.random()<.15?2:ty,b=t?12+wave*1.6:2.3+wave*.48,hp=b*(t?1.25:1.15),x=ox!==null?ox:R(W*.37,W*.63),y=oy!==null?oy:-40,vy=ovy!==null?ovy:(t?34:52)+wave*4.4+R(0,19);
@@ -991,7 +1031,16 @@ function cC(){
       }
       player.hp-=e.t?28:12;player.inv=750;shake=10;combo=1;comboT=0;ptc(player.x,player.y,"e",14);vib(70);enemies.splice(i,1);if(player.hp<=0){ed();return}continue
     }
-    if(e.y>Q+45){dojo-=e.t?24:8;shake=7;combo=1;comboT=0;enemies.splice(i,1);if(dojo<=0){ed();return}}
+    if(e.y>Q+45){
+      let dmg = e.t?24:8;
+      dojo-=dmg; shake=9; combo=1; comboT=0;
+      spawnKanji("危", e.x, Q - 30, "#ef4444", 32);
+      spawnRipple(e.x, Q - 25, "rgba(239, 68, 68, 0.85)");
+      ptc(e.x, Q - 25, "e", 12);
+      MiyagiAudioEngine.play('hit');
+      enemies.splice(i,1);
+      if(dojo<=0){ed();return}
+    }
   }
   for(let i=gates.length-1;i>=0;i--)if(gates[i].y>Q+90)gates.splice(i,1);
   for(let i=walls.length-1;i>=0;i--)if(walls[i].y>Q+100)walls.splice(i,1);
@@ -1111,6 +1160,23 @@ function rd(){
 
   // Outer Grounds (Dark Bamboo Verges)
   X.fillStyle="#07101c";X.fillRect(0,0,l,Q);X.fillRect(r,0,W-r,Q);
+
+  // Traditional River Stepping Stones (Tobi-Ishi) in Garden Verges
+  [l - 30, r + 30].forEach((pathX, pIdx) => {
+    X.save();
+    for (let k = 0; k < 8; k++) {
+      let stoneY = Q * (0.2 + k * 0.1) + ((t * 2) % (Q * 0.1));
+      let stoneX = pathX + Math.sin(k * 1.4) * 6;
+      X.fillStyle = "#16202e";
+      X.strokeStyle = "#253346";
+      X.lineWidth = 1.2;
+      X.beginPath();
+      X.ellipse(stoneX, stoneY, 14, 8, 0.2 * (k % 2 === 0 ? 1 : -1), 0, Math.PI * 2);
+      X.fill();
+      X.stroke();
+    }
+    X.restore();
+  });
 
   // Shinto Torii Gate Architecture along Horizon
   X.save();
@@ -1343,6 +1409,37 @@ function pD(){
     X.closePath();X.stroke();
     X.restore();
   }
+  if(player.craneBuff>0){
+    X.save();
+    let flap = Math.sin(performance.now() * 0.012) * 6;
+    [-1, 1].forEach(side => {
+      X.save();
+      X.scale(side, 1);
+      X.translate(14, 0);
+      X.rotate(-0.25 + flap * 0.03 * side);
+      X.shadowColor = "#90e0ef";
+      X.shadowBlur = 14;
+      X.strokeStyle = "rgba(144, 224, 239, 0.85)";
+      X.fillStyle = "rgba(224, 247, 250, 0.35)";
+      X.lineWidth = 1.8;
+      X.beginPath();
+      X.moveTo(0, 0);
+      X.quadraticCurveTo(24, -18 + flap, 42, -8 + flap * 1.5);
+      X.quadraticCurveTo(32, 10, 18, 14);
+      X.quadraticCurveTo(8, 8, 0, 0);
+      X.closePath();
+      X.fill();
+      X.stroke();
+      [12, 22, 32].forEach((fx, fi) => {
+        X.beginPath();
+        X.moveTo(fx * 0.5, 0);
+        X.lineTo(fx, 6 + fi * 2);
+        X.stroke();
+      });
+      X.restore();
+    });
+    X.restore();
+  }
   if(combo>=4){
     X.save();
     X.translate(-38, 4);
@@ -1376,6 +1473,7 @@ function pD(){
       X.rotate(ang+Math.PI/2);
       sA(0,0,0.75);
       X.restore();
+      if(Math.random()<0.25) ptc(player.x+bx, player.y+by, "e", 1);
       enemies.forEach(e=>{
         let ex=(player.x+bx)-e.x, ey=(player.y+by)-e.y;
         if(ex*ex+ey*ey<(e.r+18)**2){
@@ -1568,10 +1666,22 @@ function setSt(s){
   }
 }
 function ed(){
-  if(score > hiscore){hiscore = score; localStorage.setItem('mt_hiscore', hiscore);}
+  let isNewRecord = score > hiscore;
+  if(isNewRecord){hiscore = score; localStorage.setItem('mt_hiscore', hiscore); ptc(W/2, Q/2, "cl", 36);}
   if(wave > maxwave){maxwave = wave; localStorage.setItem('mt_maxwave', maxwave);}
+  MiyagiAudioEngine.play('gong');
   F.textContent=`Score ${score} · Wave ${wave} · ${kills} defeated`;
-  const goH = q("#goHiscore"); if(goH) goH.textContent = `🏆 PERSONAL BEST: ${hiscore} (Wave ${maxwave})`;
+  const goH = q("#goHiscore");
+  if(goH){
+    goH.innerHTML = isNewRecord 
+      ? `✨ <span style="color:#ffe37b">NEW RECORD!</span> ${hiscore} (Wave ${maxwave}) ✨`
+      : `🏆 PERSONAL BEST: ${hiscore} (Wave ${maxwave})`;
+  }
+  const goB = q("#goBadge");
+  if(goB){
+    let currentRank = wave >= 16 ? "🐉 Dragon Slayer" : wave >= 8 ? "⚡ Thunder Blade" : wave >= 4 ? "🥋 Disciple" : "🥋 Initiate";
+    goB.innerHTML = `<span class="badge">Rank Achieved: ${currentRank}</span>`;
+  }
   setSt(ST.GAMEOVER);
 }
 
