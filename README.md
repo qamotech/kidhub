@@ -4,6 +4,8 @@
 
 **A colorful browser activity hub with an expanded Art Studio for drawing, storytelling, and creative exploration.** Open one HTML file, choose Art Studio, and start making something imaginative. The application is self-contained HTML, CSS, and JavaScript; there is no build step or application server.
 
+**On this page:** [🚀 Quick start](#-quick-start) · [🆕 Latest release](#-latest-release) · [♿ Comfort settings](#-comfort-settings) · [💾 Privacy & storage](#-privacy--storage) · [Build and verification](#build-and-verification) · [🤝 Contributing & support](#-contributing--support) · [🗓️ Changelog](CHANGELOG.md)
+
 ## 🧭 All-activity expansion — September 30, 2026
 
 Every core activity now has an **Adventure trail** with three tailored missions, Explore/Stretch/Invent guidance, a coach tip, saved checkmarks, a discovery journal, and a text download. Checkmarks are self-reported and do not alter game scores.
@@ -129,6 +131,14 @@ Then visit `http://localhost:8000`. No package installation is required to use t
 ## 🧭 More activities in the hub
 
 The inherited hub includes entry points for Catch the Stars, Story Garden, Music Lab, Math Mission, Memory Match, Code Logic, Space Explorer, Dino Dig, Shapes Puzzle, Farm Friends, Coloring Book, Word Spelling, Telling Time, Music Maker, and Storybook Creator. The automated suites cover core activity flows, journals, migrations, and the current game manifest; coverage is described below.
+
+## ♿ Comfort settings
+
+KidHub follows the device's own accessibility settings, no setup needed:
+
+- 🐢 **Reduce motion** (OS setting or ⚙️ switch): animations and transitions stop, and smooth scrolling turns off.
+- 🔲 **Increase contrast** (OS setting or ⚙️ High contrast): thicker, darker card borders.
+- 🖥️ **Windows High Contrast / forced colors**: cards, pills and buttons keep visible outlines, keyboard focus uses the system highlight color, and decorative seasonal effects step aside.
 
 ## 💾 Privacy & storage
 

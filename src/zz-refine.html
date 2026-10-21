@@ -10,4 +10,16 @@ div.empty::before{content:"✨";display:block;font-size:1.4rem;margin-bottom:4px
 /* Typography: balanced headings and no lonely last words in paragraphs */
 h1,h2,h3{text-wrap:balance}
 p{text-wrap:pretty}
+/* Calm motion: the device's "reduce motion" setting gets the same safety net as the in-app Reduce motion switch */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+body.reduce *,body.reduce *::before,body.reduce *::after{animation-iteration-count:1!important;scroll-behavior:auto!important}
+/* More contrast: the device's "increase contrast" setting mirrors the in-app High contrast switch */
+@media (prefers-contrast:more){body{--line:#667085}body .card,body .panel,body .side{border-width:2px}}
+/* Windows High Contrast / forced colors: keep cards, pills and buttons outlined, focus uses the system Highlight, decorations step aside */
+@media (forced-colors:active){
+.card,.panel,.side,.pill,.round,button,div.empty{border:1px solid CanvasText}
+:focus-visible{outline:3px solid Highlight!important;outline-offset:3px}
+.sz-layer,.sz-trail,.sz-pop,.sz-sky{display:none}
+body::after{display:none}
+}
 </style>

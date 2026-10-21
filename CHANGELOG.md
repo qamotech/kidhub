@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 20:45 — Comfort modes & docs map
+
+- **Style:** If the device is set to reduce motion, KidHub now stops animations, transitions and smooth scrolling automatically, just like the in-app Reduce motion switch (which also stops looping animations now).
+- **Style:** If the device is set to increase contrast, card borders turn thicker and darker, matching the in-app High contrast switch.
+- **Style:** Windows High Contrast (forced colors) keeps cards, pills and buttons outlined, uses the system highlight color for the keyboard focus ring, and hides the dark-theme dim layer and seasonal sky effects.
+- **Organization:** The README starts with an "On this page" quick-nav and has a new "♿ Comfort settings" section explaining these modes.
+
 ## 2026-10-20 19:58 — Library focus, hover & skip link
 
 - **Style:** The Library's keyboard focus ring comes from a `--p-focus` token, so it shows as bright gold on the dark Halloween, Thanksgiving and Christmas themes instead of a dim purple.
