@@ -1,5 +1,11 @@
 # 🗓️ Changelog
 
+## 2026-10-21 01:00 — Page-chrome tokens, sticky Library header, keycaps & gentle validation
+- **Organization:** The Library's page background, header bar, header line and header links come from four `portal.css` tokens (`--p-page`, `--p-head-bg`, `--p-head-line`, `--p-head-link`); seasonal themes now just swap tokens, and their header links switch to a readable light color on the dark bar.
+- **UI:** The Library's "Back to KidHub" header stays pinned at the top while you scroll long pages, and jump links land just below it instead of underneath.
+- **Style:** Keyboard hints in the studio (Esc, A–K, H, P, R…) look like real keycaps in the theme's colors.
+- **UI:** If a Library field is edited into a value it can't take (like 99 minutes when the limit is 60), it gets a soft red outline — only after you've touched it, never on a fresh page.
+
 ## 2026-10-21 00:40 — Touch-safe hover, Library type tokens & tidy wrapping
 - **UI:** On touch screens, tapping a Library card or a music/paint button no longer leaves it stuck in its raised hover pose (keyboard focus still lifts cards).
 - **UI:** Library tabs that aren't the current page now tint toward the accent on hover, so it's clearer which ones you can click.

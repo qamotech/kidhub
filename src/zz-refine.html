@@ -70,4 +70,6 @@ html{scrollbar-gutter:stable}
 :where(ul,ol) > li::marker{color:var(--pink)}
 /* Touch screens: tapping a music or paint button no longer leaves it stuck raised in its hover pose */
 @media (hover:none){:is(.md,.pp) button:hover{transform:none}.pp button:not(.on):hover{box-shadow:none}}
+/* Keycaps: keyboard hints like Esc and A–K look like real keys in the theme's colors */
+kbd{display:inline-block;min-width:1.6em;padding:.05em .45em;border:1px solid var(--line,#ccc);border-bottom-width:3px;border-radius:6px;background:var(--soft,#f6f6f6);color:var(--ink,inherit);font:700 .85em/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;vertical-align:.08em}
 </style>

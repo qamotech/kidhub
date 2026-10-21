@@ -7154,7 +7154,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;a0fac76892f976c3&quot;;
+const BUILD=&quot;5f2958eab7c0c91e&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7308,6 +7308,8 @@ html{scrollbar-gutter:stable}
 :where(ul,ol) &gt; li::marker{color:var(--pink)}
 /* Touch screens: tapping a music or paint button no longer leaves it stuck raised in its hover pose */
 @media (hover:none){:is(.md,.pp) button:hover{transform:none}.pp button:not(.on):hover{box-shadow:none}}
+/* Keycaps: keyboard hints like Esc and A–K look like real keys in the theme&#x27;s colors */
+kbd{display:inline-block;min-width:1.6em;padding:.05em .45em;border:1px solid var(--line,#ccc);border-bottom-width:3px;border-radius:6px;background:var(--soft,#f6f6f6);color:var(--ink,inherit);font:700 .85em/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center;white-space:nowrap;vertical-align:.08em}
 &lt;/style&gt;
 &lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;
