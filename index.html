@@ -7154,7 +7154,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;f6058269d22e4106&quot;;
+const BUILD=&quot;3f767212b25d0a5c&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7314,6 +7314,15 @@ kbd{display:inline-block;min-width:1.6em;padding:.05em .45em;border:1px solid va
 @media (pointer:coarse){input[type=range]{min-height:44px}}
 /* Smooth sections: collapsible sections slide open and closed where supported (instant with reduced motion or the in-app switch) */
 @media (prefers-reduced-motion:no-preference){:root{interpolate-size:allow-keywords}body:not(.reduce) details::details-content{block-size:0;overflow:clip;transition:block-size .22s cubic-bezier(.2,.7,.3,1),content-visibility .22s allow-discrete}body:not(.reduce) details[open]::details-content{block-size:auto}}
+/* Toasts: they fit on phones (never wider than the screen) and sit above the home-indicator bar on notched phones */
+.toasts{right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));max-width:min(360px,calc(100vw - 32px))}
+/* Toasts: a theme-colored edge ties each message to the current theme (seasons recolor --pink) */
+.toast{border-inline-start:4px solid var(--pink);line-height:1.4;overflow-wrap:anywhere}
+/* Toasts: each message slides up and fades in instead of popping (off with reduced motion or the in-app switch) */
+@keyframes kh-toast-in{from{opacity:0;translate:0 10px}}
+@media (prefers-reduced-motion:no-preference){body:not(.reduce) .toast{animation:kh-toast-in .22s cubic-bezier(.2,.7,.3,1)}}
+/* Narrow phones: long words in card text break with a hyphen instead of leaving ragged gaps */
+@media (max-width:420px){:where(.card,.panel,div.empty) :where(p,li,small){hyphens:auto;-webkit-hyphens:auto}}
 &lt;/style&gt;
 &lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;

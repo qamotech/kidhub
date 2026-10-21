@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-21 01:55 — Gentle toasts, phone-fit messages & a style map
+- **UI:** Pop-up messages in the studio slide up and fade in instead of blinking on (instant with reduced motion or the Reduce motion switch).
+- **UI:** On phones, pop-up messages never run wider than the screen, wrap long words, and sit above the home-indicator bar on notched phones.
+- **Style:** Each pop-up message gets a theme-colored edge, so it matches the current theme (seasonal themes recolor it too).
+- **UI:** On narrow phones, long words in studio card text break with a hyphen instead of leaving ragged gaps.
+- **Organization:** `CONTRIBUTING.md` has a new "🗂️ Where styles live" table showing which file to edit for activities, studio-wide polish, themes, Library pages and the dashboard shell.
+
 ## 2026-10-21 01:32 — Library comfort: accent controls, steady numbers & high contrast
 - **Style:** Library checkboxes, sliders and progress bars, plus the blinking text cursor, use the theme's accent color instead of browser blue (seasonal and dark themes too).
 - **UI:** Library counts, planner totals and table numbers use even-width digits, so they don't jiggle as they change.
