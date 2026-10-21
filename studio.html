@@ -6806,7 +6806,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="919d0b593dc55c16";
+const BUILD="1caa55f58492b5ea";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6949,6 +6949,11 @@ html[data-theme] body,body{background:#fff!important;color:#000;transition:none!
 }
 /* Contained scrolling: reaching the end of a panel, toolbar or wide grid no longer drags the whole page along */
 :where(.controls,.cw-body,.pp-tools,.pp-stage,.md-grid,.md-kb){overscroll-behavior:contain}
+/* Readable links: text links get an underline that clears descenders and thickens on hover (buttons and pills are untouched) */
+:where(p,li,small,td,.card,.panel,div.empty) a:not(.btn,.pill,.chip,.round,.tool,[class*="btn"]){text-underline-offset:.2em;text-decoration-thickness:max(1px,.07em)}
+:where(p,li,small,td,.card,.panel,div.empty) a:not(.btn,.pill,.chip,.round,.tool,[class*="btn"]):hover{text-decoration-thickness:max(2px,.12em)}
+/* Steady layout: the page keeps room for its scrollbar, so opening a panel that locks scrolling doesn't nudge everything sideways */
+html{scrollbar-gutter:stable}
 </style>
 <!-- /SRC:zz-refine -->
 <!-- SRC:zzz-adventures -->

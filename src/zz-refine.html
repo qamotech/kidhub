@@ -59,4 +59,9 @@ html[data-theme] body,body{background:#fff!important;color:#000;transition:none!
 }
 /* Contained scrolling: reaching the end of a panel, toolbar or wide grid no longer drags the whole page along */
 :where(.controls,.cw-body,.pp-tools,.pp-stage,.md-grid,.md-kb){overscroll-behavior:contain}
+/* Readable links: text links get an underline that clears descenders and thickens on hover (buttons and pills are untouched) */
+:where(p,li,small,td,.card,.panel,div.empty) a:not(.btn,.pill,.chip,.round,.tool,[class*="btn"]){text-underline-offset:.2em;text-decoration-thickness:max(1px,.07em)}
+:where(p,li,small,td,.card,.panel,div.empty) a:not(.btn,.pill,.chip,.round,.tool,[class*="btn"]):hover{text-decoration-thickness:max(2px,.12em)}
+/* Steady layout: the page keeps room for its scrollbar, so opening a panel that locks scrolling doesn't nudge everything sideways */
+html{scrollbar-gutter:stable}
 </style>

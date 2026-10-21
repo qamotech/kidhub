@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 23:10 — Underlines, readable tables & spacing tokens
+
+- **Style:** Text links in the studio and the Library get an underline that sits clear of letters like g and y and thickens on hover (buttons and pills are unchanged).
+- **UI:** The Library's tables (backup guide, entry points) have a tinted header row and soft striped rows, so long rows are easier to follow; seasonal themes recolor them too.
+- **UI:** The studio keeps room for its scrollbar, so opening a panel that locks scrolling no longer nudges the page sideways.
+- **Organization:** Library spacing comes from two `portal.css` tokens (`--p-gap` 8px, `--p-gap-lg` 14px) shared by tabs, toolbars, action rows, labels and the card grid.
+
 ## 2026-10-20 22:50 — Contained scrolling, dark native controls & clear disabled states
 
 - **UI:** Scrolling to the end of a side panel, the cloud panel, paint toolbars or the music grid no longer drags the whole page along with it (the Library's wide tables too).
