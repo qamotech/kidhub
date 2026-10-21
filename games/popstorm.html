@@ -633,7 +633,8 @@ const AudioSys = (() => {
   function tick() {
     if (!ctx || !theme) return;
     const spb = 60 / theme.bpm / 4;
-    while (nextT < ctx.currentTime + 0.15) { scheduleStep(nextT); nextT += spb; step++; }
+    if (!(nextT > ctx.currentTime - 1)) nextT = ctx.currentTime + 0.05; // resume after a long stall: skip, don't replay
+    for (let guard = 0; nextT < ctx.currentTime + 0.15 && guard < 32; guard++) { scheduleStep(nextT); nextT += spb; step++; }
   }
   function music(name) {
     if (!ctx) return;
@@ -1133,14 +1134,15 @@ function spawnDirector(dt) {
   const endlessBoost = R.endless ? 1 + (m - 10) * 0.12 : 1;
   const rate = (1.8 + m * 0.95 + m * m * 0.07) * R.mods.spawn * bossDamp * endlessBoost;
   R.spawnAcc += rate * dt;
-  const alive = E.length;
-  while (R.spawnAcc >= 1) {
+  if (!Number.isFinite(R.spawnAcc)) R.spawnAcc = 0;
+  for (let guard = 0; R.spawnAcc >= 1 && guard < 40; guard++) {
     R.spawnAcc -= 1;
-    if (alive >= CAP.enemies) { R.spawnAcc = 0; break; }
+    if (E.length >= CAP.enemies) { R.spawnAcc = 0; break; }
     const pool = ENEMY_KEYS.filter((k) => ENEMIES[k].from <= m && ENEMIES[k].w > 0);
     const type = weightedPick(pool, (k) => ENEMIES[k].w * (1 + Math.max(0, m - ENEMIES[k].from) * 0.25) * (k === "gloomling" ? Math.max(0.35, 1 - m * 0.08) : 1));
     spawnEnemy(type || "gloomling");
   }
+  if (R.spawnAcc > 40) R.spawnAcc = 0;
   if (R.time >= R.nextElite) {
     R.nextElite += Math.max(28, 55 - m * 2) / R.mods.elite;
     const pool = ENEMY_KEYS.filter((k) => ENEMIES[k].from <= m && ENEMIES[k].w > 0);
@@ -1341,8 +1343,9 @@ function dropPickup(x, y, kind, v = 1) {
 function gainXP(v) {
   const comboMult = 1 + Math.min(R.combo, 120) / 240;
   R.xp += v * P.stats.growth * comboMult;
+  if (!Number.isFinite(R.xp)) R.xp = 0;
   R.gems++;
-  while (R.xp >= R.xpNext) {
+  for (let guard = 0; R.xp >= R.xpNext && guard < 500; guard++) {
     R.xp -= R.xpNext;
     R.level++;
     R.xpNext = xpFor(R.level);
@@ -1758,6 +1761,8 @@ window.addEventListener("resize", resize);
 /* glow sprites are pre-rendered once per colour+size: much cheaper than shadowBlur */
 const glowCache = new Map();
 function glow(color, r) {
+  if (!(r >= 1)) r = 1;
+  if (r > 600) r = 600;
   const key = color + "|" + Math.round(r);
   let c = glowCache.get(key);
   if (c) return c;
@@ -3036,20 +3041,33 @@ $("#btnEndless").addEventListener("click", () => {
 
 /* ================================================================ LOOP */
 let lastT = performance.now(), fpsAcc = 0, fpsN = 0;
+let frameFails = 0;
+// Drop short-lived effect lists so a bad entry can't throw on every frame.
+function healFrame() {
+  for (const a of [BEAMS, RINGS, BOLTS, LOBS, ZONES, PARTS, TEXTS, ES]) if (a && a.length) a.length = 0;
+}
 function frame(now) {
+  // The next frame is always queued first: one exception must never freeze the whole game.
+  requestAnimationFrame(frame);
   let dt = (now - lastT) / 1000;
   lastT = now;
+  if (!(dt > 0)) dt = 0;
   if (dt > 0.05) dt = 0.05;
-  G.t += dt;
-  fpsAcc += dt; fpsN++; if (fpsAcc > 0.5) { G.fps = fpsN / fpsAcc; fpsAcc = 0; fpsN = 0; }
-  Input.pollPad();
-  if (G.state === "play" && R && !R.ended) { update(dt); updateHud(dt); }
-  else if (R && (G.state === "level" || G.state === "chest")) updateFx(dt * 0.25);
-  render();
-  Modes.updateFireworks(dt);
-  Modes.drawFireworks();
-  Input.drawStick();
-  requestAnimationFrame(frame);
+  try {
+    G.t += dt;
+    fpsAcc += dt; fpsN++; if (fpsAcc > 0.5) { G.fps = fpsN / fpsAcc; fpsAcc = 0; fpsN = 0; }
+    Input.pollPad();
+    if (G.state === "play" && R && !R.ended) { update(dt); updateHud(dt); }
+    else if (R && (G.state === "level" || G.state === "chest")) updateFx(dt * 0.25);
+    render();
+    Modes.updateFireworks(dt);
+    Modes.drawFireworks();
+    Input.drawStick();
+    frameFails = 0;
+  } catch (err) {
+    if (frameFails++ === 0) console.error("PopStorm frame error (recovering):", err);
+    if (frameFails >= 3) { healFrame(); if (frameFails % 60 === 0) console.error("PopStorm still failing:", err); }
+  }
 }
 
 /* ================================================================ BOOT */
