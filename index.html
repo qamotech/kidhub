@@ -7154,7 +7154,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;1caa55f58492b5ea&quot;;
+const BUILD=&quot;b074e2e7cabf0bfb&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7302,6 +7302,10 @@ html[data-theme] body,body{background:#fff!important;color:#000;transition:none!
 :where(p,li,small,td,.card,.panel,div.empty) a:not(.btn,.pill,.chip,.round,.tool,[class*=&quot;btn&quot;]):hover{text-decoration-thickness:max(2px,.12em)}
 /* Steady layout: the page keeps room for its scrollbar, so opening a panel that locks scrolling doesn&#x27;t nudge everything sideways */
 html{scrollbar-gutter:stable}
+/* Less see-through: the device&#x27;s &quot;reduce transparency&quot; setting swaps frosted-glass blur for solid surfaces */
+@media (prefers-reduced-transparency:reduce){*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.glass-panel,.top{background:var(--card,#fff)!important}}
+/* Themed list markers: bullets and numbers take the theme color (seasons recolor --pink), so lists match their headings */
+:where(ul,ol) &gt; li::marker{color:var(--pink)}
 &lt;/style&gt;
 &lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;

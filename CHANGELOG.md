@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-21 00:05 — Solid glass, shadow tokens, list markers & notch-safe Library
+
+- **Style:** If the device is set to reduce transparency, the studio and the Library swap frosted-glass blur for solid surfaces, so text over panels stays crisp.
+- **Organization:** Library shadows come from two `portal.css` tokens (`--p-shadow` at rest, `--p-shadow-lg` on hover), so cards and feature panels sit on one consistent shadow.
+- **Style:** Bullets and numbers in lists take the theme color in the studio and the Library (seasonal themes recolor them too).
+- **UI:** On notched phones turned sideways, the Library page and its header stay clear of rounded corners and the camera cut-out.
+
 ## 2026-10-20 23:10 — Underlines, readable tables & spacing tokens
 
 - **Style:** Text links in the studio and the Library get an underline that sits clear of letters like g and y and thickens on hover (buttons and pills are unchanged).

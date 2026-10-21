@@ -64,4 +64,8 @@ html[data-theme] body,body{background:#fff!important;color:#000;transition:none!
 :where(p,li,small,td,.card,.panel,div.empty) a:not(.btn,.pill,.chip,.round,.tool,[class*="btn"]):hover{text-decoration-thickness:max(2px,.12em)}
 /* Steady layout: the page keeps room for its scrollbar, so opening a panel that locks scrolling doesn't nudge everything sideways */
 html{scrollbar-gutter:stable}
+/* Less see-through: the device's "reduce transparency" setting swaps frosted-glass blur for solid surfaces */
+@media (prefers-reduced-transparency:reduce){*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.glass-panel,.top{background:var(--card,#fff)!important}}
+/* Themed list markers: bullets and numbers take the theme color (seasons recolor --pink), so lists match their headings */
+:where(ul,ol) > li::marker{color:var(--pink)}
 </style>
