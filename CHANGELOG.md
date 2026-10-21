@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 19:58 — Library focus, hover & skip link
+
+- **Style:** The Library's keyboard focus ring comes from a `--p-focus` token, so it shows as bright gold on the dark Halloween, Thanksgiving and Christmas themes instead of a dim purple.
+- **Style:** Library buttons darken their own theme color on hover (no more purple flash in seasonal themes), and cards lift gently on hover or keyboard focus; the lift turns off with reduced motion.
+- **Organization:** The "Open …" buttons on Library cards are styled by `portal.css` (`.kh-portal a.primary`, 44px tall) instead of an inline style repeated on all 115 cards.
+- **UI:** `resources.html` starts with a "Skip to content" link that appears on Tab and jumps straight to the library without changing the page section.
+
 ## 2026-10-20 19:29 — Touch, tokens & tidy empty states
 
 - **UI:** Round icon buttons, phone-sized top pills, Library tabs and the "new KidHub is ready" Refresh button are now at least 44px tall, so they're easy to tap.
