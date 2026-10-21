@@ -590,9 +590,10 @@ const MiyagiAudioEngine = (() => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(420, t);
-      osc.frequency.exponentialRampToValueAtTime(140, t + 0.08);
-      gain.gain.setValueAtTime(0.38, t);
+      const baseFreq = (360 + Math.random() * 90) * pitch;
+      osc.frequency.setValueAtTime(baseFreq, t);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.35, t + 0.08);
+      gain.gain.setValueAtTime(0.42, t);
       gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
       osc.connect(gain);
       gain.connect(sfxGain);
@@ -787,7 +788,7 @@ function sht(){
   }
 }
 
-function swd(){if(state!==ST.PLAYING||player.sword>0)return;player.sword=Math.max(330,650-swordLv*25);MiyagiAudioEngine.play('sword', { pitch: 1 + Math.min(combo - 1, 10) * 0.04 });spawnRipple(player.x,player.y,"#ff9d7e");slashes.push({x:player.x,y:player.y,r:10,m:72+swordLv*12,l:.25});ptc(player.x,player.y-15,"e",18);vib(40);let parried=false;enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<88+swordLv*12){e.hp-=2+swordLv*1.35;e.vy-=75;ptc(e.x,e.y,"e",7);if(e.hp<=0)spawnKanji("斬",e.x,e.y,"#ff6b4a",32);if(!parried&&e.y>player.y-45){parried=true;score+=75*combo;chi=Math.min(100,chi+8);ptc(player.x,player.y-20,"cl",12);MiyagiAudioEngine.play('bell');spawnKanji("覇",player.x,player.y-35,"#ffd700",38)}}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<108+swordLv*10)o.hp-=3+swordLv*2});makiwaras.forEach(m=>{if(Math.hypot(m.x-player.x,m.y-player.y)<88+swordLv*12){m.hp-=3+swordLv*1.5;m.h=0.1;m.tilt=(player.x<m.x?0.3:-0.3);ptc(m.x,m.y,"cl",10);MiyagiAudioEngine.play('wood');spawnKanji("極",m.x,m.y,"#e0c362",24);if(m.hp<=0){score+=60*combo;ptc(m.x,m.y,"cl",16);makiwaras.splice(makiwaras.indexOf(m),1)}}})}
+function swd(){if(state!==ST.PLAYING||player.sword>0)return;player.sword=Math.max(330,650-swordLv*25);MiyagiAudioEngine.play('sword', { pitch: 1 + Math.min(combo - 1, 10) * 0.04 });spawnRipple(player.x,player.y,"#ff9d7e");slashes.push({x:player.x,y:player.y,r:10,m:72+swordLv*12,l:.25});if(combo>=5){slashes.push({x:player.x,y:player.y,r:14,m:90+swordLv*14,l:.28});ptc(player.x,player.y-18,"cl",8);}ptc(player.x,player.y-15,"e",18);vib(40);let parried=false;enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<88+swordLv*12){e.hp-=2+swordLv*1.35;e.vy-=75;ptc(e.x,e.y,"e",7);if(e.hp<=0)spawnKanji("斬",e.x,e.y,"#ff6b4a",32);if(!parried&&e.y>player.y-45){parried=true;score+=75*combo;chi=Math.min(100,chi+8);ptc(player.x,player.y-20,"cl",12);MiyagiAudioEngine.play('bell');spawnKanji("覇",player.x,player.y-35,"#ffd700",38)}}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<108+swordLv*10)o.hp-=3+swordLv*2});makiwaras.forEach(m=>{if(Math.hypot(m.x-player.x,m.y-player.y)<88+swordLv*12){m.hp-=3+swordLv*1.5;m.h=0.1;m.tilt=(player.x<m.x?0.3:-0.3);ptc(m.x,m.y,"cl",10);MiyagiAudioEngine.play('wood');spawnKanji(["極","技","錬","道","誠"][Math.floor(Math.random()*5)],m.x,m.y,"#e0c362",24);if(m.hp<=0){score+=60*combo;ptc(m.x,m.y,"cl",16);spawnKanji("破",m.x,m.y,"#ffd700",34);makiwaras.splice(makiwaras.indexOf(m),1)}}})}
 
 function blst(){if(state!==ST.PLAYING||chi<100)return;chi=0;MiyagiAudioEngine.play('chi');spawnRipple(player.x,player.y,"#65e7ff");spawnKanji("氣",player.x,player.y-45,"#65e7ff",48);rings.push({x:player.x,y:player.y,r:10,l:.55,m:.55});ptc(player.x,player.y,"c",42);vib([50,50,80]);enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<300){e.hp-=7+wave*.35;e.y-=70;e.vy*=.55;ptc(e.x,e.y,"c",10)}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<320)o.hp-=10});shake=12;note("CHI BLAST","#76efff")}
 
@@ -839,7 +840,24 @@ function kE(e,j){
 function dG(g,j){gates.splice(j,1);g.t==="THROW SPEED"?throwLv++:swordLv++;score+=100*combo;chi=Math.min(100,chi+12);note(g.t+" UPGRADE");ptc(g.x,g.y,"cl",34);MiyagiAudioEngine.play('upgrade');}
 function dW(o,j){walls.splice(j,1);if(o.rw==="MASTER THROW")throwLv+=2;else if(o.rw==="MASTER SWORD")swordLv+=2;else{dojo=Math.min(100,dojo+28);player.hp=Math.min(100,player.hp+22)}score+=350*combo;chi=Math.min(100,chi+22);note(o.rw);ptc(o.x,o.y,"cl",44);MiyagiAudioEngine.play('upgrade');}
 
-function uP(dt,ms){let spd=player.craneBuff>0?410:300;if(keys.ArrowLeft||keys.a||keys.A)player.x-=spd*dt;if(keys.ArrowRight||keys.d||keys.D)player.x+=spd*dt;if(pointer!==null)player.x+=(pointer-player.x)*Math.min(1,dt*10);player.x=cl(player.x,24,W-24);player.cool-=ms;player.sword-=ms;player.inv-=ms;comboT-=ms;if(player.craneBuff>0)player.craneBuff-=ms;if(player.dragonBuff>0){player.dragonBuff-=ms;player.dragonAngle+=dt*6.5;}if(player.bellBuff>0)player.bellBuff-=ms;if(comboT<=0){if(combo>=3)ptc(player.x,player.y,"v",14);combo=1;kills-=kills%4;comboT=0}sht()}
+function uP(dt,ms){
+  let spd=player.craneBuff>0?410:300, moving=0;
+  if(keys.ArrowLeft||keys.a||keys.A){player.x-=spd*dt; moving=1;}
+  if(keys.ArrowRight||keys.d||keys.D){player.x+=spd*dt; moving=1;}
+  if(pointer!==null){
+    let pDiff = pointer - player.x;
+    if(Math.abs(pDiff) > 8) moving=1;
+    player.x+=pDiff*Math.min(1,dt*10);
+  }
+  if(moving && Math.random()<0.2) ptc(player.x+(Math.random()-0.5)*16, player.y+22, "w", 1);
+  player.x=cl(player.x,24,W-24);
+  player.cool-=ms;player.sword-=ms;player.inv-=ms;comboT-=ms;
+  if(player.craneBuff>0)player.craneBuff-=ms;
+  if(player.dragonBuff>0){player.dragonBuff-=ms;player.dragonAngle+=dt*6.5;}
+  if(player.bellBuff>0)player.bellBuff-=ms;
+  if(comboT<=0){if(combo>=3)ptc(player.x,player.y,"v",14);combo=1;kills-=kills%4;comboT=0}
+  sht();
+}
 
 function uE(dt,ms){
   spawn-=ms;waveT+=ms;gateT-=ms;obsT-=ms;lanternT-=ms;
@@ -932,9 +950,9 @@ function cC(){
         ptc(m.x,m.y,"w",8);
         ptc(m.x,m.y,"cl",6);
         MiyagiAudioEngine.play('wood');
-        spawnKanji("極",m.x,m.y,"#e0c362",24);
+        spawnKanji(["極","技","錬","道","誠"][Math.floor(Math.random()*5)],m.x,m.y,"#e0c362",24);
         comboT=3000;
-        if(m.hp<=0){score+=60*combo;ptc(m.x,m.y,"w",18);ptc(m.x,m.y,"cl",16);makiwaras.splice(j,1);}
+        if(m.hp<=0){score+=60*combo;ptc(m.x,m.y,"w",18);ptc(m.x,m.y,"cl",16);spawnKanji("破",m.x,m.y,"#ffd700",34);makiwaras.splice(j,1);}
       }
     }
     for(let j=walls.length-1;j>=0&&!u;j--){let o=walls[j];if(rH(s,o)){o.hp-=s.dmg;stars.splice(i,1);u=1;ptc(s.x,s.y,"s",8);if(o.hp<=0)dW(o,j)}}
@@ -1009,6 +1027,30 @@ function rd(){
     X.beginPath(); X.arc(W * 0.82 - 8, Q * 0.12 - 4, 18, 0, Math.PI * 2); X.fill();
   }
   X.restore();
+
+  // Celestial Starfield & Constellations
+  if (!isStorm) {
+    X.save();
+    let starPts = [
+      {x: W*0.14, y: Q*0.08}, {x: W*0.22, y: Q*0.12}, {x: W*0.31, y: Q*0.06},
+      {x: W*0.38, y: Q*0.13}, {x: W*0.48, y: Q*0.09}
+    ];
+    X.strokeStyle = isBlood ? "rgba(255, 100, 120, 0.22)" : "rgba(180, 230, 255, 0.25)";
+    X.lineWidth = 1;
+    X.beginPath();
+    starPts.forEach((pt, i) => {
+      if (i === 0) X.moveTo(pt.x, pt.y); else X.lineTo(pt.x, pt.y);
+    });
+    X.stroke();
+    starPts.forEach((pt, i) => {
+      let twinkle = Math.sin(t * 0.12 + i * 1.7) * 0.5 + 0.5;
+      X.fillStyle = isBlood ? "#ff8899" : "#e0f4ff";
+      X.shadowColor = isBlood ? "#ff3355" : "#65e7ff";
+      X.shadowBlur = 8 * twinkle;
+      X.beginPath(); X.arc(pt.x, pt.y, 1.8 + twinkle * 1.2, 0, Math.PI * 2); X.fill();
+    });
+    X.restore();
+  }
 
   // Atmospheric Drifting Horizon Mist Bands
   mistLayers.forEach((m, idx) => {
@@ -1117,7 +1159,53 @@ function rd(){
     X.fillRect(altarX + ox - 4, altarY - 14, 8, 4);
     X.shadowBlur = 0;
   });
+  // Sacred Incense Burner & Ascending Wisps
+  X.fillStyle = "#8d703b";
+  X.fillRect(altarX - 5, altarY - 26, 10, 4);
+  for (let i = 0; i < 3; i++) {
+    let smokeProg = (t * 0.035 + i * 0.33) % 1;
+    let sy = (altarY - 26) - smokeProg * 38;
+    let sx = altarX + Math.sin(t * 0.12 + i * 2.3 + smokeProg * 4) * (5 + smokeProg * 10);
+    let sAlpha = Math.sin(smokeProg * Math.PI) * (isStorm ? 0.12 : 0.28);
+    X.fillStyle = isBlood ? `rgba(255, 120, 140, ${sAlpha})` : `rgba(210, 230, 255, ${sAlpha})`;
+    X.beginPath();
+    X.arc(sx, sy, 1.8 + smokeProg * 4.5, 0, Math.PI * 2);
+    X.fill();
+  }
   X.restore();
+
+  // Japanese Niwaki Cloud Pine Silhouettes in Garden Verges
+  [l - 85, r + 85].forEach((px, idx) => {
+    X.save();
+    let flip = idx === 0 ? 1 : -1;
+    let py = Q * 0.38;
+    X.fillStyle = "#0c1524";
+    X.beginPath();
+    X.moveTo(px, py + 80);
+    X.quadraticCurveTo(px + 14 * flip, py + 40, px + 8 * flip, py);
+    X.lineTo(px + 2 * flip, py);
+    X.quadraticCurveTo(px + 6 * flip, py + 40, px - 6 * flip, py + 80);
+    X.closePath();
+    X.fill();
+    let pads = [
+      { ox: 10 * flip, oy: -8, rx: 26, ry: 10 },
+      { ox: -12 * flip, oy: 18, rx: 22, ry: 9 },
+      { ox: 20 * flip, oy: 36, rx: 28, ry: 11 },
+      { ox: -18 * flip, oy: 54, rx: 24, ry: 10 }
+    ];
+    pads.forEach(p => {
+      let sway = Math.sin(t * 0.08 + p.oy) * 2;
+      X.fillStyle = "#142236";
+      X.beginPath();
+      X.ellipse(px + p.ox + sway, py + p.oy, p.rx, p.ry, 0, 0, Math.PI * 2);
+      X.fill();
+      X.fillStyle = "#1e3352";
+      X.beginPath();
+      X.ellipse(px + p.ox + sway, py + p.oy - 2, p.rx * 0.75, p.ry * 0.6, 0, 0, Math.PI * 2);
+      X.fill();
+    });
+    X.restore();
+  });
 
   // Stone Lanterns (Toro) with Flickering Flame Glow & Ground Halo
   let flamePulse = Math.sin(t * 0.25) * 5;
@@ -1428,6 +1516,8 @@ function dS(){
     X.beginPath();X.arc(s.x,s.y,s.r,-2.85,.2);X.stroke();
     X.strokeStyle="#ffffff";X.lineWidth=3;
     X.beginPath();X.arc(s.x,s.y,s.r*0.96,-2.8,.15);X.stroke();
+    X.strokeStyle="#65e7ff";X.lineWidth=1.2;
+    X.beginPath();X.arc(s.x,s.y,s.r*1.04,-2.7,.1);X.stroke();
     X.restore();
   });
   
