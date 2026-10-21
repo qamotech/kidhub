@@ -22,4 +22,14 @@ body.reduce *,body.reduce *::before,body.reduce *::after{animation-iteration-cou
 .sz-layer,.sz-trail,.sz-pop,.sz-sky{display:none}
 body::after{display:none}
 }
+/* Press feedback: buttons sink a little while held (uses `scale`, so hover lifts keep working); off with reduced motion */
+@media (prefers-reduced-motion:no-preference){body:not(.reduce) :is(button,.btn,.tool,.pill,.round,.chip):active:not(:disabled){scale:.96}}
+/* Theme-matched form controls: checkboxes, sliders, radios and the text cursor follow the theme (seasons recolor --pink) */
+:where(input,progress,meter){accent-color:var(--pink)}
+:where(input,textarea,[contenteditable]){caret-color:var(--pink)}
+/* Steady numbers: scores, timers, counters and stats use equal-width digits so they don't jiggle as they change */
+#count,#score,#timer,.stat,.stat-value,.stats,.badge,.kh-num{font-variant-numeric:tabular-nums}
+/* Clear unavailable and busy states */
+html :is(button,input,select,textarea,.btn):disabled,[aria-disabled="true"]{cursor:not-allowed}
+[aria-busy="true"]{cursor:progress}
 </style>

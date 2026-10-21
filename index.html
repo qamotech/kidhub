@@ -7154,7 +7154,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;a469342bb0f63461&quot;;
+const BUILD=&quot;2073e049f75831e2&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7260,6 +7260,16 @@ body.reduce *,body.reduce *::before,body.reduce *::after{animation-iteration-cou
 .sz-layer,.sz-trail,.sz-pop,.sz-sky{display:none}
 body::after{display:none}
 }
+/* Press feedback: buttons sink a little while held (uses `scale`, so hover lifts keep working); off with reduced motion */
+@media (prefers-reduced-motion:no-preference){body:not(.reduce) :is(button,.btn,.tool,.pill,.round,.chip):active:not(:disabled){scale:.96}}
+/* Theme-matched form controls: checkboxes, sliders, radios and the text cursor follow the theme (seasons recolor --pink) */
+:where(input,progress,meter){accent-color:var(--pink)}
+:where(input,textarea,[contenteditable]){caret-color:var(--pink)}
+/* Steady numbers: scores, timers, counters and stats use equal-width digits so they don&#x27;t jiggle as they change */
+#count,#score,#timer,.stat,.stat-value,.stats,.badge,.kh-num{font-variant-numeric:tabular-nums}
+/* Clear unavailable and busy states */
+html :is(button,input,select,textarea,.btn):disabled,[aria-disabled=&quot;true&quot;]{cursor:not-allowed}
+[aria-busy=&quot;true&quot;]{cursor:progress}
 &lt;/style&gt;
 &lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;

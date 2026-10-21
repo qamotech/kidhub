@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 21:05 — Press feedback & steady numbers
+
+- **UI:** Buttons, pills, tools and round icon buttons sink slightly while pressed, so taps feel answered; hover lifts still work and the effect turns off with reduced motion.
+- **Style:** Checkboxes, sliders, radio buttons and the typing cursor take the theme's accent color (and the seasonal color in Halloween, Thanksgiving and Christmas) instead of the browser's default blue.
+- **Style:** Scores, timers, the adventure count and stats use equal-width digits, so numbers no longer jiggle as they change.
+- **UI:** Unavailable buttons and fields show a "not allowed" pointer, and anything marked busy shows a "working" pointer.
+
 ## 2026-10-20 20:45 — Comfort modes & docs map
 
 - **Style:** If the device is set to reduce motion, KidHub now stops animations, transitions and smooth scrolling automatically, just like the in-app Reduce motion switch (which also stops looping animations now).
