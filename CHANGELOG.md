@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-20 22:40 — Readable hints, tappable sections & print-ready pages
+
+- **Style:** Placeholder hints in text boxes use the theme's muted ink (in the studio and the Library), so they stay readable in dark and seasonal themes instead of faint browser grey.
+- **UI:** Every collapsible section header ("details" summary, including Music's) is now a 44px tap target with a pointer cursor, so it's obvious it can be opened.
+- **UI:** Printing a page leaves out the floating cloud and back-to-top buttons, toasts and sky effects, prints on plain white, and keeps each card on one page.
+- **Organization:** The README's "♿ Comfort settings" section now explains printing.
+
 ## 2026-10-20 22:10 — Snappy taps, phone fit & jump glow
 
 - **UI:** Buttons, links, cards and pills respond to taps right away on phones and tablets (no double-tap-zoom delay), and the grey tap flash is gone because buttons already sink when pressed.

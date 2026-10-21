@@ -24,3 +24,5 @@ html:has(.kh-portal){-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @keyframes kh-p-target{from{box-shadow:0 0 0 4px color-mix(in srgb,var(--p-focus) 60%,transparent)}to{box-shadow:0 0 0 4px transparent}}
 .kh-portal :is(section,.kh-card,details,h2,h3)[id]:target{animation:kh-p-target calc(var(--p-dur)*9) var(--p-ease)}
 @media (prefers-reduced-motion:reduce){.kh-portal :target{animation:none}}
+/* Readable hints: Library placeholders use the muted token so seasonal themes keep them legible */
+.kh-portal ::placeholder{color:var(--p-muted);opacity:.85}

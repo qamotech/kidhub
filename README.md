@@ -139,6 +139,7 @@ KidHub follows the device's own accessibility settings, no setup needed:
 - 🐢 **Reduce motion** (OS setting or ⚙️ switch): animations and transitions stop, and smooth scrolling turns off.
 - 🔲 **Increase contrast** (OS setting or ⚙️ High contrast): thicker, darker card borders.
 - 🖥️ **Windows High Contrast / forced colors**: cards, pills and buttons keep visible outlines, keyboard focus uses the system highlight color, and decorative seasonal effects step aside.
+- 🖨️ **Printing**: printed pages leave out the floating cloud and back-to-top buttons, toasts and sky effects, use a plain white background, and keep each card on one page.
 
 ## 💾 Privacy & storage
 

@@ -6389,7 +6389,7 @@ window.kidFx={emojify,scenes:SCENES.length,layers:SCENES.reduce((a,s)=&gt;a+s.L.
 .md-big{font-size:clamp(20px,4vw,30px);font-weight:900;text-align:center;margin:6px 0}
 .md-note{position:fixed;pointer-events:none;font-size:22px;z-index:50;animation:mdFloat 1.2s ease-out forwards}
 @keyframes mdFloat{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx),-120px) scale(1.6) rotate(20deg)}}
-.md details summary{cursor:pointer;font-weight:800;min-height:40px;display:flex;align-items:center}
+.md details summary{cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center}
 .md ol{font-size:13px;columns:2;column-gap:24px}
 @media (max-width:640px){.md-viz{grid-template-columns:1fr}.md ol{columns:1}}
 @media (prefers-reduced-motion:reduce){.md button{transition:none}.md-note{display:none}}
@@ -7154,7 +7154,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;d17841dd8725b670&quot;;
+const BUILD=&quot;ff850c13d7c8a911&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -7284,6 +7284,17 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @keyframes kh-target{from{box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 60%,transparent)}to{box-shadow:0 0 0 4px transparent}}
 :is(.panel,.card,h2,h3)[id]:target{animation:kh-target 1.6s ease-out;border-radius:12px}
 body.reduce :target{animation:none}
+/* Readable hints: placeholder text uses the theme&#x27;s muted ink (seasons and dark themes recolor --muted) instead of faint browser grey */
+::placeholder{color:var(--muted);opacity:.8}
+/* Disclosures: every &quot;details&quot; summary is a full 44px tap target with a pointer, so collapsible sections read as tappable */
+:where(summary){cursor:pointer;min-height:var(--kh-tap);padding-block:10px;box-sizing:border-box}
+/* Print-friendly: floating buttons, panels, toasts and sky effects stay off paper, and cards don&#x27;t split across pages */
+@media print{
+.cw-btn,.cw-panel,.kh-top,.kh-update,#toasts,.toasts,.sz-layer,.sz-trail,.sz-pop,.sz-sky{display:none!important}
+body::after{display:none!important}
+html[data-theme] body,body{background:#fff!important;color:#000;transition:none!important}
+.card,.panel,div.empty{break-inside:avoid;box-shadow:none}
+}
 &lt;/style&gt;
 &lt;!-- /SRC:zz-refine --&gt;
 &lt;!-- SRC:zzz-adventures --&gt;

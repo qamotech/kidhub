@@ -46,4 +46,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @keyframes kh-target{from{box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 60%,transparent)}to{box-shadow:0 0 0 4px transparent}}
 :is(.panel,.card,h2,h3)[id]:target{animation:kh-target 1.6s ease-out;border-radius:12px}
 body.reduce :target{animation:none}
+/* Readable hints: placeholder text uses the theme's muted ink (seasons and dark themes recolor --muted) instead of faint browser grey */
+::placeholder{color:var(--muted);opacity:.8}
+/* Disclosures: every "details" summary is a full 44px tap target with a pointer, so collapsible sections read as tappable */
+:where(summary){cursor:pointer;min-height:var(--kh-tap);padding-block:10px;box-sizing:border-box}
+/* Print-friendly: floating buttons, panels, toasts and sky effects stay off paper, and cards don't split across pages */
+@media print{
+.cw-btn,.cw-panel,.kh-top,.kh-update,#toasts,.toasts,.sz-layer,.sz-trail,.sz-pop,.sz-sky{display:none!important}
+body::after{display:none!important}
+html[data-theme] body,body{background:#fff!important;color:#000;transition:none!important}
+.card,.panel,div.empty{break-inside:avoid;box-shadow:none}
+}
 </style>

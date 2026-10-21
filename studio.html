@@ -6041,7 +6041,7 @@ window.kidFx={emojify,scenes:SCENES.length,layers:SCENES.reduce((a,s)=>a+s.L.len
 .md-big{font-size:clamp(20px,4vw,30px);font-weight:900;text-align:center;margin:6px 0}
 .md-note{position:fixed;pointer-events:none;font-size:22px;z-index:50;animation:mdFloat 1.2s ease-out forwards}
 @keyframes mdFloat{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx),-120px) scale(1.6) rotate(20deg)}}
-.md details summary{cursor:pointer;font-weight:800;min-height:40px;display:flex;align-items:center}
+.md details summary{cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center}
 .md ol{font-size:13px;columns:2;column-gap:24px}
 @media (max-width:640px){.md-viz{grid-template-columns:1fr}.md ol{columns:1}}
 @media (prefers-reduced-motion:reduce){.md button{transition:none}.md-note{display:none}}
@@ -6806,7 +6806,7 @@ html[data-theme="space"] .brand h1,html[data-theme="midnight"] .brand h1{color:v
 </style>
 <script id="polish-js">
 (()=>{"use strict";if(typeof app==="undefined")return;
-const BUILD="d17841dd8725b670";
+const BUILD="ff850c13d7c8a911";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const IMPROVEMENTS=["🎨 Themes now recolor the whole app (8 palettes)","🌙 Dark mode dims the whole page slightly","🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic","🟣 Theme swatches in settings","🔁 Dark toggle remembers your last light & dark theme","📱 Browser toolbar color follows the theme","🌑 Readable dark top bar, pills and inputs","🖥️ First visit follows your device's dark-mode setting","🌗 Auto day/night uses your favorite light & dark themes",
 "🔗 Deep links for every screen (#music, #draw, #arcade…)","⬅️ Browser Back returns to the previous screen","🏷️ Tab title shows the current activity","🎯 Focus moves to each screen's heading","📣 Screen changes are announced to screen readers","⏭️ Skip-to-content link","⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something","🔢 Accurate activity count on the hub","⬆️ Back-to-top button on the long hub","📍 Hub scroll position restored when you come back",
@@ -6936,6 +6936,17 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @keyframes kh-target{from{box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 60%,transparent)}to{box-shadow:0 0 0 4px transparent}}
 :is(.panel,.card,h2,h3)[id]:target{animation:kh-target 1.6s ease-out;border-radius:12px}
 body.reduce :target{animation:none}
+/* Readable hints: placeholder text uses the theme's muted ink (seasons and dark themes recolor --muted) instead of faint browser grey */
+::placeholder{color:var(--muted);opacity:.8}
+/* Disclosures: every "details" summary is a full 44px tap target with a pointer, so collapsible sections read as tappable */
+:where(summary){cursor:pointer;min-height:var(--kh-tap);padding-block:10px;box-sizing:border-box}
+/* Print-friendly: floating buttons, panels, toasts and sky effects stay off paper, and cards don't split across pages */
+@media print{
+.cw-btn,.cw-panel,.kh-top,.kh-update,#toasts,.toasts,.sz-layer,.sz-trail,.sz-pop,.sz-sky{display:none!important}
+body::after{display:none!important}
+html[data-theme] body,body{background:#fff!important;color:#000;transition:none!important}
+.card,.panel,div.empty{break-inside:avoid;box-shadow:none}
+}
 </style>
 <!-- /SRC:zz-refine -->
 <!-- SRC:zzz-adventures -->
