@@ -1,5 +1,12 @@
 # 🗓️ Changelog
 
+## 2026-10-21 01:32 — Library comfort: accent controls, steady numbers & high contrast
+- **Style:** Library checkboxes, sliders and progress bars, plus the blinking text cursor, use the theme's accent color instead of browser blue (seasonal and dark themes too).
+- **UI:** Library counts, planner totals and table numbers use even-width digits, so they don't jiggle as they change.
+- **Style:** If the device is set to increase contrast, Library cards, sections and fields get thicker, darker borders and hint text turns full strength.
+- **Style:** Windows High Contrast keeps Library cards, tabs and buttons outlined, and shows the current tab and focus ring in the system highlight color.
+- **Organization:** The README's "🎨 Library design tokens" section now explains how `portal.css` handles accent controls, tabular digits, increased contrast and forced colors.
+
 ## 2026-10-21 01:15 — Dark Library, touch sliders, smooth sections & token docs
 - **Style:** The Library panel in the dashboard now turns dark with the Dark, Cyberpunk and Emerald themes instead of staying bright white, with readable links and buttons in each theme's colors.
 - **Style:** The standalone Library page follows the device's dark mode when no theme is picked: dark page, header, cards, fields and native controls.

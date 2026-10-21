@@ -156,6 +156,8 @@ The Library (`resources.html` and the dashboard's Applications panel) is styled 
 
 Theme overrides live at the bottom of `portal.css`: seasonal (`halloween`, `thanksgiving`, `christmas`), dashboard (`dark`, `cyberpunk`, `emerald`) and OS dark mode (`prefers-color-scheme: dark` when no `data-theme` is set). Keep white button text at WCAG AA contrast on any new `--p-accent`.
 
+Comfort settings live in `portal.css` too: form controls and the text caret follow `--p-accent`; counts, totals and table cells use tabular digits; `prefers-contrast: more` thickens borders and darkens `--p-line`/`--p-field`/`--p-muted`; and `forced-colors: active` (Windows High Contrast) keeps cards, tabs and buttons outlined, with the current tab and focus ring in the system Highlight color.
+
 ## 💾 Privacy & storage
 
 - 🏠 Profile, progress, and gallery state use browser local storage under `kidHubV3`.

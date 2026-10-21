@@ -63,3 +63,11 @@ body.portal-page>header{position:sticky;top:0;z-index:5}html:has(body.portal-pag
 @media (pointer:coarse){.kh-portal input[type=range]{min-height:44px}}
 /* Smooth sections: Library details slide open and closed where supported (instant with reduced motion) */
 @media (prefers-reduced-motion:no-preference){.kh-portal{interpolate-size:allow-keywords}.kh-portal details::details-content{block-size:0;overflow:clip;transition:block-size var(--p-dur) var(--p-ease),content-visibility var(--p-dur) allow-discrete}.kh-portal details[open]::details-content{block-size:auto}}
+/* Theme-accent controls: Library checkboxes, radios, sliders and progress bars, plus the text caret, take the accent token */
+.kh-portal :where(input,progress,meter){accent-color:var(--p-accent)}.kh-portal :where(input,textarea){caret-color:var(--p-accent)}
+/* Steady numbers: Library counts, totals and table cells use even-width digits so they don't jiggle as they change */
+.kh-portal :where(.kh-count,.kh-status,td,th,output,[id$=-total]){font-variant-numeric:tabular-nums}
+/* More contrast: with the OS "increase contrast" setting, Library borders thicken and darken and muted text reads as full ink */
+@media (prefers-contrast:more){.kh-portal{--p-line:color-mix(in srgb,var(--p-ink) 60%,var(--p-bg));--p-field:color-mix(in srgb,var(--p-ink) 75%,var(--p-bg));--p-muted:var(--p-ink)}.kh-card,.kh-portal :is(details,fieldset,.kh-note){border-width:2px}}
+/* Forced colors (Windows High Contrast): Library cards, tabs and buttons keep outlines; the current tab and focus ring use the system highlight */
+@media (forced-colors:active){.kh-card,.kh-tabs a,.kh-portal .kh-feature,.kh-portal .kh-note,.kh-portal a.primary{border:1px solid CanvasText}.kh-tabs a[aria-current=page]{forced-color-adjust:none;background:Highlight;color:HighlightText}.kh-portal :focus-visible{outline-color:Highlight}.kh-card:hover,.kh-card:focus-within{box-shadow:none}}
