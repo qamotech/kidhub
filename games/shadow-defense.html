@@ -379,12 +379,12 @@ const MiyagiAssets = (() => {
 <script>
 (()=>{
 const C=document.querySelector("#c"),X=C.getContext("2d"),q=s=>document.querySelector(s),S=q("#stats"),P=q("#power"),H=q("#health"),M=q("#message"),K=q("#combo"),A=q("#start"),U=q("#pause"),G=q("#gameover"),F=q("#final"),BF=q("#hpFill"),DF=q("#dojoFill"),CF=q("#chiFill"),ST={MENU:0,PLAYING:1,PAUSED:2,GAMEOVER:3},vib=n=>navigator.vibrate&&navigator.vibrate(n);
-let state=ST.MENU,W=0,Q=0,D=1,last=0,keys={},pointer=null,penTarget=null,shake=0,spawn=0,waveT=0,gateT=0,obsT=0,lanternT=0,stars=[],enemies=[],gates=[],walls=[],bits=[],slashes=[],lanterns=[],ecoOrbs=[],rings=[],player,score,wave,dojo,throwLv,swordLv,chi,combo,comboT,kills;
+let state=ST.MENU,W=0,Q=0,D=1,last=0,keys={},pointer=null,penTarget=null,shake=0,spawn=0,waveT=0,gateT=0,obsT=0,lanternT=0,stars=[],enemies=[],gates=[],walls=[],bits=[],slashes=[],lanterns=[],ecoOrbs=[],rings=[],bolts=[],flashes=[],banner=null,waveCleared=false,player,score,wave,dojo,throwLv,swordLv,chi,combo,comboT,kills;
 const R=(a,b)=>a+Math.random()*(b-a),cl=(v,a,b)=>Math.max(a,Math.min(b,v)),rate=()=>Math.max(80,520-throwLv*43-(combo>=5?150:0)),tps=()=>Math.min(12,1e3/rate());
 
 function resize(){D=Math.min(2,devicePixelRatio||1);W=innerWidth;Q=innerHeight;C.width=W*D;C.height=Q*D;C.style.width=W+"px";C.style.height=Q+"px";X.setTransform(D,0,0,D,0,0)}
 
-function reset(){stars=[];enemies=[];gates=[];walls=[];bits=[];slashes=[];lanterns=[];ecoOrbs=[];rings=[];score=0;wave=1;dojo=100;throwLv=1;swordLv=1;chi=0;combo=1;comboT=0;kills=0;spawn=1200;waveT=0;gateT=4500;obsT=7500;lanternT=12000;player={x:W/2,y:Q*.83,r:18,hp:100,cool:0,sword:0,inv:0};ui()}
+function reset(){stars=[];enemies=[];gates=[];walls=[];bits=[];slashes=[];lanterns=[];ecoOrbs=[];rings=[];bolts=[];flashes=[];banner=null;waveCleared=false;score=0;wave=1;dojo=100;throwLv=1;swordLv=1;chi=0;combo=1;comboT=0;kills=0;spawn=1200;waveT=0;gateT=4500;obsT=7500;lanternT=12000;player={x:W/2,y:Q*.83,r:18,hp:100,cool:0,sword:0,inv:0};ui()}
 
 function ui(){S.innerHTML=`Score: ${score}<br>Wave: ${wave} · Defeated: ${kills}`;P.innerHTML=`Throw Lv. ${throwLv} · ${tps().toFixed(1)}/sec<br>Sword Lv. ${swordLv} · Combo × ${combo}`;H.innerHTML=`Dojo: ${Math.max(0,dojo|0)} · Ninja: ${Math.max(0,player.hp|0)}<br>Chi: ${Math.floor(chi)}%`;BF.style.width=cl(player.hp,0,100)+"%";DF.style.width=cl(dojo,0,100)+"%";CF.style.width=cl(chi,0,100)+"%";K.textContent=combo>1?`×${combo} COMBO`:"";K.style.opacity=combo>1?1:0;K.style.transform=combo>1?"scale(1)":"scale(.8)"}
 
@@ -405,13 +405,17 @@ function ptc(x,y,t,n=8){
 
 function sht(){if(player.cool>0)return;player.cool=rate();let n=throwLv>=8?3:throwLv>=5?2:1;if(combo>=5)n++;for(let i=0;i<n;i++)stars.push({x:player.x+(i-(n-1)/2)*14,y:player.y-20,vx:(i-(n-1)/2)*38,vy:-500-throwLv*17,r:7+throwLv*.35,dmg:1+throwLv*.28,sp:0})}
 
-function swd(){if(state!==ST.PLAYING||player.sword>0)return;player.sword=Math.max(150,400-swordLv*25);slashes.push({x:player.x,y:player.y,r:10,m:72+swordLv*12,l:.25});ptc(player.x,player.y-15,"e",18);vib(40);enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<88+swordLv*12){e.hp-=2+swordLv*1.35;e.vy-=75;ptc(e.x,e.y,"e",7)}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<108+swordLv*10)o.hp-=3+swordLv*2})}
+function swd(){if(state!==ST.PLAYING||player.sword>0)return;player.sword=Math.max(150,400-swordLv*25);slashes.push({x:player.x,y:player.y,r:10,m:72+swordLv*12,l:.25});ptc(player.x,player.y-15,"e",18);vib(40);let parry=false;
+enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<88+swordLv*12){e.hp-=2+swordLv*1.35;e.vy-=75;ptc(e.x,e.y,"e",7);if(Math.hypot(e.x-player.x,e.y-player.y)<135)parry=true}});
+walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<108+swordLv*10)o.hp-=3+swordLv*2});
+for(let i=bolts.length-1;i>=0;i--){let b=bolts[i];if(Math.hypot(b.x-player.x,b.y-player.y)<112+swordLv*10){bolts.splice(i,1);parry=true;ptc(b.x,b.y,"c",10)}}
+if(parry){flashes.push({x:player.x,y:player.y-12,l:.42,m:.42,sh:0});note("PARRY!","#ffe080");score+=50*combo;chi=Math.min(100,chi+12);shake=Math.max(shake,6);vib(60)}}
 
-function blst(){if(state!==ST.PLAYING||chi<100)return;chi=0;rings.push({x:player.x,y:player.y,r:10,l:.55,m:.55});ptc(player.x,player.y,"c",42);vib([50,50,80]);enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<300){e.hp-=7+wave*.35;e.y-=70;e.vy*=.55;ptc(e.x,e.y,"c",10)}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<320)o.hp-=10});shake=12;note("CHI BLAST","#76efff")}
+function blst(){if(state!==ST.PLAYING||chi<100)return;chi=0;rings.push({x:player.x,y:player.y,r:10,l:.55,m:.55});ptc(player.x,player.y,"c",42);vib([50,50,80]);enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<300){e.hp-=7+wave*.35;e.y-=70;e.vy*=.55;ptc(e.x,e.y,"c",10)}});walls.forEach(o=>{if(Math.hypot(o.x-player.x,o.y-player.y)<320)o.hp-=10});bolts.forEach(b=>{if(Math.hypot(b.x-player.x,b.y-player.y)<300){b.dead=1;ptc(b.x,b.y,"c",8)}});for(let i=bolts.length-1;i>=0;i--)if(bolts[i].dead)bolts.splice(i,1);shake=12;note("CHI BLAST","#76efff")}
 
 function emy(ty=0,ox=null,oy=null,ovy=null){
-  let t=Math.random()<.08?2:ty,b=t?8+wave*1.2:1.8+wave*.3,hp=b*(t?1.1:1.1),x=ox!==null?ox:R(W*.37,W*.63),y=oy!==null?oy:-40,vy=ovy!==null?ovy:(t?30:45)+wave*3.5+R(0,15);
-  enemies.push({x,y,r:t?32:17+R(0,6),hp,m:hp,vy,vx:R(-12,12),t,h:0,sh:R(0,6.28)})
+  let t=ty===0&&Math.random()<.08?2:ty,b=t===4?2.6+wave*.45:t===5?3+wave*.5:(t?8+wave*1.2:1.8+wave*.3),hp=b*(t?1.1:1.1),x=ox!==null?ox:R(W*.37,W*.63),y=oy!==null?oy:-40,vy=ovy!==null?ovy:(t?30:45)+wave*3.5+R(0,15);
+  enemies.push({x,y,r:(t===4||t===5)?20+R(0,4):(t?32:17+R(0,6)),hp,m:hp,vy,vx:R(-12,12),t,h:0,sh:R(0,6.28),dashCD:R(1200,2200),dashT:0,spitCD:R(1500,2500)})
 }
 
 function mG(){let x=Math.random()<.52?W*.17:W*.29,t=Math.random()<.56?"THROW SPEED":"SWORD",hp=(4.5+wave*.7)*1.2,vy=65+wave*2;gates.push({x,y:-45,w:Math.min(150,W*.25),h:63,t,hp,vy});for(let i=0;i<2;i++)emy(0,x+R(-20,20),-90-i*40,vy+10)}
@@ -432,9 +436,9 @@ function uP(dt,ms){if(keys.ArrowLeft||keys.a||keys.A)player.x-=300*dt;if(keys.Ar
 
 function uE(dt,ms){
   spawn-=ms;waveT+=ms;gateT-=ms;obsT-=ms;lanternT-=ms;
-  if(spawn<=0){emy();if(wave>5&&Math.random()<.05)emy();spawn=Math.max(650,1500-wave*35)}
+  if(spawn<=0){let ty=0;if(wave>=4&&Math.random()<.16)ty=5;else if(wave>=2&&Math.random()<.24)ty=4;emy(ty);if(wave>5&&Math.random()<.05)emy();spawn=Math.max(650,1500-wave*35)}
   if(waveT>22e3){
-    wave++;waveT=0;note("WAVE "+wave);
+    wave++;waveT=0;waveCleared=false;note("WAVE "+wave);
     if(wave%8===0){
       setTimeout(()=>note("DRAGON BOSS!","#ff3c1c"),250);
       enemies.push({t:3,x:W/2,y:Q*.16,baseX:W/2,phase:0,hp:80+wave*8,m:80+wave*8,breathCooldown:1800,r:40,h:0,sh:0,vx:0,vy:0});
@@ -460,6 +464,26 @@ function uE(dt,ms){
         shake=10;
         if(dojo<=0) ed();
       }
+    } else if(e.t===4){
+      // WEAVER: zigzag drift, then a lunging dash toward the player
+      e.dashCD-=ms;e.dashT-=ms;
+      if(e.dashT>0){e.x=cl(e.x+e.vx*dt,W*.32,W*.68);e.y+=e.vy*dt;if(Math.random()<.6)ptc(e.x,e.y,"s",3)}
+      else{
+        e.vx*=.92;e.vy=(34+wave*3)+Math.sin(e.sh*3)*46;
+        e.x=cl(e.x+(e.vx+Math.sin(e.sh*2.4)*60)*dt,W*.32,W*.68);e.y+=e.vy*dt;
+        if(e.dashCD<=0&&e.y>Q*.1){e.dashCD=R(1600,2400);e.dashT=450;let dx=player.x-e.x,d=Math.max(1,Math.hypot(dx,0));e.vx=dx/d*360;e.vy=200;ptc(e.x,e.y,"s",8);note("WEAVER DASH!","#ffb14e")}
+      }
+    } else if(e.t===5){
+      // SPITTER: holds mid-field, strafes, fires shadow-bolt volleys
+      if(e.y<Q*.32)e.y+=e.vy*dt;else e.y=Q*.32;
+      e.x=cl(e.x+Math.sin(e.sh*1.2)*70*dt,W*.32,W*.68);
+      e.spitCD-=ms;
+      if(e.spitCD<=0&&e.y>=Q*.28){
+        e.spitCD=Math.max(1200,R(1900,2600)-wave*60);
+        let dx=player.x-e.x,dy=player.y-e.y,d=Math.max(1,Math.hypot(dx,dy));
+        bolts.push({x:e.x,y:e.y+22,vx:dx/d*150,vy:dy/d*150+240,r:9,ph:0});
+        ptc(e.x,e.y+20,"s",5)
+      }
     } else {
       e.y+=e.vy*dt;
       e.x=cl(e.x+e.vx*dt,W*.32,W*.68);
@@ -467,6 +491,14 @@ function uE(dt,ms){
     e.h-=dt;e.sh+=dt*2;
   });
   gates.forEach(g=>g.y+=g.vy*dt);walls.forEach(o=>o.y+=o.vy*dt);
+  for(let i=bolts.length-1;i>=0;i--){let b=bolts[i];b.x+=b.vx*dt;b.y+=b.vy*dt;b.ph+=dt*6;if(b.y>Q+30||b.x<-30||b.x>W+30)bolts.splice(i,1)}
+  for(let i=flashes.length-1;i>=0;i--){let f=flashes[i];f.l-=dt;f.sh+=dt*7;if(f.l<=0)flashes.splice(i,1)}
+  if(banner){banner.t+=dt;if(banner.t>=banner.m)banner=null}
+  if(!waveCleared&&waveT>3e3&&enemies.length===0&&bolts.length===0&&state===ST.PLAYING){
+    waveCleared=true;banner={t:0,m:1.7,title:"WAVE "+wave+" CLEARED!",sub:"+150 SCORE · DOJO +8"};
+    score+=150;dojo=Math.min(100,dojo+8);spawn=1600;
+    for(let i=0;i<5;i++)ptc(R(W*.3,W*.7),R(Q*.15,Q*.3),"cl",10)
+  }
   lanterns.forEach(l=>{l.p+=dt*3;l.y+=l.vy*dt;l.x+=Math.sin(l.p)*22*dt});
   ecoOrbs.forEach(e=>{e.p+=dt*5;e.y+=e.vy*dt;e.x+=Math.cos(e.p)*30*dt});
   for(let i=bits.length-1;i>=0;i--){let b=bits[i];b.vx*=b.d;b.vy=b.vy*b.d+b.g*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.l-=dt;if(b.l<=0)bits.splice(i,1)}
@@ -488,6 +520,7 @@ function cC(){
       }
     }
     for(let j=gates.length-1;j>=0&&!u;j--){let g=gates[j];if(rH(s,g)){g.hp-=s.dmg;stars.splice(i,1);u=1;ptc(s.x,s.y,"s",8);if(g.hp<=0)dG(g,j)}}
+    for(let j=bolts.length-1;j>=0&&!u;j--){let b=bolts[j],bx=s.x-b.x,by=s.y-b.y;if(bx*bx+by*by<(s.r+b.r)**2){stars.splice(i,1);bolts.splice(j,1);u=1;score+=10*combo;ptc(b.x,b.y,"c",8)}}
     for(let j=walls.length-1;j>=0&&!u;j--){let o=walls[j];if(rH(s,o)){o.hp-=s.dmg;stars.splice(i,1);u=1;ptc(s.x,s.y,"s",8);if(o.hp<=0)dW(o,j)}}
     for(let j=lanterns.length-1;j>=0&&!u;j--){
       let l=lanterns[j],dx=s.x-l.x,dy=s.y-l.y;
@@ -503,6 +536,9 @@ function cC(){
     let dx=e.x-player.x,dy=e.y-player.y;
     if(dx*dx+dy*dy<(e.r+player.r)**2&&player.inv<=0){player.hp-=e.t?28:12;player.inv=750;shake=10;combo=1;comboT=0;ptc(player.x,player.y,"e",14);vib(70);enemies.splice(i,1);if(player.hp<=0){ed();return}continue}
     if(e.y>Q+45){dojo-=e.t?24:8;shake=7;combo=1;comboT=0;enemies.splice(i,1);if(dojo<=0){ed();return}}
+  }
+  for(let i=bolts.length-1;i>=0;i--){let b=bolts[i],bx=b.x-player.x,by=b.y-player.y;
+    if(bx*bx+by*by<(b.r+player.r)**2){bolts.splice(i,1);if(player.inv<=0){player.hp-=8;player.inv=500;shake=8;combo=1;comboT=0;ptc(player.x,player.y,"e",12);vib(60);if(player.hp<=0){ed();return}}else ptc(b.x,b.y,"e",6)}
   }
   for(let i=gates.length-1;i>=0;i--)if(gates[i].y>Q+90)gates.splice(i,1);
   for(let i=walls.length-1;i>=0;i--)if(walls[i].y>Q+100)walls.splice(i,1);
@@ -531,6 +567,8 @@ function eD(e){
   else if(e.t===1) MiyagiAssets.drawDragonChampion(X,e.x,e.y,e.r/30,{hit:e.h,phase:e.sh,hp:e.hp/e.m});
   else if(e.t===2) MiyagiAssets.drawChiAdept(X,e.x,e.y,e.r/20,{hit:e.h,phase:e.sh,hp:e.hp/e.m});
   else if(e.t===3) MiyagiAssets.drawFlyingDragon(X,e.x,e.y,Math.min(1.2,W/900),{phase:e.phase,breathe:e.breathCooldown<450?1:0});
+  else if(e.t===4) MiyagiAssets.drawSwordAssassin(X,e.x,e.y,e.r/18,{hit:e.h,hp:e.hp/e.m});
+  else if(e.t===5) MiyagiAssets.drawSpearGuard(X,e.x,e.y,e.r/20,{hit:e.h,hp:e.hp/e.m});
 }
 
 function dS(){
@@ -554,6 +592,20 @@ function dS(){
   
   enemies.forEach(eD);
   slashes.forEach(s=>{X.strokeStyle="#fff5a4";X.lineWidth=7;X.globalAlpha=Math.max(0,s.l/.25);X.beginPath();X.arc(s.x,s.y,s.r,-2.85,.2);X.stroke();X.globalAlpha=1});
+  flashes.forEach(f=>MiyagiAssets.drawImpact(X,f.x,f.y,(1-f.l/f.m)*2.6+1,{life:Math.max(0,f.l/f.m),phase:f.sh,type:"spark"}));
+  bolts.forEach(b=>{X.save();X.translate(b.x,b.y);let p=1+.18*Math.sin(b.ph);X.shadowColor="#c95bff";X.shadowBlur=16;X.fillStyle="#e9b8ff";X.beginPath();X.arc(0,0,b.r*p,0,7);X.fill();X.shadowBlur=0;X.strokeStyle="#7a2fd6";X.lineWidth=3;X.beginPath();X.arc(0,0,b.r*p+4,0,7);X.stroke();X.restore()});
+  if(banner){
+    let bt=banner.t,bm=banner.m,bs=Math.min(1,bt*5);
+    bs=1+2.7*Math.pow(bs-1,3)+1.7*Math.pow(bs-1,2);
+    X.save();X.globalAlpha=bt>bm-.45?Math.max(0,(bm-bt)/.45):1;
+    X.translate(W/2,Q*.34);X.scale(bs,bs);
+    let bw=Math.min(W*.84,560),bh=112;
+    X.fillStyle="rgba(4,10,22,.9)";X.strokeStyle="#e8c45d";X.lineWidth=3;
+    X.beginPath();X.rect(-bw/2,-bh/2,bw,bh);X.fill();X.stroke();
+    X.fillStyle="#ffe36c";X.font="900 40px Arial";X.textAlign="center";X.fillText(banner.title,0,2);
+    X.fillStyle="#cfe6ff";X.font="bold 18px Arial";X.fillText(banner.sub,0,34);
+    X.restore()
+  }
   
   rings.forEach(r=>MiyagiAssets.drawChiOrb(X,r.x,r.y,r.r/22,{phase:1-r.l/r.m}));
   pD();
@@ -578,6 +630,7 @@ addEventListener("keyup",e=>keys[e.key]=0);
 C.addEventListener("pointerdown",e=>{pointer=e.clientX;C.setPointerCapture(e.pointerId);if(e.pointerType!=='pen')swd()});
 C.addEventListener("pointermove",e=>{if(e.buttons)pointer=e.clientX;if(e.pointerType==='pen')penTarget={x:e.clientX,y:e.clientY}});
 C.addEventListener("pointerup",()=>{pointer=null;penTarget=null});
+window.__sd={spawn:(ty,ox,oy)=>emy(ty,ox,oy),parry:()=>swd(),blast:()=>blst(),clearField:()=>{enemies.length=0;bolts.length=0},setWaveT:(t)=>{waveT=t},state:()=>({enemies:enemies.length,bolts:bolts.length,flashes:flashes.length,banner:!!banner,wave,score,waveCleared,weaver:enemies.some(e=>e.t===4),spitter:enemies.some(e=>e.t===5),msg:M.textContent})};
 resize();reset();setSt(ST.MENU);requestAnimationFrame(loop)
 })();
 </script>

@@ -222,6 +222,48 @@
             35% { background: #ffaa00; opacity: 0.9; }
             100% { background: transparent; opacity: 0; }
         }
+
+        /* Cycle-4: gold ledger count */
+        .gold-count { color: #ffcc00; font-size: 0.72rem; margin-left: 6px; text-shadow: 0 0 6px rgba(255,204,0,0.6); }
+
+        #arena { position: relative; }
+
+        /* Cycle-4: floating gold popup text */
+        .gold-popup {
+            position: absolute; top: 36%; transform: translateX(-50%);
+            font-weight: 900; font-size: 1.05rem; color: #ffcc00; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255,204,0,0.9), 0 2px 4px #000;
+            pointer-events: none; z-index: 30; white-space: nowrap;
+            animation: gold-rise 1.4s ease-out forwards;
+        }
+        @keyframes gold-rise {
+            0% { opacity: 0; transform: translate(-50%, 12px) scale(0.7); }
+            15% { opacity: 1; transform: translate(-50%, 0) scale(1.15); }
+            100% { opacity: 0; transform: translate(-50%, -52px) scale(1); }
+        }
+
+        /* Cycle-4: screen-shake on big hits */
+        .big-hit-shake { animation: big-hit-tremor 0.28s ease-out; }
+        @keyframes big-hit-tremor {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-6px, 3px) rotate(-0.6deg); }
+            40% { transform: translate(5px, -4px) rotate(0.5deg); }
+            60% { transform: translate(-4px, -2px); }
+            80% { transform: translate(3px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Cycle-4: arena hazard markers */
+        .hazard {
+            position: absolute; top: 50%; left: 50%; z-index: 1;
+            transform: translate(-50%, -50%); font-size: 1.25rem; line-height: 1;
+            pointer-events: none; filter: drop-shadow(0 0 4px rgba(255,60,60,0.8));
+            animation: hazard-pulse 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes hazard-pulse {
+            from { transform: translate(-50%, -50%) scale(1); }
+            to { transform: translate(-50%, -50%) scale(1.28); }
+        }
     </style>
 <!-- N8-ENHANCEMENTS:HEAD:START -->
 <meta content="Play Blood &amp; Gold: Panther Arena, an interactive browser game from the N8 CyberDev collection." name="description"/>
@@ -265,8 +307,8 @@
 <div id="header">
 <h1>PANTHER ARENA</h1>
 <div id="score-ledger">
-<div class="score-box">PURPLE: <span id="score-p1">0</span></div>
-<div class="score-box">BLUE: <span id="score-p2">0</span></div>
+<div class="score-box">PURPLE: <span id="score-p1">0</span><span class="gold-count" id="gold-p1">🪙0</span></div>
+<div class="score-box">BLUE: <span id="score-p2">0</span><span class="gold-count" id="gold-p2">🪙0</span></div>
 </div>
 <div class="controls">
 <button id="modeBtn" onclick="window.toggle2P()">SOLO VS AI</button>
@@ -291,6 +333,11 @@
     // Memory Matrices for Score Tracking
     let p1Wins = 0;
     let p2Wins = 0;
+
+    // Cycle-4: gold combo multiplier + arena hazards
+    window.gold = { p1: 0, p2: 0 };   // banked gold per side (session-persistent)
+    window.combo = { p1: 0, p2: 0 };  // combo streak per side
+    window.hazards = {};              // "c,r" -> 'skull' | 'storm'
 
     function initMatrix() {
         window.gameState = [];
@@ -339,6 +386,16 @@
         while(pieces.length > 0) {
             pieces[0].parentNode.removeChild(pieces[0]);
         }
+
+        // Cycle-4: fresh hazards + combo reset each match; gold persists across the session
+        window.combo = { p1: 0, p2: 0 };
+        const oldHaz = document.getElementsByClassName('hazard');
+        while(oldHaz.length > 0) {
+            oldHaz[0].parentNode.removeChild(oldHaz[0]);
+        }
+        window.hazards = {};
+        seedHazards();
+        updateGoldDisplay();
     };
 
     window.undoTurn = function() {
@@ -406,12 +463,37 @@
             p.className = 'piece ' + (window.turn === 1 ? 'purple' : 'blue');
             cell.appendChild(p);
             
+            // Cycle-4: arena hazard trigger (consumed on hit; may still count toward a win)
+            const hzKey = col + ',' + row;
+            const hz = window.hazards[hzKey];
+            if (hz) {
+                delete window.hazards[hzKey];
+                const hzCell = document.getElementById(`cell-${col}-${row}`);
+                const marker = hzCell ? hzCell.querySelector('.hazard') : null;
+                if (marker) marker.remove();
+                triggerHazard(hz, window.turn);
+            }
+
             // Win Vectors Diagnostic Check
-            const winCoords = checkVictory(row, col);
-            if (winCoords) {
-                executeELESequence(winCoords);
+            const res = checkVictory(row, col);
+            if (res.win) {
+                executeELESequence(res.win);
                 return;
             }
+
+            // Cycle-4: gold combo multiplier on line-building moves
+            const side = window.turn === 1 ? 'p1' : 'p2';
+            if (res.best >= 2) {
+                window.combo[side]++;
+                const mult = Math.min(window.combo[side], 8);
+                const gain = 10 * res.best * mult;
+                window.gold[side] += gain;
+                goldPopup('+' + gain + ' GOLD  x' + mult, '#ffcc00');
+                if (res.best >= 3) bigHit(); // screen-shake on big hits
+            } else {
+                window.combo[side] = 0;
+            }
+            updateGoldDisplay();
 
             window.turn = (window.turn === 1 ? 2 : 1);
             updateStatusDisplay();
@@ -435,16 +517,17 @@
         }
     }
 
-    // Modified CheckVictory function returning structural coordinates array
+    // Modified CheckVictory function returning { win: coordinates|null, best: longest line }
     function checkVictory(r, c) {
         const target = window.gameState[r][c];
         const directions = [
-            [[0, 1], [0, -1]],  
-            [[1, 0], [-1, 0]],  
-            [[1, 1], [-1, -1]], 
-            [[1, -1], [-1, 1]]  
+            [[0, 1], [0, -1]],
+            [[1, 0], [-1, 0]],
+            [[1, 1], [-1, -1]],
+            [[1, -1], [-1, 1]]
         ];
 
+        let best = 1;
         for (let d = 0; d < directions.length; d++) {
             let matches = [[r, c]];
             for (let i = 0; i < 2; i++) {
@@ -452,16 +535,17 @@
                 let dc = directions[d][i][1];
                 let currR = r + dr;
                 let currC = c + dc;
-                
+
                 while (currR >= 0 && currR < ROWS && currC >= 0 && currC < COLS && window.gameState[currR][currC] === target) {
                     matches.push([currR, currC]);
                     currR += dr;
                     currC += dc;
                 }
             }
-            if (matches.length >= 4) return matches;
+            if (matches.length > best) best = matches.length;
+            if (matches.length >= 4) return { win: matches, best };
         }
-        return null;
+        return { win: null, best };
     }
 
     // Feature 1: Extinction Level Event Function Architecture
@@ -497,6 +581,14 @@
             p2Wins++;
             document.getElementById('score-p2').innerHTML = p2Wins;
         }
+
+        // Cycle-4: gold rush win bonus scaled by the combo multiplier
+        const wside = window.turn === 1 ? 'p1' : 'p2';
+        const wmult = Math.max(1, Math.min(window.combo[wside], 8));
+        const wbonus = 100 * wmult;
+        window.gold[wside] += wbonus;
+        goldPopup('🏆 GOLD RUSH +' + wbonus + '  x' + wmult, '#ffe066');
+        updateGoldDisplay();
 
         // Finalize Status Banner Printout
         const statusEl = document.getElementById('status');
@@ -534,7 +626,7 @@
             let r = getTargetRow(c);
             if (r !== -1) {
                 window.gameState[r][c] = 2;
-                if (checkVictory(r, c)) {
+                if (checkVictory(r, c).win) {
                     window.gameState[r][c] = 0; 
                     window.dropPiece(c);
                     return;
@@ -547,7 +639,7 @@
             let r = getTargetRow(c);
             if (r !== -1) {
                 window.gameState[r][c] = 1;
-                if (checkVictory(r, c)) {
+                if (checkVictory(r, c).win) {
                     window.gameState[r][c] = 0;
                     window.dropPiece(c);
                     return;
@@ -573,7 +665,75 @@
         return -1;
     }
 
+    // Cycle-4: floating gold popup text over the arena
+    function goldPopup(text, color) {
+        const arena = document.getElementById('arena');
+        const el = document.createElement('div');
+        el.className = 'gold-popup';
+        el.textContent = text;
+        if (color) el.style.color = color;
+        el.style.left = (18 + Math.random() * 64) + '%';
+        arena.appendChild(el);
+        setTimeout(() => { if (el.parentNode) el.remove(); }, 1450);
+    }
+
+    // Cycle-4: brief screen-shake for big hits (3-in-a-row, hazards)
+    function bigHit() {
+        const arena = document.getElementById('arena');
+        arena.classList.remove('big-hit-shake');
+        void arena.offsetWidth;
+        arena.classList.add('big-hit-shake');
+        setTimeout(() => arena.classList.remove('big-hit-shake'), 320);
+    }
+
+    function updateGoldDisplay() {
+        document.getElementById('gold-p1').textContent = '🪙' + window.gold.p1;
+        document.getElementById('gold-p2').textContent = '🪙' + window.gold.p2;
+    }
+
+    // Cycle-4: seed 2 one-shot arena hazards — skull (💀 cursed: drains half your gold)
+    // and storm (⚡ shatters your combo) — on random cells each match
+    function seedHazards() {
+        const types = ['skull', 'storm'];
+        for (const t of types) {
+            for (let tries = 0; tries < 40; tries++) {
+                const c = Math.floor(Math.random() * COLS);
+                const r = Math.floor(Math.random() * ROWS);
+                const key = c + ',' + r;
+                if (!window.hazards[key]) {
+                    window.hazards[key] = t;
+                    const td = document.getElementById(`cell-${c}-${r}`);
+                    if (td) {
+                        const m = document.createElement('div');
+                        m.className = 'hazard';
+                        m.textContent = t === 'skull' ? '💀' : '⚡';
+                        m.title = t === 'skull' ? 'Cursed cell: drains half your gold' : 'Storm cell: shatters your combo';
+                        td.appendChild(m);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    function triggerHazard(type, player) {
+        const side = player === 1 ? 'p1' : 'p2';
+        bigHit();
+        if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+        if (type === 'skull') {
+            const lost = Math.floor(window.gold[side] / 2);
+            window.gold[side] -= lost;
+            goldPopup('💀 CURSED! -' + lost + ' GOLD', '#ff5555');
+        } else {
+            window.combo[side] = 0;
+            goldPopup('⚡ COMBO SHATTERED!', '#7fd4ff');
+        }
+        updateGoldDisplay();
+    }
+
     initMatrix();
+    seedHazards();
+    updateGoldDisplay();
 </script>
 
 <!-- N8-ENHANCEMENTS:BODY:START -->

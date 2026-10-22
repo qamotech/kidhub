@@ -3344,6 +3344,7 @@ function renderSelect() {
   const B = window.B || { triggerSpecial() {}, unlock() {} };
   "use strict";
   const PRO_VERSION = "4.0.0-Smash";
+  const q = s => document.querySelector(s); // local alias (bbr-ascension-systems' q is scoped to its own IIFE)
   const STALE_QUEUE_SIZE = 9;
   const DI_STRENGTH = 0.18;
   const SDI_STRENGTH = 4;

@@ -34,7 +34,7 @@
 </div>
 <div class="controls">
 <span>[WASD]</span> Move | <span>[Mouse]</span> Aim | <span>[Left Click]</span> Cyber-Katana | <span>[Right Click]</span> Plasma Shuriken<br/>
-<span>[Shift]</span> Blink-Dash | <span>[Space]</span> Transform (Vehicle/Ninja)
+<span>[Shift]</span> Blink-Dash | <span>[Space]</span> Transform (Ninja → Vehicle → Beast)
         </div>
 </div>
 <script>
@@ -215,8 +215,115 @@ class Projectile {
 const Particles = new FastPool(Particle, 400);
 const Projectiles = new FastPool(Projectile, 50);
 
+// --- TRAINING DUMMY (hit counter target) ---
+const DUMMY_KEY = 'kh-ninja-dummy-hits';
+const dummy = { x: 480, y: 180, r: 50, hits: 0, wobble: 0, flash: 0, popups: [] };
+try {
+    const savedHits = parseInt(localStorage.getItem(DUMMY_KEY), 10);
+    if (!isNaN(savedHits) && savedHits >= 0) dummy.hits = savedHits;
+} catch (e) { /* storage unavailable */ }
+
+function registerDummyHit(x, y) {
+    dummy.hits++;
+    dummy.wobble = 1;
+    dummy.flash = 1;
+    dummy.popups.push({ x, y, life: 0.9, maxLife: 0.9 });
+    for (let i = 0; i < 14; i++) {
+        Particles.spawn(x, y, (Math.random() - 0.5) * 520, (Math.random() - 0.5) * 520 - 140, 0.5, i % 2 ? '#FFD54A' : '#FFF', 3, true);
+    }
+    try { localStorage.setItem(DUMMY_KEY, String(dummy.hits)); } catch (e) {}
+}
+
+function drawDummy(dt) {
+    dummy.wobble = Math.max(0, dummy.wobble - dt * 2.2);
+    dummy.flash = Math.max(0, dummy.flash - dt * 3);
+    for (let i = dummy.popups.length - 1; i >= 0; i--) {
+        const p = dummy.popups[i];
+        p.life -= dt; p.y -= 60 * dt;
+        if (p.life <= 0) dummy.popups.splice(i, 1);
+    }
+
+    const w = dummy.wobble;
+    ctx.save();
+    ctx.translate(dummy.x, dummy.y);
+    if (w > 0) ctx.rotate(Math.sin(w * 22) * 0.14 * w);
+
+    // target ring on the ground
+    ctx.strokeStyle = '#FFD54A'; ctx.globalAlpha = 0.3; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, 64, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // post
+    ctx.fillStyle = '#4a3320';
+    ctx.fillRect(-7, 30, 14, 44);
+    ctx.fillStyle = '#5d4429';
+    ctx.fillRect(-7, 30, 5, 44);
+
+    // sandbag torso
+    ctx.fillStyle = '#8a6a45'; ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.ellipse(0, 0, 36, 44, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = '#5d4429'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(-34, -14); ctx.quadraticCurveTo(0, -6, 34, -14); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-34, 14); ctx.quadraticCurveTo(0, 22, 34, 14); ctx.stroke();
+
+    // bullseye
+    ctx.fillStyle = '#c0392b';
+    ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#FFF';
+    ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#c0392b';
+    ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+
+    // cross arms
+    ctx.fillStyle = '#4a3320'; ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 2;
+    ctx.fillRect(-46, -34, 92, 14); ctx.strokeRect(-46, -34, 92, 14);
+    ctx.fillStyle = '#8a6a45';
+    ctx.beginPath(); ctx.arc(-46, -27, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(46, -27, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+    // head
+    ctx.fillStyle = '#a37e50'; ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, -72, 17, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = '#5d4429'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(-16, -78); ctx.quadraticCurveTo(0, -70, 16, -78); ctx.stroke();
+    ctx.strokeStyle = '#2a1c10'; ctx.lineWidth = 2.5;
+    for (const ex of [-6, 6]) {
+        ctx.beginPath();
+        ctx.moveTo(ex - 4, -76); ctx.lineTo(ex + 4, -68);
+        ctx.moveTo(ex + 4, -76); ctx.lineTo(ex - 4, -68);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    // hit flash ring
+    if (dummy.flash > 0) {
+        ctx.strokeStyle = '#FFD54A';
+        ctx.globalAlpha = dummy.flash;
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(dummy.x, dummy.y, 70 + (1 - dummy.flash) * 50, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+    }
+
+    // floating +1 popups
+    for (const p of dummy.popups) {
+        ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+        ctx.fillStyle = '#FFD54A';
+        ctx.font = 'bold 22px monospace'; ctx.textAlign = 'center';
+        ctx.fillText('+1', p.x, p.y);
+        ctx.globalAlpha = 1;
+    }
+
+    // label + hit counter
+    ctx.fillStyle = '#FFD54A';
+    ctx.font = 'bold 16px monospace'; ctx.textAlign = 'center';
+    ctx.fillText('TRAINING DUMMY', dummy.x, dummy.y - 104);
+    ctx.fillStyle = '#FFF';
+    ctx.font = 'bold 20px monospace';
+    ctx.fillText('HITS ' + dummy.hits, dummy.x, dummy.y - 82);
+}
+
 // --- PLAYER CONTROLLER ---
-const STATES = { IDLE: 0, RUN: 1, DASH: 2, MELEE: 3, RANGED: 4, TRANSFORMING: 5, VEHICLE: 6 };
+const STATES = { IDLE: 0, RUN: 1, DASH: 2, MELEE: 3, RANGED: 4, TRANSFORMING: 5, VEHICLE: 6, BEAST: 7 };
 
 class Player {
     constructor(x, y) {
@@ -227,7 +334,11 @@ class Player {
         
         this.speedNinja = 400;
         this.speedVehicle = 900;
+        this.speedBeast = 650;
         this.dashSpeed = 1500;
+
+        this.form = 'ninja';
+        this.formTarget = 'ninja';
         
         this.dashTimer = 0; this.dashCD = 1.5;
         this.atkTimer = 0; this.atkCD = 0.4;
@@ -257,13 +368,13 @@ class Player {
                 this.handleMovement(dt, this.speedNinja);
                 this.handleRotation(dt);
                 this.handleActions(dt);
-                if (Input.justPressed('space')) this.startTransform(1);
+                if (Input.justPressed('space')) this.startTransform(this.form === 'vehicle' ? 2 : this.form === 'beast' ? 0 : 1);
                 break;
                 
             case STATES.VEHICLE:
                 this.handleMovement(dt, this.speedVehicle);
                 this.handleRotation(dt);
-                if (Input.justPressed('space')) this.startTransform(0);
+                if (Input.justPressed('space')) this.startTransform(2);
                 if (this.vx !== 0 || this.vy !== 0) {
                     const bx = this.x - Math.cos(this.angle) * 30;
                     const by = this.y - Math.sin(this.angle) * 30;
@@ -271,25 +382,43 @@ class Player {
                 }
                 break;
 
+            case STATES.BEAST:
+                this.handleMovement(dt, this.speedBeast);
+                this.handleRotation(dt);
+                this.handleBeastActions(dt);
+                if (Input.justPressed('space')) this.startTransform(0);
+                break;
+
             case STATES.DASH:
                 this.stateTimer -= dt;
                 this.x += this.vx * dt; this.y += this.vy * dt;
                 this.spawnTrail();
-                if (this.stateTimer <= 0) this.state = STATES.RUN;
+                if (this.stateTimer <= 0) this.state = this.baseState();
                 break;
 
             case STATES.MELEE:
                 this.stateTimer -= dt;
                 this.x += this.vx * 0.1 * dt; this.y += this.vy * 0.1 * dt;
-                this.meleeArc = 1 - (this.stateTimer / 0.25);
-                if (this.stateTimer <= 0) { this.state = STATES.IDLE; this.meleeActive = false; }
+                this.meleeArc = 1 - (this.stateTimer / (this.meleeDur || 0.25));
+                if (!this.dummyMeleeHit && this.meleeArc > 0.1 && this.meleeArc < 0.9) {
+                    const mdx = dummy.x - this.x, mdy = dummy.y - this.y;
+                    const mdist = Math.hypot(mdx, mdy);
+                    let mda = Math.atan2(mdy, mdx) - this.angle;
+                    while (mda > Math.PI) mda -= Math.PI * 2;
+                    while (mda < -Math.PI) mda += Math.PI * 2;
+                    if (mdist < 120 && Math.abs(mda) < 1.0) {
+                        this.dummyMeleeHit = true;
+                        registerDummyHit(dummy.x - (mdx / (mdist || 1)) * dummy.r, dummy.y - (mdy / (mdist || 1)) * dummy.r);
+                    }
+                }
+                if (this.stateTimer <= 0) { this.state = this.baseState(); this.meleeActive = false; }
                 break;
 
             case STATES.RANGED:
                 this.stateTimer -= dt;
                 this.handleMovement(dt, this.speedNinja * 0.5);
                 this.handleRotation(dt);
-                if (this.stateTimer <= 0) this.state = STATES.IDLE;
+                if (this.stateTimer <= 0) this.state = this.baseState();
                 break;
 
             case STATES.TRANSFORMING:
@@ -303,9 +432,11 @@ class Player {
 
                 if (this.stateTimer <= 0) {
                     this.morph = targetMorph;
-                    this.state = targetMorph === 1 ? STATES.VEHICLE : STATES.IDLE;
-                    document.getElementById('modeDisplay').innerText = targetMorph === 1 ? "HOVER-VEHICLE" : "NINJA";
-                    document.getElementById('modeDisplay').style.color = targetMorph === 1 ? "#F0F" : "#0FF";
+                    this.form = this.formTarget;
+                    this.state = this.baseState();
+                    const formHud = { ninja: ["NINJA", "#0FF"], vehicle: ["HOVER-VEHICLE", "#F0F"], beast: ["BEAST MODE", "#39FF14"] };
+                    document.getElementById('modeDisplay').innerText = formHud[this.form][0];
+                    document.getElementById('modeDisplay').style.color = formHud[this.form][1];
                 }
                 break;
         }
@@ -370,8 +501,10 @@ class Player {
         if (Input.mouseJustPressed('left') && this.atkTimer <= 0) {
             this.state = STATES.MELEE;
             this.stateTimer = 0.25;
+            this.meleeDur = 0.25;
             this.atkTimer = this.atkCD;
             this.meleeActive = true;
+            this.dummyMeleeHit = false;
             this.vx = Math.cos(this.angle) * 500;
             this.vy = Math.sin(this.angle) * 500;
             Camera.shake(0.15);
@@ -391,23 +524,59 @@ class Player {
         }
     }
 
+    baseState() {
+        return this.form === 'vehicle' ? STATES.VEHICLE : this.form === 'beast' ? STATES.BEAST : STATES.IDLE;
+    }
+
+    handleBeastActions(dt) {
+        if (Input.justPressed('shift') && this.dashTimer <= 0) {
+            let mag = Math.hypot(this.vx, this.vy);
+            let dirX = mag > 50 ? this.vx / mag : Math.cos(this.angle);
+            let dirY = mag > 50 ? this.vy / mag : Math.sin(this.angle);
+
+            this.vx = dirX * this.dashSpeed;
+            this.vy = dirY * this.dashSpeed;
+            this.state = STATES.DASH;
+            this.stateTimer = 0.15;
+            this.dashTimer = this.dashCD;
+            Camera.shake(0.1);
+            return;
+        }
+
+        // Beast form: claws only — faster swipe, no ranged attack
+        if (Input.mouseJustPressed('left') && this.atkTimer <= 0) {
+            this.state = STATES.MELEE;
+            this.stateTimer = 0.22;
+            this.meleeDur = 0.22;
+            this.atkTimer = 0.28;
+            this.meleeActive = true;
+            this.dummyMeleeHit = false;
+            this.vx = Math.cos(this.angle) * 650;
+            this.vy = Math.sin(this.angle) * 650;
+            Camera.shake(0.15);
+            return;
+        }
+    }
+
     startTransform(targetMorph) {
         this.state = STATES.TRANSFORMING;
         this.morphTarget = targetMorph;
+        this.formTarget = targetMorph === 2 ? 'beast' : targetMorph === 1 ? 'vehicle' : 'ninja';
         this.stateTimer = 0.3;
         Camera.shake(0.2);
     }
 
     spawnTrail() {
         const t = this.trails[this.trailIdx];
-        t.active = true; t.x = this.x; t.y = this.y; t.angle = this.angle; t.morph = this.morph; t.alpha = 0.6;
+        t.active = true; t.x = this.x; t.y = this.y; t.angle = this.angle; t.morph = this.morph; t.form = this.form; t.alpha = 0.6;
         this.trailIdx = (this.trailIdx + 1) % this.trails.length;
     }
 
     // --- RENDERING ---
-    drawPlayerModel(ctx, morph, alpha = 1) {
+    drawPlayerModel(ctx, morph, alpha = 1, form = this.form) {
         ctx.globalAlpha = alpha;
-        
+
+        if (form === 'beast') { this.drawBeastModel(ctx, alpha); return; }
         const breathe = this.state === STATES.IDLE && morph === 0 ? Math.sin(this.animTime * 5) * 0.02 : 0;
         const metalDark = '#1a1c23', metalLight = '#3a3f4c', neonCyan = '#00FFFF', neonMagenta = '#FF00FF';
         
@@ -521,6 +690,112 @@ class Player {
         ctx.globalAlpha = 1;
     }
 
+    // --- BEAST FORM: cyber-tiger quadriped, drawn in code ---
+    drawBeastModel(ctx, alpha) {
+        ctx.globalAlpha = alpha;
+        const t = this.animTime;
+        const speed = Math.hypot(this.vx, this.vy);
+        const running = this.state === STATES.BEAST && speed > 60;
+        const f = running ? t * 16 : t * 3;
+        const metalDark = '#1c142e', metalLight = '#3a2c5c', neonLime = '#39FF14', eyeOrange = '#FF9A00';
+
+        // tail with blade tip
+        const tailSwing = Math.sin(t * (running ? 9 : 2.5)) * 0.35;
+        ctx.save();
+        ctx.strokeStyle = metalLight; ctx.lineWidth = 9; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(-26, 0);
+        ctx.quadraticCurveTo(-50, tailSwing * 40, -66, 14 + tailSwing * 40); ctx.stroke();
+        ctx.translate(-66, 14 + tailSwing * 40); ctx.rotate(tailSwing * 0.6);
+        ctx.fillStyle = neonLime;
+        ctx.beginPath(); ctx.moveTo(2, -9); ctx.lineTo(-16, 0); ctx.lineTo(2, 9); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath(); ctx.moveTo(0, -4); ctx.lineTo(-9, 0); ctx.lineTo(0, 4); ctx.closePath(); ctx.fill();
+        ctx.restore();
+
+        // four legs with trotting animation + lime claws
+        const legs = [{ x: 16, ph: 0 }, { x: -20, ph: Math.PI }];
+        for (let side = -1; side <= 1; side += 2) {
+            for (const L of legs) {
+                const phase = L.ph + (side > 0 ? 0 : Math.PI);
+                const sw = running ? Math.sin(f + phase) * 9 : Math.sin(f + phase) * 1.5;
+                const pawX = sw * 0.4, pawY = side * 15;
+                ctx.save();
+                ctx.translate(L.x + sw, side * 17);
+                ctx.fillStyle = metalLight; ctx.strokeStyle = neonLime; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = metalDark;
+                ctx.beginPath();
+                ctx.moveTo(-6, 0); ctx.lineTo(6, 0); ctx.lineTo(pawX + 5, pawY); ctx.lineTo(pawX - 5, pawY);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = metalLight;
+                ctx.beginPath(); ctx.arc(pawX, pawY, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = neonLime;
+                for (let c = -1; c <= 1; c++) {
+                    const cx = pawX + c * 6, cy = pawY + side * 9;
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 3, cy - side * 2); ctx.lineTo(cx + 3, cy - side * 2); ctx.lineTo(cx, cy + side * 7);
+                    ctx.closePath(); ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        // torso
+        ctx.fillStyle = metalLight; ctx.strokeStyle = metalDark; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.ellipse(0, 0, 36, 21, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = metalDark;
+        ctx.beginPath(); ctx.ellipse(0, 0, 28, 14, 0, 0, Math.PI * 2); ctx.fill();
+        // spine spikes
+        ctx.fillStyle = neonLime;
+        for (let i = 0; i < 4; i++) {
+            const sx = 18 - i * 12;
+            for (const s of [-1, 1]) {
+                ctx.globalAlpha = alpha * 0.85;
+                ctx.beginPath();
+                ctx.moveTo(sx - 5, s * 18); ctx.lineTo(sx + 5, s * 18); ctx.lineTo(sx, s * 30);
+                ctx.closePath(); ctx.fill();
+            }
+        }
+        ctx.globalAlpha = alpha;
+        // back core glow
+        ctx.globalAlpha = alpha * 0.5; ctx.fillStyle = neonLime;
+        ctx.beginPath(); ctx.arc(-2, 0, 9, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = alpha; ctx.fillStyle = '#FFF';
+        ctx.beginPath(); ctx.arc(-2, 0, 4, 0, Math.PI * 2); ctx.fill();
+
+        // head
+        ctx.save();
+        ctx.translate(38, 0);
+        ctx.fillStyle = metalLight; ctx.strokeStyle = metalDark; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(22, 0); ctx.lineTo(8, 13); ctx.lineTo(-12, 10); ctx.lineTo(-16, 0); ctx.lineTo(-12, -10); ctx.lineTo(8, -13);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        // ears
+        ctx.fillStyle = metalDark; ctx.strokeStyle = neonLime; ctx.lineWidth = 1.5;
+        for (const s of [-1, 1]) {
+            ctx.beginPath(); ctx.moveTo(2, s * 10); ctx.lineTo(-6, s * 20); ctx.lineTo(-12, s * 9); ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+        // eyes (blink)
+        const blink = (t % 4) < 0.12 ? 0.2 : 1;
+        ctx.fillStyle = eyeOrange;
+        for (const s of [-1, 1]) {
+            ctx.save(); ctx.translate(6, s * 6); ctx.scale(1.4, blink);
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+        // fangs
+        ctx.fillStyle = '#FFF';
+        for (const s of [-1, 1]) {
+            ctx.beginPath(); ctx.moveTo(18, s * 4); ctx.lineTo(14, s * 7); ctx.lineTo(16, s * 1); ctx.closePath(); ctx.fill();
+        }
+        // snout glow
+        ctx.globalAlpha = alpha * 0.5; ctx.fillStyle = neonLime;
+        ctx.beginPath(); ctx.arc(14, 0, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+
+        ctx.globalAlpha = 1;
+    }
+
     draw() {
         this.trails.forEach(t => {
             if (!t.active) return;
@@ -528,7 +803,7 @@ class Player {
             ctx.translate(t.x, t.y);
             ctx.rotate(t.angle);
             ctx.globalCompositeOperation = 'screen';
-            this.drawPlayerModel(ctx, t.morph, t.alpha * 0.5);
+            this.drawPlayerModel(ctx, t.morph, t.alpha * 0.5, t.form);
             ctx.globalCompositeOperation = 'source-over';
             ctx.restore();
         });
@@ -539,13 +814,15 @@ class Player {
 
         if (this.state === STATES.MELEE && this.meleeActive) {
             ctx.save();
+            const swipeGlow = this.form === 'beast' ? '#39FF14' : '#FF00FF';
+            const swipeTrail = this.form === 'beast' ? 'rgba(57, 255, 20, 0.5)' : 'rgba(255, 0, 255, 0.5)';
             const startAngle = -Math.PI * 0.6;
             const endAngle = Math.PI * 0.6;
             const currentAngle = startAngle + (endAngle - startAngle) * this.meleeArc;
             
             ctx.rotate(currentAngle);
             
-            ctx.strokeStyle = '#FF00FF';
+            ctx.strokeStyle = swipeGlow;
             ctx.lineWidth = 12 + Math.sin(this.meleeArc * Math.PI) * 16;
             ctx.lineCap = 'round';
             ctx.globalAlpha = 0.3;
@@ -558,7 +835,7 @@ class Player {
             
             ctx.globalAlpha = 1 - this.meleeArc;
             ctx.lineWidth = 20;
-            ctx.strokeStyle = 'rgba(255, 0, 255, 0.5)';
+            ctx.strokeStyle = swipeTrail;
             ctx.beginPath();
             ctx.arc(0, 0, 50, startAngle, currentAngle);
             ctx.stroke();
@@ -606,11 +883,21 @@ function gameLoop(now) {
     if (dt > 0.1) dt = 0.1; // Safety clamp 
     lastTime = now;
 
-    Input.update();
     player.update(dt);
     Camera.update(dt, player);
     Projectiles.update(dt);
     Particles.update(dt);
+
+    // Training dummy: projectile hits
+    for (let i = 0; i < Projectiles.activeCount; i++) {
+        const pr = Projectiles.pool[i];
+        if (!pr.active) continue;
+        const pdx = pr.x - dummy.x, pdy = pr.y - dummy.y;
+        if (pdx * pdx + pdy * pdy < (dummy.r + 14) * (dummy.r + 14)) {
+            pr.active = false;
+            registerDummyHit(pr.x, pr.y);
+        }
+    }
 
     ctx.fillStyle = '#030305';
     ctx.fillRect(0, 0, width, height);
@@ -619,11 +906,13 @@ function gameLoop(now) {
     Camera.apply();
     
     Particles.draw();
+    drawDummy(dt);
     player.draw();
     Projectiles.draw();
     
     Camera.restore();
 
+    Input.update(); // sync prev keys/mouse AFTER this frame's logic so justPressed edges survive
     requestAnimationFrame(gameLoop);
 }
 
