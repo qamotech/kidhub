@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b2a4a">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bike Blitz">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Bike Blitz — a Puddlewick Isle mini-game. Joy Ride, Time Trials and Trick Park on the Spoke Island trails.">
+<title>Puddlewick Isle: Bike Blitz</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { width:100%; height:100%; overflow:hidden; overscroll-behavior:none; text-size-adjust:100%; -webkit-text-size-adjust:100%; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; background:#0b2a4a; font-family:'Trebuchet MS','Segoe UI',Verdana,sans-serif; }
+  #wrap { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0b2a4a; }
+  canvas { display:block; background:#0e3a5c; touch-action:none; cursor:pointer; }
+  #rotate { display:none; position:fixed; inset:0; z-index:50; background:#0b2a4a; color:#fff; align-items:center; justify-content:center; text-align:center; padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom)); font-size:18px; line-height:1.5; }
+  #touchUI { position:fixed; left:0; right:0; bottom:0; z-index:40; display:none; justify-content:space-between; align-items:flex-end; padding:0 14px calc(14px + env(safe-area-inset-bottom)); pointer-events:none; }
+  #touchUI .cluster { display:flex; gap:14px; align-items:flex-end; }
+  .tbtn { pointer-events:auto; touch-action:none; user-select:none; -webkit-user-select:none; width:78px; height:78px; border-radius:50%; border:2px solid rgba(255,255,255,.65); background:rgba(8,32,54,.55); color:#fff; font-size:14px; font-weight:bold; font-family:inherit; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; }
+  .tbtn .ic { font-size:27px; line-height:1.05; }
+  .tbtn.on { background:rgba(46,139,58,.8); }
+  :focus-visible { outline:3px solid #f0a840; outline-offset:2px; }
+  .tbtn:focus-visible { outline:3px solid #f0a840; outline-offset:2px; }
+  ::selection { background:#ffe1a8; color:#0b2a4a; }
+  .tbtn:active { transform:scale(.96); }
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.tbtn:active{transform:none}}
+</style>
+</head>
+<body>
+<noscript><div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0b2a4a;color:#fff;font-size:18px;line-height:1.5;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));text-align:center">Bike Blitz needs JavaScript to play.</div></noscript>
+<div id="wrap"><canvas id="game" role="img" aria-label="Bike Blitz game canvas" tabindex="0"></canvas></div>
+<div id="touchUI"><div class="cluster"><button class="tbtn" id="tBrake" aria-label="Brake"><span class="ic" aria-hidden="true">◀</span>BRAKE</button></div><div class="cluster"><button class="tbtn" id="tHop" aria-label="Hop"><span class="ic" aria-hidden="true">⤒</span>HOP</button><button class="tbtn" id="tPedal" aria-label="Pedal"><span class="ic" aria-hidden="true">▶</span>PEDAL</button></div></div>
+<div id="rotate" role="status"><span aria-hidden="true">🔄</span><br>Rotate your device<br>to landscape to play!</div>
+<script>
+'use strict';
+/* =========================================================================
+   PUDDLEWICK ISLE: BIKE BLITZ 🚲
+   A single-file side game for Puddlewick Isle.
+   Ride the Cruiser or Stunt Hopper across the isle: pedal, hop, dodge,
+   grab stars, nail tricks. Features the bike from Puddlewick Isle!
+   ========================================================================= */
+const TAU=Math.PI*2;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const rfloat=(r,a,b)=>a+r()*(b-a);
+const pick=(r,arr)=>arr[Math.floor(r()*arr.length)];
+const dist=(x1,y1,x2,y2)=>Math.hypot(x2-x1,y2-y1);
+function mulberry(seed){let t=seed>>>0;return function(){t+=0x6D2B79F5;let z=Math.imul(t^(t>>>15),1|t);z^=z+Math.imul(z^(z>>>7),61|z);return((z^(z>>>14))>>>0)/4294967296;};}
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=(n>>16)+amt,g=((n>>8)&255)+amt,b=(n&255)+amt;r=clamp(r,0,255);g=clamp(g,0,255);b=clamp(b,0,255);return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');}
+
+const cv=document.getElementById('game'), g=cv.getContext('2d');
+let W=960,H=540;
+function resize(){
+  const DPR=Math.min(2,window.devicePixelRatio||1);
+  const ww=window.innerWidth, wh=window.innerHeight;
+  let cw=ww, ch=ww*9/16; if(ch>wh){ch=wh;cw=wh*16/9;}
+  cv.style.width=cw+'px'; cv.style.height=ch+'px';
+  cv.width=960*DPR; cv.height=540*DPR; g.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize',resize); resize();
+
+// ---------------- audio ----------------
+const AU={ctx:null,master:null,muted:false,
+init(){if(this.ctx)return;try{this.ctx=new (window.AudioContext||window.webkitAudioContext)();this.master=this.ctx.createGain();this.master.gain.value=0.45;this.master.connect(this.ctx.destination);}catch(e){}},
+resume(){if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume();},
+tone(f,dur,type,vol,slideTo,delay){if(!this.ctx||this.muted)return;const t=this.ctx.currentTime+(delay||0);const o=this.ctx.createOscillator(),gn=this.ctx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slideTo)o.frequency.exponentialRampToValueAtTime(Math.max(1,slideTo),t+dur);gn.gain.setValueAtTime(vol||0.2,t);gn.gain.exponentialRampToValueAtTime(0.001,t+dur);o.connect(gn);gn.connect(this.master);o.start(t);o.stop(t+dur+0.05);},
+noise(dur,vol,fc,delay){if(!this.ctx||this.muted)return;const t=this.ctx.currentTime+(delay||0);const len=Math.floor(this.ctx.sampleRate*dur);const buf=this.ctx.createBuffer(1,len,this.ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);const src=this.ctx.createBufferSource();src.buffer=buf;const f=this.ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=fc||1200;const gn=this.ctx.createGain();gn.gain.setValueAtTime(vol||0.2,t);gn.gain.exponentialRampToValueAtTime(0.001,t+dur);src.connect(f);f.connect(gn);gn.connect(this.master);src.start(t);},
+sfx(n){if(!this.ctx||this.muted)return;switch(n){
+  case 'click':this.tone(660,0.07,'square',0.12);break;
+  case 'hop':this.noise(0.25,0.14,1400);this.tone(300,0.25,'sine',0.1,700);break;
+  case 'land':this.noise(0.15,0.2,500);break;
+  case 'star':this.tone(1046,0.1,'triangle',0.16);this.tone(1568,0.14,'triangle',0.16,null,0.07);break;
+  case 'crash':this.noise(0.35,0.3,400);this.tone(200,0.4,'sawtooth',0.18,60);break;
+  case 'bell':this.tone(2093,0.4,'sine',0.14);this.tone(2637,0.3,'sine',0.08,null,0.02);break;
+  case 'boost':this.noise(0.4,0.2,2000);this.tone(200,0.4,'sawtooth',0.12,800);break;
+  case 'trick':[659,784,988,1318].forEach((f,i)=>this.tone(f,0.14,'triangle',0.16,null,i*0.07));break;
+  case 'win':[523,659,784,1046,1318].forEach((f,i)=>this.tone(f,0.2,'triangle',0.2,null,i*0.1));break;
+  case 'count':this.tone(440,0.12,'square',0.2);break;
+  case 'go':this.tone(523,0.12,'square',0.2);this.tone(659,0.12,'square',0.2,null,0.12);this.tone(880,0.3,'square',0.22,null,0.24);break;
+  case 'unlock':[392,494,587,784,988].forEach((f,i)=>this.tone(f,0.2,'triangle',0.2,null,i*0.09));break;
+  case 'error':this.tone(220,0.2,'square',0.15,110);break;
+  case 'coin':this.tone(988,0.09,'square',0.14);this.tone(1319,0.16,'square',0.14,null,0.08);break;
+  case 'pedal':this.tone(140+Math.random()*30,0.05,'sawtooth',0.04);break;
+}}};
+
+// ---------------- data ----------------
+const BIKES=[
+ {id:'cruiser',name:'Cruiser Bike',col:'#06b6d4',accent:'#f43f5e',cost:0,max:300,accel:170,hop:430,desc:'Steady and reliable. The classic.'},
+ {id:'stunt',name:'Stunt Hopper',col:'#f59e0b',accent:'#8b5cf6',cost:800,max:345,accel:200,hop:540,desc:'Bigger hops, faster sprints.'},
+];
+const VILLAGERS=[
+ {n:'Rosie',e:'🐗',cheer:'Oink oink! Go go!'},
+ {n:'Piper',e:'🪶',cheer:'Tra-la! You fly!'},
+ {n:'Marlowe',e:'🦦',cheer:'Splish! Nice air!'},
+ {n:'Wren',e:'🦊',cheer:'Heh! Show-off!'},
+];
+const TRACKS=[ // time trial distances in meters (50px = 1m)
+ {name:'Meadow Sprint',m:800},{name:'Riverside Run',m:1600},{name:'Isle Marathon',m:3200},
+];
+const PX_PER_M=50;
+
+// ---------------- save ----------------
+const SAVE_KEY='puddlewick_bikeblitz_v1';
+let SV=null;
+function defSave(){return {coins:150,bike:0,owned:['cruiser'],best:{dist:0},trialBest:{},tricks:0};}
+function loadSave(){try{SV=Object.assign(defSave(),JSON.parse(localStorage.getItem(SAVE_KEY))||{});}catch(e){SV=defSave();}}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(SV));}catch(e){}}
+loadSave();
+
+// ---------------- state ----------------
+const G={screen:'title',t:0,mx:0,my:0,clicked:false,down:false,
+ mode:'joy',track:0,bikeIdx:0,
+ // ride state
+ x:0,y:0,vx:0,vy:0,hopZ:0,airT:0,step:0,face:1,
+ riding:false,countT:0,go:false,finishT:0,
+ score:0,stars:0,dist:0,trickScore:0,trickT:0,
+ crashT:0,flashT:0,landedTrick:false,
+ camX:0,terrainSeed:1234,items:[],obs:[],cheer:[],
+ msg:null,msgT:0,combo:0,comboT:0,
+ howtoPage:0,shopTab:0,
+};
+function toast(m,t){G.msg=m;G.msgT=t||2.4;}
+
+// ---------------- terrain ----------------
+// rolling hills from layered sines + ramps; seeded per run
+function terrainY(x,seed){
+  const r=mulberry(seed);
+  // fixed params per seed so it's stable within a run
+  const a1=26,a2=14,f1=0.004,f2=0.011,p2=(seed%100)/100*TAU;
+  let y=H*0.72 + a1*Math.sin(x*f1) + a2*Math.sin(x*f2+p2);
+  // ramps: smooth bumps every ~900px
+  const rx=((x%900)+900)%900;
+  if(rx<160){const t=rx/160;y-=Math.sin(t*Math.PI)*46;}
+  if(x<320){const t=clamp(x/320,0,1);y=H*0.72+(y-H*0.72)*t;} // gentle flat start: never spawn stuck on a hill
+  return y;
+}
+function terrainSlope(x,seed){return (terrainY(x+6,seed)-terrainY(x-6,seed))/12;}
+</script>
+<script>
+'use strict';
+/* ================= input ================= */
+const keys={};
+function toGame(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*960,y:(e.clientY-r.top)/r.height*540};}
+cv.addEventListener('pointerdown',e=>{e.preventDefault();AU.init();AU.resume();const p=toGame(e);G.mx=p.x;G.my=p.y;G.down=true;G.clicked=true;G.px=p.x;G.py=p.y;});
+window.addEventListener('pointermove',e=>{const p=toGame(e);G.mx=p.x;G.my=p.y;});
+window.addEventListener('pointerup',()=>{G.down=false;});
+window.addEventListener('keydown',e=>{keys[e.code]=true;AU.init();AU.resume();
+  if(['Space','ArrowUp','ArrowRight','ArrowLeft'].includes(e.code)){e.preventDefault();if(!G.down){G.down=true;G.clicked=true;}}});
+window.addEventListener('keyup',e=>{keys[e.code]=false;if(['Space','ArrowUp','ArrowRight','ArrowLeft'].includes(e.code))G.down=false;});
+function endFrame(){G.clicked=false;}
+
+/* ================= ui ================= */
+function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function button(x,y,w,h,label,opts){
+  opts=opts||{};const hov=G.mx>=x&&G.mx<=x+w&&G.my>=y&&G.my<=y+h,dis=opts.disabled;
+  g.save();g.globalAlpha=dis?0.45:1;
+  const grd=g.createLinearGradient(0,y,0,y+h);
+  if(hov&&!dis){grd.addColorStop(0,'#ffd97a');grd.addColorStop(1,'#f0a840');}
+  else{grd.addColorStop(0,opts.color||'#5fb4e8');grd.addColorStop(1,opts.color2||'#2b7cb0');}
+  rr(x,y,w,h,12);g.fillStyle=grd;g.fill();
+  g.lineWidth=3;g.strokeStyle=hov?'#fff':'rgba(0,0,0,0.35)';g.stroke();
+  g.fillStyle=opts.tcolor||'#fff';g.font=`bold ${opts.fs||20}px 'Trebuchet MS',sans-serif`;
+  g.textAlign='center';g.textBaseline='middle';g.shadowColor='rgba(0,0,0,0.4)';g.shadowOffsetY=2;
+  g.fillText(label,x+w/2,y+h/2+1);g.restore();
+  if(hov&&G.clicked&&!dis){AU.sfx('click');return true;}return false;
+}
+function panel(x,y,w,h){g.save();rr(x,y,w,h,16);g.fillStyle='#0d2f4a';g.globalAlpha=0.93;g.fill();g.globalAlpha=1;g.lineWidth=3;g.strokeStyle='#3d7ca8';g.stroke();g.restore();}
+function txt(s,x,y,size,col,align,bold){g.save();g.font=`${bold?'bold ':''}${size}px 'Trebuchet MS',sans-serif`;g.textAlign=align||'left';g.textBaseline='middle';g.fillStyle=col||'#fff';g.shadowColor='rgba(0,0,0,0.5)';g.shadowOffsetY=2;g.fillText(s,x,y);g.restore();}
+function coinHUD(){g.save();rr(W-172,10,162,36,18);g.fillStyle='rgba(0,0,0,0.45)';g.fill();txt('🪙',W-152,29,22,'#fff','left');txt(SV.coins+'',W-122,29,20,'#ffd97a','left',true);g.restore();}
+function backBtn(){if(button(14,14,110,40,'← Back',{fs:17}))return true;return false;}
+
+/* ================= bike + rider art (from Puddlewick Isle) ================= */
+function drawBike(x,y,face,step,moving,bike,hopZ,lean){
+  const by=y-hopZ;
+  g.save();g.translate(x,by);g.rotate(lean||0);
+  // shadow
+  g.save();g.rotate(-(lean||0));g.fillStyle='rgba(20,30,20,0.25)';
+  g.beginPath();g.ellipse(0,hopZ+4,26,7,0,0,TAU);g.fill();g.restore();
+  const dir=face;
+  const bx=-17*dir,fx=17*dir,wy=-11;
+  const wheel=wx=>{
+    g.fillStyle='#1c1917';g.beginPath();g.arc(wx,wy,10.5,0,TAU);g.fill();
+    g.fillStyle='#e2e8f0';g.beginPath();g.arc(wx,wy,6.6,0,TAU);g.fill();
+    g.fillStyle='#0f172a';g.beginPath();g.arc(wx,wy,2.8,0,TAU);g.fill();
+    g.strokeStyle='rgba(148,163,184,.85)';g.lineWidth=1.4;
+    const a=(moving?step*2.6:0)+(wx>0?0:1.3);
+    g.beginPath();
+    g.moveTo(wx+Math.cos(a)*6,wy+Math.sin(a)*6);g.lineTo(wx-Math.cos(a)*6,wy-Math.sin(a)*6);
+    g.moveTo(wx+Math.cos(a+1.57)*6,wy+Math.sin(a+1.57)*6);g.lineTo(wx-Math.cos(a+1.57)*6,wy-Math.sin(a+1.57)*6);
+    g.stroke();
+  };
+  wheel(bx);wheel(fx);
+  // frame
+  g.strokeStyle=bike.col;g.lineWidth=5;g.lineCap='round';
+  const seatX=-4*dir,seatY=-27,bbX=0,bbY=-11,headX=12*dir,headY=-29;
+  g.beginPath();
+  g.moveTo(bx,wy);g.lineTo(bbX,bbY);g.lineTo(seatX,seatY);g.lineTo(bx,wy);
+  g.moveTo(seatX,seatY);g.lineTo(headX,headY);g.lineTo(bbX,bbY);
+  g.moveTo(headX,headY);g.lineTo(fx,wy);g.stroke();
+  // handlebar
+  g.strokeStyle=bike.accent;g.lineWidth=3.5;
+  g.beginPath();g.moveTo(headX,headY);g.lineTo(headX+dir*3,headY-9);g.lineTo(headX+dir*7,headY-10);g.stroke();
+  // seat
+  g.fillStyle='#0f172a';rr(seatX-7,seatY-4,14,6,3);g.fill();
+  // pedals
+  const pa=moving?step*2.4:0.6;
+  g.strokeStyle='#94a3b8';g.lineWidth=3;
+  g.beginPath();g.moveTo(bbX+Math.cos(pa)*7,bbY+Math.sin(pa)*7);g.lineTo(bbX-Math.cos(pa)*7,bbY-Math.sin(pa)*7);g.stroke();
+  g.fillStyle='#334155';
+  g.fillRect(bbX+Math.cos(pa)*7-3,bbY+Math.sin(pa)*7-2,6,4);
+  g.fillRect(bbX-Math.cos(pa)*7-3,bbY-Math.sin(pa)*7-2,6,4);
+  g.restore();
+}
+function drawRider(x,y,face,step,moving,hopZ,lean,pedaling){
+  const by=y-hopZ;
+  g.save();g.translate(x,by);g.rotate((lean||0)*0.5);
+  const dir=face;
+  const bob=moving?Math.abs(Math.sin(step*2.4))*2:Math.sin(G.t*2)*1;
+  // legs pedaling
+  const pa=pedaling?step*2.4:0.6;
+  g.strokeStyle='#3b5bd6';g.lineWidth=7;g.lineCap='round';
+  const hipY=-30;
+  g.beginPath();g.moveTo(-2*dir,hipY);g.lineTo(Math.cos(pa)*10*dir,hipY+16+Math.sin(pa)*6);g.stroke();
+  g.beginPath();g.moveTo(-2*dir,hipY);g.lineTo(Math.cos(pa+Math.PI)*10*dir,hipY+16+Math.sin(pa+Math.PI)*6);g.stroke();
+  // torso
+  g.fillStyle='#e8a34c';rr(-9*dir-8,hipY-26,18,28,8);g.fill();
+  // arms to handlebar
+  g.strokeStyle='#f2c89b';g.lineWidth=6;
+  g.beginPath();g.moveTo(4*dir,hipY-20);g.lineTo(16*dir,-38+bob*0.3);g.stroke();
+  // head
+  g.fillStyle='#f2c89b';g.beginPath();g.arc(2*dir,hipY-38+bob*0.4,10,0,TAU);g.fill();
+  g.fillStyle='#222';g.beginPath();g.arc((2*dir)+4*dir,hipY-38+bob*0.4,2,0,TAU);g.fill();
+  // cap
+  g.fillStyle='#c94f4f';g.beginPath();g.arc(2*dir,hipY-40+bob*0.4,10,Math.PI,TAU);g.fill();
+  g.fillRect((2*dir)-10,hipY-44+bob*0.4,20,5);
+  g.restore();
+}
+
+/* ================= screens ================= */
+function drawSky(dt,fast){
+  const dayF=(G.t*0.01)%1, night=dayF>0.6;
+  const grd=g.createLinearGradient(0,0,0,H);
+  if(night){grd.addColorStop(0,'#0b1030');grd.addColorStop(1,'#2a3566');}
+  else{grd.addColorStop(0,'#6ec6f0');grd.addColorStop(1,'#c0e8ff');}
+  g.fillStyle=grd;g.fillRect(0,0,W,H);
+  if(night){g.fillStyle='#f4f1d8';g.beginPath();g.arc(W-100,70,26,0,TAU);g.fill();
+    g.fillStyle='#fff';for(let i=0;i<36;i++){g.globalAlpha=0.3+0.7*Math.abs(Math.sin(G.t*2+i));g.fillRect((i*173)%W,(i*97)%260,2,2);}g.globalAlpha=1;}
+  else{g.fillStyle='#ffef9e';g.beginPath();g.arc(W-100,70,30,0,TAU);g.fill();
+    g.fillStyle='rgba(255,240,180,0.35)';g.beginPath();g.arc(W-100,70,46,0,TAU);g.fill();}
+  g.fillStyle=night?'rgba(60,70,120,0.7)':'rgba(255,255,255,0.85)';
+  const sp=fast?3:1;
+  for(let i=0;i<4;i++){const cx=((G.t*14*sp*(i%2+1)+i*300)%(W+260))-130,cy=46+i*34;
+    g.beginPath();g.ellipse(cx,cy,52,15,0,0,TAU);g.ellipse(cx+32,cy+4,36,12,0,0,TAU);g.fill();}
+  // far hills parallax
+  g.fillStyle=night?'#1c2a4a':'#7ab88a';
+  g.beginPath();g.moveTo(0,H*0.72);
+  for(let x=0;x<=W;x+=20){const wx=x+G.camX*0.2;g.lineTo(x,H*0.72+Math.sin(wx*0.006)*26-20);}
+  g.lineTo(W,H);g.lineTo(0,H);g.fill();
+}
+function scrTitle(dt){
+  drawSky(dt,false);
+  // ground strip with demo bike
+  g.fillStyle='#5da24f';g.fillRect(0,H*0.78,W,H*0.22);
+  g.fillStyle='#4a8a40';for(let x=0;x<W;x+=46)g.fillRect(x,H*0.78+((x*7)%40),18,7);
+  const bx=W/2+Math.sin(G.t*0.8)*30;
+  drawBike(bx,H*0.78,1,G.t*6,true,BIKES[0],Math.abs(Math.sin(G.t*2.2))*16,-0.06);
+  drawRider(bx,H*0.78,1,G.t*6,true,Math.abs(Math.sin(G.t*2.2))*16,-0.06,true);
+  txt('🚲',W/2-190,110+Math.sin(G.t*1.4)*8,64,'#fff','center');
+  txt('PUDDLEWICK ISLE',W/2,200,52,'#fff','center',true);
+  txt('BIKE BLITZ',W/2,252,40,'#ffd97a','center',true);
+  txt('starring the bike from Puddlewick Isle!',W/2,292,17,'#eaf6ff','center');
+  if(Math.sin(G.t*4)>-0.2)txt('tap anywhere to ride!',W/2,420,22,'#fff','center',true);
+  txt('v1.0 • progress saves automatically',W/2,H-24,14,'rgba(255,255,255,0.6)','center');
+  if(G.clicked){G.screen='menu';G.clicked=false;}
+}
+function scrMenu(){
+  drawSky(0.016,false);
+  g.fillStyle='#5da24f';g.fillRect(0,H*0.78,W,H*0.22);
+  txt('🚲 BIKE BLITZ',W/2,52,34,'#fff','center',true);
+  coinHUD();
+  const bx=W/2-150,bw=300,bh=54;let y=112;
+  if(button(bx,y,bw,bh,'🌈 Joy Ride',{fs:22})){G.mode='joy';G.screen='bikes';}
+  y+=68;
+  if(button(bx,y,bw,bh,'⏱ Time Trial',{fs:22})){G.mode='trial';G.screen='bikes';}
+  y+=68;
+  if(button(bx,y,bw,bh,'✨ Trick Park',{fs:22})){G.mode='trick';G.screen='bikes';}
+  y+=68;
+  if(button(bx,y,bw,bh,'🛒 Bike Shop',{fs:22})){G.screen='shop';}
+  y+=68;
+  if(button(bx,y,bw,bh,'❓ How to Play',{fs:22,color:'#9b7ede',color2:'#6a4ab0'})){G.screen='howto';G.howtoPage=0;}
+  txt('Pedal • Hop • Shred!',W/2,H-30,16,'#eaf6ff','center');
+}
+function scrBikes(){
+  drawSky(0.016,false);
+  g.fillStyle='#5da24f';g.fillRect(0,H*0.78,W,H*0.22);
+  txt('Choose your bike',W/2,48,30,'#fff','center',true);
+  if(backBtn()){G.screen='menu';return;}
+  BIKES.forEach((bk,i)=>{
+    const x=240+i*480,y=300,owned=SV.owned.includes(bk.id);
+    const hov=dist(G.mx,G.my,x,y)<150;
+    g.save();
+    rr(x-200,y-130,400,270,18);g.fillStyle=hov?'#164a6e':'#0d2f4a';g.globalAlpha=0.94;g.fill();g.globalAlpha=1;
+    g.lineWidth=G.bikeIdx===i?5:2;g.strokeStyle=G.bikeIdx===i?'#ffd97a':'#3d7ca8';g.stroke();
+    if(!owned){g.globalAlpha=0.35;}
+    drawBike(x,y+40,1,G.t*5,true,bk,0,0);
+    drawRider(x,y+40,1,G.t*5,true,0,0,true);
+    g.globalAlpha=1;
+    txt(bk.name,x,y+100,22,'#fff','center',true);
+    txt(bk.desc,x,y+126,14,'#bfe0f5','center');
+    if(!owned)txt('🔒 🪙 '+bk.cost,x,y-100,20,'#ffd97a','center',true);
+    g.restore();
+    if(hov&&G.clicked){
+      if(owned){G.bikeIdx=i;AU.sfx('click');}
+      else if(SV.coins>=bk.cost){SV.coins-=bk.cost;SV.owned.push(bk.id);G.bikeIdx=i;save();AU.sfx('unlock');toast('Unlocked '+bk.name+'!');}
+      else{AU.sfx('error');toast('Need '+bk.cost+' 🪙!');}
+      G.clicked=false;
+    }
+  });
+  if(G.mode==='trial'){
+    txt('Pick a distance:',W/2,452,17,'#eaf6ff','center');
+    TRACKS.forEach((tr,i)=>{
+      const best=SV.trialBest[i];
+      if(button(180+i*220,472,200,44,tr.name+(best?' • '+best.toFixed(1)+'s':''),{fs:15})){}
+    });
+    // simpler: tapping a track starts
+    TRACKS.forEach((tr,i)=>{
+      const x=180+i*220;
+      if(G.mx>=x&&G.mx<=x+200&&G.my>=472&&G.my<=516&&G.clicked){G.track=i;G.clicked=false;beginRide();}
+    });
+  }else{
+    if(button(W/2-150,H-96,300,54,'Start Riding!',{fs:22,color:'#5fd35f',color2:'#2e8b3a'}))beginRide();
+  }
+  if(G.msg&&G.msgT>0)txt(G.msg,W/2,H-40,18,'#ffd97a','center',true);
+}
+function scrShop(){
+  drawSky(0.016,false);g.fillStyle='#5da24f';g.fillRect(0,H*0.78,W,H*0.22);
+  txt('🛒 Bike Shop',W/2,44,30,'#fff','center',true);coinHUD();
+  if(backBtn()){G.screen='menu';return;}
+  BIKES.forEach((bk,i)=>{
+    const y=120+i*120,owned=SV.owned.includes(bk.id),sel=SV.bike===i;
+    const hov=G.mx>=140&&G.mx<=W-140&&G.my>=y&&G.my<=y+100;
+    g.save();rr(140,y,W-280,100,14);g.fillStyle=hov?'#164a6e':'#0d2f4a';g.globalAlpha=0.94;g.fill();g.globalAlpha=1;
+    g.lineWidth=sel?4:2;g.strokeStyle=sel?'#5fd35f':'#3d7ca8';g.stroke();
+    drawBike(230,y+62,1,G.t*4,true,bk,0,0);
+    txt(bk.name,320,y+30,21,'#fff','left',true);
+    txt(bk.desc,320,y+58,14,'#bfe0f5','left');
+    txt('⚡'+bk.max+'  🦘'+bk.hop,320,y+82,14,'#ffd97a','left');
+    if(sel)txt('✔ SELECTED',W-170,y+50,17,'#5fd35f','right',true);
+    else if(owned)txt('Tap to select',W-170,y+50,15,'#bfe0f5','right');
+    else txt('🪙 '+bk.cost,W-170,y+50,19,'#ffd97a','right',true);
+    g.restore();
+    if(hov&&G.clicked){
+      if(owned){SV.bike=i;G.bikeIdx=i;save();AU.sfx('click');}
+      else if(SV.coins>=bk.cost){SV.coins-=bk.cost;SV.owned.push(bk.id);SV.bike=i;G.bikeIdx=i;save();AU.sfx('unlock');toast('Unlocked '+bk.name+'!');}
+      else{AU.sfx('error');toast('Need '+bk.cost+' 🪙!');}
+      G.clicked=false;
+    }
+  });
+  txt('💡 Ride to earn coins: distance + stars + tricks.',W/2,H-30,15,'#eaf6ff','center');
+  if(G.msg&&G.msgT>0)txt(G.msg,W/2,H-58,17,'#ffd97a','center',true);
+}
+const HOWTO2=[
+ ['🚲 Pedal & Brake','HOLD the big ▶ PEDAL button to pedal (or hold the right side of the screen / → key). Hold ◀ BRAKE (or left side / ←) to slow down. Uphills slow you, downhills speed you up!'],
+ ['🦘 Hop','Tap the HOP button (or TAP the screen / SPACE) to hop! Clear rocks, logs and water pools. Like the bike in Puddlewick Isle, a good hop sails over anything.'],
+ ['⭐ Stars','Grab stars for points and coins. They love hiding over ramps…'],
+['🔔 Bells','Golden bells float over the trail too — ring one for a SPEED BOOST, +50 points and +5 coins!'],
+ ['✨ Tricks','Big air off ramps = points! Land on a downslope for a Smooth Landing bonus. Chain them for a combo multiplier.'],
+ ['💥 Crashes','Smack an obstacle and you\'ll eat dirt — you lose speed but keep going. Water without a hop = splash slowdown.'],
+ ['🏁 Modes','Joy Ride: go as far as you can. Time Trial: beat the clock over 3 distances. Trick Park: 2 minutes, max style points!'],
+['🏝️ Arcade Bonus','Playing inside Puddlewick Isle? Your first Bike Blitz ride each day earns +50 Tide Points back on the island!'],
+['🛒 Bike Shop','Coins from distance, stars and tricks buy faster, higher-hopping bikes in the Bike Shop — tap an owned bike there to make it yours on the trail!'],
+['🪙 Coins','Your ride pays out at the finish: 1 coin for every 10 m ridden, 2 coins per star, and 1 coin per 20 trick points — spend them in the Bike Shop!'],
+['🏆 Records','Your best Joy Ride distance and Time Trial times are saved and shown on the mode buttons — beat one and the finish screen flags a NEW BEST!'],
+['🚪 Quitting Early','Need to stop mid-ride? Tap Quit (top-right) — you still bank coins for your distance, stars and tricks, and a Joy Ride best distance still counts!'],
+['💾 Auto-Save','Your coins, owned bikes and best records save automatically as you play — close the game any time and your progress will be waiting when you come back!'],
+['🚲 Pick Your Ride','Each bike rides differently: the Cruiser is steady and reliable, while the Stunt Hopper (800 coins) sprints faster and hops much higher — pick the ride that fits the trail!'],
+['⏱️ Time Trial Tracks','Time Trial runs three set courses: Meadow Sprint (800 m), Riverside Run (1,600 m) and the Isle Marathon (3,200 m) — your best time on each course is saved!'],
+['🔥 Combos','Chain tricks quickly to build a combo — each link adds +25% to your trick points, but the chain fades after about 3 seconds without a new trick!'],
+];
+function scrHowto(){
+  drawSky(0.016,false);g.fillStyle='#5da24f';g.fillRect(0,H*0.78,W,H*0.22);
+  txt('❓ How to Play',W/2,44,30,'#fff','center',true);
+  if(backBtn()){G.screen='menu';return;}
+  panel(90,90,W-180,H-200);
+  const p=HOWTO2[G.howtoPage];
+  txt(p[0],W/2,140,26,'#ffd97a','center',true);
+  g.save();g.font='19px Trebuchet MS';g.textAlign='center';g.fillStyle='#fff';
+  const words=p[1].split(' ');let line='',yy=200;
+  words.forEach(w=>{const t=line+' '+w;if(g.measureText(t).width>W-300){g.fillText(line,W/2,yy);yy+=34;line=w;}else line=t;});
+  g.fillText(line,W/2,yy);g.restore();
+  txt((G.howtoPage+1)+' / '+HOWTO2.length,W/2,H-140,16,'#bfe0f5','center');
+  if(G.howtoPage>0&&button(120,H-110,140,48,'← Prev',{fs:18}))G.howtoPage--;
+  if(G.howtoPage<HOWTO2.length-1&&button(W-260,H-110,140,48,'Next →',{fs:18}))G.howtoPage++;
+  if(G.howtoPage===HOWTO2.length-1&&button(W/2-110,H-110,220,48,"Let's Ride!",{fs:20,color:'#5fd35f',color2:'#2e8b3a'}))G.screen='menu';
+}
+</script>
+<script>
+'use strict';
+/* ================= ride setup ================= */
+function beginRide(){
+  const bike=BIKES[SV.bike];
+  G.bike=bike;
+  G.terrainSeed=Math.floor(Math.random()*1e9);
+  G.x=0;G.vx=0;G.vy=0;G.hopZ=0;G.airT=0;G.step=0;G.face=1;
+  G.score=0;G.stars=0;G.dist=0;G.trickScore=0;G.trickT=G.mode==='trick'?120:0;
+  G.crashT=0;G.flashT=0;G.combo=0;G.comboT=0;G.landedTrick=false;
+  G.camX=0;G.finishT=0;G.riding=false;G.countT=0;
+  G.items=[];G.obs=[];G.cheer=[];G.parts=[];G.floats=[];
+  G.trialTime=0;
+  // generate items & obstacles ahead
+  const r=mulberry(G.terrainSeed^0x9e37);
+  const maxX=G.mode==='trial'?TRACKS[G.track].m*PX_PER_M+800:200000;
+  // stars: arcs over ramps + lines
+  for(let x=500;x<maxX;x+=rfloat(r,260,520)){
+    const y=terrainY(x,G.terrainSeed);
+    if(r()<0.45){ // arc of 5 over this spot (ramps nearby)
+      for(let k=0;k<5;k++)G.items.push({x:x+k*36-72,y:y-70-Math.sin(k/4*Math.PI)*46,t:'star',got:false,ph:r()*TAU});
+    }else{ // line of 3
+      for(let k=0;k<3;k++)G.items.push({x:x+k*40,y:y-56,t:'star',got:false,ph:r()*TAU});
+    }
+    if(r()<0.3)G.items.push({x:x+rfloat(r,-60,60),y:y-60,t:'bell',got:false,ph:r()*TAU});
+  }
+  // obstacles
+  for(let x=700;x<maxX;x+=rfloat(r,420,900)){
+    const y=terrainY(x,G.terrainSeed),kind=pick(r,['rock','rock','log','water','water']);
+    const w=kind==='water'?rfloat(r,90,150):rfloat(r,26,40);
+    G.obs.push({x,y,kind,w,h:kind==='water'?0:kind==='log'?26:34,hit:false});
+  }
+  // villagers cheering
+  for(let x=900;x<maxX;x+=rfloat(r,1400,2600)){
+    const v=pick(r,VILLAGERS);
+    G.cheer.push({x,y:terrainY(x,G.terrainSeed),v,cheered:false,wt:r()*TAU});
+  }
+  G.screen='ride';
+  toast(G.mode==='trial'?'Reach the 🏁 flag!':G.mode==='trick'?'2 minutes — style it up!':'Pedal! Grab ⭐!');
+}
+function addFloat(x,y,s,col){G.floats.push({x,y,txt:s,col:col||'#fff',t:1.8});}
+function burst(x,y,n,col,spd){for(let i=0;i<n;i++){const a=Math.random()*TAU,s=rfloat(Math.random,0.4,1)*(spd||140);G.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-60,t:rfloat(Math.random,0.4,0.9),col});}}
+
+/* ================= ride update ================= */
+function rideUpdate(dt){
+  const bike=G.bike;
+  // countdown
+  if(!G.go){
+    G.countT+=dt;
+    const n=3-Math.floor(G.countT);
+    if(n!==G.lastCount&&n>0){G.lastCount=n;AU.sfx('count');}
+    if(G.countT>=3){G.go=true;G.riding=true;AU.sfx('go');toast('GO!');}
+    return;
+  }
+  if(G.finishT>0){ // rolling past finish
+    G.finishT-=dt;
+    G.vx=lerp(G.vx,60,dt*2);
+    if(G.finishT<=0){endRide(true);return;}
+  }
+  const pedaling=(keys.ArrowRight||keys.KeyD||(G.down&&G.px>W/2))&&G.crashT<=0;
+  const braking=(keys.ArrowLeft||keys.KeyA||(G.down&&G.px<=W/2))&&G.crashT<=0;
+  const slope=terrainSlope(G.x,G.terrainSeed);
+  // accel
+  if(pedaling)G.vx+=bike.accel*dt;
+  if(braking)G.vx-=300*dt;
+  G.vx-=G.vx*0.25*dt;              // drag
+  G.vx-=clamp(slope,-0.3,0.3)*520*dt; // hills (capped: a pedaling bike can always climb)
+  G.vx=clamp(G.vx,0,bike.max*(G.flashT>0?1.25:1));
+  if(pedaling&&Math.random()<dt*10)AU.sfx('pedal');
+  // hop
+  const wantHop=(keys.Space||keys.ArrowUp||keys.KeyW||G.hopTap)&&G.hopZ<=0.5&&G.crashT<=0;
+  if(wantHop){
+    G.vy=-bike.hop;G.airT=0;AU.sfx('hop');
+    burst(G.x-140,terrainY(G.x,G.terrainSeed),8,'#cfe8d8',80);
+  }
+  G.hopTap=false;
+  // vertical
+  const gy=terrainY(G.x,G.terrainSeed);
+  if(G.hopZ>0||G.vy<0){
+    G.vy+=1500*dt;G.hopZ-=G.vy*dt;G.airT+=dt;
+    if(G.hopZ<=0){ // landing
+      G.hopZ=0;
+      const hard=G.vy>700;
+      if(G.airT>0.55){
+        const pts=Math.round(20+G.airT*60);
+        trick(pts,G.airT>1?'BIG AIR!':'Air!');
+      }
+      // smooth landing bonus on downslope
+      if(slope>0.12&&G.airT>0.3){trick(15,'Smooth landing!');}
+      if(hard){burst(G.x-140,gy,10,'#9a8a6a',100);AU.sfx('land');}
+      else AU.sfx('land');
+      G.vy=0;G.airT=0;
+    }
+  }
+  G.y=gy;
+  // ramp launch: hitting a crest at speed sends you flying!
+  if(!(G.hopZ>0||G.vy<0)){
+    if(G.prevSlope!==undefined&&G.prevSlope<-0.06&&slope>0.06&&G.vx>190&&G.crashT<=0){
+      G.vy=-G.vx*0.42;G.hopZ=0.5;G.airT=0;
+      AU.sfx('hop');addFloat(G.x-140,G.y-90,'WHEEE!','#fff');
+      burst(G.x-140,gy,8,'#cfe8d8',90);
+    }
+    G.prevSlope=slope;
+  }
+  G.x+=G.vx*dt;
+  G.dist=Math.max(G.dist,G.x/PX_PER_M);
+  G.step+=dt*(2+G.vx/40);
+  G.camX=lerp(G.camX,G.x-260,clamp(dt*5,0,1));
+  // combo decay
+  if(G.comboT>0){G.comboT-=dt;if(G.comboT<=0)G.combo=0;}
+  // crash recovery
+  if(G.crashT>0)G.crashT-=dt;
+  if(G.flashT>0)G.flashT-=dt;
+  // items
+  const bx=G.x-140;
+  for(const it of G.items){
+    if(it.got)continue;
+    if(Math.abs(it.x-G.x)<44&&Math.abs((it.y)-(G.y-G.hopZ-40))<52){
+      it.got=true;G.stars++;
+      const gain=it.t==='bell'?50:10;
+      const pts=gain*(1+G.combo*0.25);
+      G.score+=Math.round(pts);G.trickScore+=it.t==='bell'?50:0;
+      SV.coins+=it.t==='bell'?5:1;
+      addFloat(it.x,it.y-20,'+'+Math.round(pts),'#ffd97a');
+      burst(it.x,it.y,10,it.t==='bell'?'#ffd97a':'#fff27a',110);
+      AU.sfx(it.t==='bell'?'bell':'star');
+      if(it.t==='bell'){G.flashT=1.2;addFloat(bx,G.y-90,'SPEED BOOST!','#5fd35f');AU.sfx('boost');}
+    }
+  }
+  // obstacles
+  for(const o of G.obs){
+    if(o.hit||Math.abs(o.x-G.x)>46)continue;
+    const bikeBottom=G.hopZ;
+    if(o.kind==='water'){
+      if(bikeBottom<8){ // splash!
+        G.vx*=0.45;burst(G.x-140,G.y,18,'#7ec8f7',150);AU.sfx('land');
+        addFloat(G.x-140,G.y-70,'SPLASH!', '#7ec8f7');o.hit=true;
+      }
+    }else if(bikeBottom<o.h){
+      // CRASH
+      o.hit=true;G.crashT=1.1;G.flashT=0;
+      G.vx*=0.25;G.combo=0;
+      AU.sfx('crash');G.flashRed=0.35;
+      burst(G.x-140,G.y-40,20,'#ff6b6b',170);
+      addFloat(G.x-140,G.y-80,'OUCH!', '#ff6b6b');
+    }
+  }
+  // villagers cheer
+  for(const c of G.cheer){
+    if(!c.cheered&&G.x>c.x-60){c.cheered=true;addFloat(c.x-140,c.y-90,c.v.cheer,'#fff');AU.sfx('bell');}
+  }
+  // mode timers / finish
+  if(G.mode==='trick'){
+    G.trickT-=dt;
+    if(G.trickT<=0){endRide(true);return;}
+  }
+  if(G.mode==='trial'){
+    G.trialTime+=dt;
+    const fin=TRACKS[G.track].m*PX_PER_M;
+    if(G.x>=fin&&G.finishT<=0){
+      G.finishT=2.5;AU.sfx('win');
+      burst(G.x-140,G.y-60,40,'#ffd97a',220);
+    }
+  }
+  if(G.msgT>0)G.msgT-=dt;
+  // fx
+  for(let i=G.parts.length-1;i>=0;i--){const p=G.parts[i];p.t-=dt;if(p.t<=0){G.parts.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=400*dt;}
+  for(let i=G.floats.length-1;i>=0;i--){const f=G.floats[i];f.t-=dt;f.y-=30*dt;if(f.t<=0)G.floats.splice(i,1);}
+  if(G.flashRed>0)G.flashRed-=dt;
+}
+function trick(pts,label){
+  G.combo++;G.comboT=3;
+  const total=Math.round(pts*(1+(G.combo-1)*0.25));
+  G.score+=total;G.trickScore+=total;
+  SV.tricks++;
+  addFloat(G.x-140,G.y-G.hopZ-100,label+' +'+total,'#c07bff');
+  AU.sfx('trick');
+}
+
+/* ================= ride render ================= */
+function drawTerrain(){
+  const seed=G.terrainSeed;
+  // ground fill
+  g.beginPath();g.moveTo(0,H);
+  for(let sx=0;sx<=W;sx+=12){
+    const wx=sx+G.camX;
+    g.lineTo(sx,terrainY(wx,seed));
+  }
+  g.lineTo(W,H);g.closePath();
+  const grd=g.createLinearGradient(0,H*0.5,0,H);
+  grd.addColorStop(0,'#6fbf5f');grd.addColorStop(1,'#3d7a35');
+  g.fillStyle=grd;g.fill();
+  // grass tufts
+  g.strokeStyle='#2f6b28';g.lineWidth=2;
+  for(let sx=0;sx<W;sx+=34){
+    const wx=Math.floor((sx+G.camX)/34)*34;
+    const wy=terrainY(wx,seed);
+    const h=6+((wx*13)%9);
+    g.beginPath();g.moveTo(sx,wy);g.lineTo(sx-3,wy-h);g.moveTo(sx,wy);g.lineTo(sx+3,wy-h-2);g.stroke();
+  }
+  // flowers
+  for(let sx=20;sx<W;sx+=130){
+    const wx=Math.floor((sx+G.camX)/130)*130;
+    if((wx*7)%3===0){const wy=terrainY(wx,seed);
+      g.fillStyle=['#ff6b9d','#ffd93d','#fff'][Math.abs(wx)%3];
+      g.beginPath();g.arc(sx,wy-6,3.4,0,TAU);g.fill();}
+  }
+}
+function drawItems(){
+  for(const it of G.items){
+    if(it.got||it.x<G.camX-60||it.x>G.camX+W+60)continue;
+    const sx=it.x-G.camX, sy=it.y+Math.sin(G.t*3+it.ph)*5;
+    if(it.t==='bell'){
+      g.save();g.translate(sx,sy);g.rotate(Math.sin(G.t*4+it.ph)*0.2);
+      g.fillStyle='#ffd97a';g.beginPath();g.arc(0,0,11,Math.PI,TAU);g.fill();
+      g.fillRect(-11,-2,22,4);g.fillStyle='#8a6d1f';g.beginPath();g.arc(0,6,3,0,TAU);g.fill();
+      g.restore();
+    }else{
+      g.save();g.translate(sx,sy);g.rotate(G.t*2+it.ph);
+      g.fillStyle='#fff27a';g.strokeStyle='#e0a800';g.lineWidth=2;
+      g.beginPath();
+      for(let k=0;k<5;k++){const a=k/5*TAU-Math.PI/2,a2=a+TAU/10;
+        g.lineTo(Math.cos(a)*11,Math.sin(a)*11);g.lineTo(Math.cos(a2)*4.6,Math.sin(a2)*4.6);}
+      g.closePath();g.fill();g.stroke();g.restore();
+    }
+  }
+}
+function drawObs(){
+  for(const o of G.obs){
+    if(o.x<G.camX-80||o.x>G.camX+W+80)continue;
+    const sx=o.x-G.camX, sy=o.y;
+    if(o.kind==='water'){
+      g.save();g.fillStyle='rgba(80,170,230,0.85)';
+      g.beginPath();g.ellipse(sx,sy+2,o.w/2,10,0,0,TAU);g.fill();
+      g.strokeStyle='rgba(255,255,255,0.5)';g.lineWidth=2;
+      g.beginPath();g.ellipse(sx+Math.sin(G.t*5)*6,sy+2,o.w/2-12,6,0,0,TAU);g.stroke();
+      g.restore();
+    }else if(o.kind==='log'){
+      g.save();g.translate(sx,sy-13);g.rotate(0.04);
+      g.fillStyle='#7a5230';rr(-o.w/2,0,o.w,26,10);g.fill();
+      g.fillStyle='#a07a48';g.beginPath();g.ellipse(o.w/2,13,7,13,0,0,TAU);g.fill();
+      g.strokeStyle='#5e3f22';g.lineWidth=2;
+      g.beginPath();g.ellipse(o.w/2,13,4,8,0,0,TAU);g.stroke();g.restore();
+    }else{ // rock
+      g.save();g.translate(sx,sy);
+      g.fillStyle=o.hit?'#8a8a8a':'#7d7d8d';
+      g.beginPath();g.moveTo(-o.w/2,0);g.lineTo(-o.w/4,-o.h);g.lineTo(o.w/4,-o.h-6);g.lineTo(o.w/2,0);g.closePath();g.fill();
+      g.fillStyle='rgba(255,255,255,0.25)';
+      g.beginPath();g.moveTo(-o.w/4,-o.h);g.lineTo(o.w/4,-o.h-6);g.lineTo(0,-o.h*0.4);g.closePath();g.fill();
+      g.restore();
+    }
+  }
+}
+function drawCheer(){
+  for(const c of G.cheer){
+    if(c.x<G.camX-60||c.x>G.camX+W+60)continue;
+    const sx=c.x-G.camX, sy=c.y;
+    const wave=c.cheered?Math.sin(G.t*10)*4:Math.sin(G.t*2+c.wt)*2;
+    txt(c.v.e,sx,sy-34+wave,34,'#fff','center');
+    if(c.cheered&&G.t%1<0.9)txt('📣',sx+24,sy-58+Math.sin(G.t*8)*3,20,'#fff','center');
+  }
+}
+function drawFinish(){
+  if(G.mode!=='trial')return;
+  const fx=TRACKS[G.track].m*PX_PER_M-G.camX;
+  if(fx<-40||fx>W+40)return;
+  const fy=terrainY(TRACKS[G.track].m*PX_PER_M,G.terrainSeed);
+  g.save();
+  g.fillStyle='#8a6d3b';g.fillRect(fx-4,fy-150,8,150);
+  for(let i=0;i<5;i++)for(let j=0;j<3;j++){
+    g.fillStyle=(i+j)%2?'#111':'#fff';g.fillRect(fx+4+i*14,fy-150+j*14,14,14);
+  }
+  g.restore();
+}
+function scrRide(dt){
+  drawSky(dt,true);
+  drawTerrain();drawFinish();drawCheer();drawObs();drawItems();
+  // bike screen pos: fixed at x=300 world->screen via camX... bike world x = G.x, screen = G.x - camX
+  // we set camX = G.x-260 so bike sits at screen x=260. Use 260-140=120? Keep simple:
+  const scrX=G.x-G.camX, scrY=G.y;
+  const slope=terrainSlope(G.x,G.terrainSeed);
+  const lean=clamp(slope*1.2,-0.4,0.4)+(G.hopZ>0?-0.12:0);
+  const moving=G.vx>8;
+  drawBike(scrX,scrY,G.face,G.step,moving,G.bike,G.hopZ,lean);
+  drawRider(scrX,scrY,G.face,G.step,moving,G.hopZ,lean,moving);
+  // fx
+  g.save();
+  G.parts.forEach(p=>{const sx=p.x-G.camX;g.globalAlpha=clamp(p.t*2,0,1);g.fillStyle=p.col;g.fillRect(sx-3,p.y-3,6,6);});
+  g.globalAlpha=1;
+  G.floats.forEach(f=>{const sx=f.x-G.camX;g.globalAlpha=clamp(f.t,0,1);txt(f.txt,sx,f.y,19,f.col,'center',true);});
+  g.globalAlpha=1;g.restore();
+  // speed lines when fast
+  if(G.vx>240){g.save();g.strokeStyle='rgba(255,255,255,0.35)';g.lineWidth=3;
+    for(let i=0;i<6;i++){const yy=scrY-90+((i*53+G.t*900)%160);g.beginPath();g.moveTo(scrX-70,yy);g.lineTo(scrX-130,yy);g.stroke();}
+    g.restore();}
+  // crash flash
+  if(G.flashRed>0){g.save();g.globalAlpha=G.flashRed*1.4;g.fillStyle='#ff3b3b';g.fillRect(0,0,W,H);g.restore();}
+  // HUD
+  coinHUD();
+  g.save();rr(14,10,210,36,18);g.fillStyle='rgba(0,0,0,0.45)';g.fill();
+  txt('🚲 '+Math.round(G.vx/8)+' km/h',24,29,19,'#fff','left',true);g.restore();
+  g.save();rr(14,52,210,36,18);g.fillStyle='rgba(0,0,0,0.45)';g.fill();
+  txt('📏 '+Math.floor(G.dist)+' m',24,71,19,'#fff','left',true);g.restore();
+  if(G.mode==='trick'){
+    const tt=Math.ceil(G.trickT);
+    txt('⏱ '+tt+'s   ✨ '+G.score,W/2,29,22,'#fff','center',true);
+  }else if(G.mode==='trial'){
+    txt('⏱ '+G.trialTime.toFixed(1)+'s',W/2,29,22,'#fff','center',true);
+    const left=Math.max(0,TRACKS[G.track].m-Math.floor(G.dist));
+    txt('🏁 '+left+' m to go',W/2,58,17,'#ffd97a','center',true);
+  }else{
+    txt('⭐ '+G.score+'  •  ✨ '+G.stars,W/2,29,22,'#fff','center',true);
+    if(SV.best.dist>0)txt('best '+Math.floor(SV.best.dist)+' m',W/2,58,15,'#bfe0f5','center');
+  }
+  if(G.combo>1)txt('🔥 x'+G.combo+' COMBO!',W/2,92,20,'#ffb02e','center',true);
+  // countdown
+  if(!G.go){
+    const n=Math.ceil(3-G.countT);
+    txt(n>0?n:'GO!',W/2,H/2-40,84,'#fff','center',true);
+    txt(G.mode==='trial'?'Reach the flag!':G.mode==='trick'?'Score tricks for 2 min!':'How far can you ride?',W/2,H/2+40,20,'#fff','center');
+  }
+  // touch controls hint
+  if(!G.go||G.t<2)txt('HOLD ▶ PEDAL to ride • ◀ BRAKE slows • HOP button jumps',W/2,H-24,15,'rgba(255,255,255,0.85)','center');
+  if(G.msg&&G.msgT>0){G.msgT-=dt;txt(G.msg,W/2,H-52,18,'#ffd97a','center',true);}
+  // pause / quit
+  if(button(W-104,10,90,36,'Quit',{fs:15})){quitRide();}
+  rideUpdate(dt);
+}
+function quitRide(){
+  // bank rewards
+  const earned=Math.floor(G.dist/10)+G.stars*2+Math.floor(G.trickScore/20);
+  if(earned>0){SV.coins+=earned;}
+  if(G.mode==='joy'&&G.dist>SV.best.dist)SV.best.dist=Math.floor(G.dist);
+  save();G.screen='menu';G.mode='joy';
+}
+function endRide(done){
+  const earned=Math.floor(G.dist/10)+G.stars*2+Math.floor(G.trickScore/20);
+  SV.coins+=earned;
+  let newBest=false;
+  if(G.mode==='joy'&&G.dist>SV.best.dist){SV.best.dist=Math.floor(G.dist);newBest=true;}
+  if(G.mode==='trial'){
+    const pb=SV.trialBest[G.track];
+    if(!pb||G.trialTime<pb){SV.trialBest[G.track]=G.trialTime;newBest=true;}
+  }
+  save();
+  G.results2={earned,newBest,dist:Math.floor(G.dist),stars:G.stars,score:G.score,time:G.trialTime,mode:G.mode,track:G.track};
+  try{parent.postMessage({pw:'bike',mode:G.mode,score:G.score|0,dist:Math.floor(G.dist),time:G.trialTime||0,done:!!done},'*')}catch(_){}
+  G.screen='results2';
+  if(newBest)AU.sfx('win');else AU.sfx('coin');
+}
+function scrResults2(){
+  drawSky(0.016,true);
+  g.fillStyle='#5da24f';g.fillRect(0,H*0.78,W,H*0.22);
+  const R=G.results2;
+  const title=R.mode==='trial'?'⏱ Time Trial Complete!':R.mode==='trick'?'✨ Trick Park Results':'🌈 Ride Complete!';
+  txt(title,W/2,70,32,'#fff','center',true);
+  panel(W/2-240,110,480,250);
+  let y=160;
+  const row=(l,v)=>{txt(l,W/2-200,y,19,'#bfe0f5','left');txt(v,W/2+200,y,21,'#fff','right',true);y+=44;};
+  row('Distance',R.dist+' m');
+  row('Stars', '⭐ '+R.stars);
+  if(R.mode==='trick')row('Trick score','✨ '+R.score);
+  if(R.mode==='trial')row('Time',R.time.toFixed(1)+' s');
+  row('Coins earned','+'+R.earned+' 🪙');
+  if(R.newBest)txt('🎉 NEW BEST! 🎉',W/2,352,22,'#ffd97a','center',true);
+  if(window.parent!==window)txt('🏝 Playing inside Puddlewick Isle — your daily bonus (and a trophy, if you earned it!) land on your island.',W/2,H-112,14,'#ffe9a8','center');
+  if(button(W/2-150,H-90,300,54,'Back to Menu',{fs:20})){G.screen='menu';G.mode='joy';}
+}
+</script>
+<script>
+'use strict';
+/* ================= tap-to-hop ================= */
+G.pressT=0;
+window.addEventListener('pointerdown',()=>{G.pressT=G.t;});
+window.addEventListener('pointerup',()=>{
+  if(G.screen==='ride'&&G.go&&G.finishT<=0&&G.t-G.pressT<0.28)G.hopTap=true;
+});
+window.addEventListener('keydown',e=>{
+  if(['Space','ArrowUp','KeyW'].includes(e.code)&&G.screen==='ride'&&G.go)G.hopTap=true;
+});
+
+/* ================= on-screen touch controls ================= */
+const touchUI=document.getElementById('touchUI');
+const TCH={pedal:false,brake:false};
+function bindHold(id,on,off){const el=document.getElementById(id);if(!el)return;
+  const dn=e=>{e.preventDefault();e.stopPropagation();try{AU.init();AU.resume()}catch(_){} el.classList.add('on');try{el.setPointerCapture(e.pointerId)}catch(_){} on();};
+  const up=()=>{el.classList.remove('on');off();};
+  el.addEventListener('pointerdown',dn);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('lostpointercapture',up);el.addEventListener('contextmenu',e=>e.preventDefault());}
+bindHold('tPedal',()=>{TCH.pedal=true;G.down=true;G.px=W-10;G.py=H-10;},()=>{TCH.pedal=false;if(!TCH.brake)G.down=false;});
+bindHold('tBrake',()=>{TCH.brake=true;G.down=true;G.px=10;G.py=H-10;},()=>{TCH.brake=false;if(!TCH.pedal)G.down=false;});
+bindHold('tHop',()=>{if(G.screen==='ride'&&G.go&&G.finishT<=0)G.hopTap=true;},()=>{});
+
+/* ================= main loop ================= */
+let lastT=performance.now();
+function frame(now){
+  let dt=(now-lastT)/1000;lastT=now;
+  dt=clamp(dt,0,0.05);
+  G.t+=dt;
+  if(touchUI)touchUI.style.display=(G.screen==='ride')?'flex':'none';
+  if(G.msgT>0&&G.screen!=='ride')G.msgT-=dt;
+  g.clearRect(0,0,W,H);
+  switch(G.screen){
+    case 'title':scrTitle(dt);break;
+    case 'menu':scrMenu();break;
+    case 'bikes':scrBikes();break;
+    case 'shop':scrShop();break;
+    case 'howto':scrHowto();break;
+    case 'ride':scrRide(dt);break;
+    case 'results2':scrResults2();break;
+    default:scrTitle(dt);
+  }
+  endFrame();
+  requestAnimationFrame(frame);
+}
+document.addEventListener('contextmenu',e=>e.preventDefault());
+// boot
+G.bike=BIKES[SV.bike]||BIKES[0];
+G.bikeIdx=SV.bike||0;
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
