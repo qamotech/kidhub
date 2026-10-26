@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>💰 Family Money Game Night — KidHub</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; min-height: 100vh; padding: 14px 12px 30px;
+    background: #07130c radial-gradient(circle at 50% 0%, #123f22 0%, #07130c 70%);
+    color: #f2fff5; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    text-align: center;
+  }
+  .wrap { max-width: 430px; margin: 0 auto; }
+  a.back { display: inline-block; color: #8dffab; text-decoration: none; font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+  h1 { margin: 4px 0 2px; font-size: 1.6rem; }
+  .rule { color: #ffd75e; font-weight: 800; margin: 4px 0 10px; }
+  #round-label { font-weight: 800; font-size: 1.1rem; margin: 6px 0; }
+  .wallet {
+    background: linear-gradient(135deg, #6d4c00, #3d2b00); border: 2px solid #ffd75e; border-radius: 16px;
+    padding: 10px; font-size: 1.3rem; font-weight: 900; margin-bottom: 12px;
+  }
+  .jars { display: flex; gap: 8px; margin-bottom: 12px; }
+  .jar { flex: 1; background: rgba(17, 40, 24, .95); border: 2px solid #2f6b41; border-radius: 16px; padding: 10px 4px; }
+  .jar .jname { font-weight: 800; font-size: .95rem; }
+  .jar .jamt { font-size: 1.35rem; font-weight: 900; margin: 4px 0; }
+  .jar .jbtns { display: flex; justify-content: center; gap: 6px; }
+  .jar button {
+    width: 42px; height: 42px; border-radius: 50%; border: none; font-size: 1.3rem; font-weight: 900;
+    background: #29e07c; color: #06280f; cursor: pointer;
+  }
+  .jar button.minus { background: #39506b; color: #dbe9ff; }
+  .jar button:disabled { opacity: .35; }
+  #goal-line { font-weight: 800; margin: 4px 0 2px; }
+  #needs-due { font-weight: 800; color: #ff9c9c; min-height: 1.3em; margin: 2px 0 10px; }
+  #needs-due.ok { color: #8dffab; }
+  #card-area {
+    background: rgba(20, 34, 56, .95); border: 2px solid #7fd8ff; border-radius: 16px;
+    padding: 16px; min-height: 120px; margin-bottom: 12px;
+  }
+  #card-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 6px; }
+  #card-text { font-size: 1rem; color: #e6f1ff; }
+  #card-lesson { margin-top: 10px; color: #ffd75e; font-weight: 700; font-size: .95rem; }
+  .actions { display: flex; gap: 8px; }
+  .big-btn {
+    flex: 1; border: none; border-radius: 999px; padding: 14px 8px; font-size: 1.05rem; font-weight: 900; cursor: pointer;
+  }
+  #draw-btn { background: #7fd8ff; color: #06263b; }
+  #end-btn { background: #29e07c; color: #06280f; }
+  .big-btn:disabled { opacity: .35; }
+  #end-screen { display: none; margin-top: 14px; padding: 18px; border-radius: 16px; border: 2px solid #ffd75e;
+                background: linear-gradient(135deg, #3d2b00, #123f22); font-weight: 800; font-size: 1.1rem; }
+  #end-screen.show { display: block; }
+  #new-month-btn { margin-top: 12px; background: #ffd75e; color: #3d2b00; border: none; border-radius: 999px;
+                   padding: 12px 22px; font-size: 1rem; font-weight: 900; cursor: pointer; }
+  .stats { margin-top: 14px; color: #9fd8ae; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">⬅️ Back to KidHub</a>
+  <h1>💰 Family Money Game Night</h1>
+  <p class="rule">🌟 Needs first, then savings, then wants!</p>
+  <p id="round-label">Week 1 of 8</p>
+
+  <div class="wallet">👛 Wallet: $<span id="wallet">0</span></div>
+
+  <div class="jars">
+    <div class="jar" id="jar-box-needs">
+      <div class="jname">🏠 Needs</div>
+      <div class="jamt">$<span id="jar-needs">0</span></div>
+      <div class="jbtns">
+        <button type="button" class="minus" data-jar="needs" data-dir="-1" aria-label="Take 5 from Needs">−</button>
+        <button type="button" data-jar="needs" data-dir="1" aria-label="Add 5 to Needs">+</button>
+      </div>
+    </div>
+    <div class="jar" id="jar-box-savings">
+      <div class="jname">🐷 Savings</div>
+      <div class="jamt">$<span id="jar-savings">0</span></div>
+      <div class="jbtns">
+        <button type="button" class="minus" data-jar="savings" data-dir="-1" aria-label="Take 5 from Savings">−</button>
+        <button type="button" data-jar="savings" data-dir="1" aria-label="Add 5 to Savings">+</button>
+      </div>
+    </div>
+    <div class="jar" id="jar-box-wants">
+      <div class="jname">🎮 Wants</div>
+      <div class="jamt">$<span id="jar-wants">0</span></div>
+      <div class="jbtns">
+        <button type="button" class="minus" data-jar="wants" data-dir="-1" aria-label="Take 5 from Wants">−</button>
+        <button type="button" data-jar="wants" data-dir="1" aria-label="Add 5 to Wants">+</button>
+      </div>
+    </div>
+  </div>
+
+  <p id="goal-line">🎯 Savings goal: $50 by the end of Week 8</p>
+  <p id="needs-due" class="ok">✅ No needs bills due right now</p>
+
+  <div id="card-area">
+    <div id="card-title">🎴 Ready to play?</div>
+    <div id="card-text">You earned your monthly income! Sort your money into the jars, then draw a card to start Week 1.</div>
+    <div id="card-lesson">💡 Grown-ups do this every month — needs first, then savings, then wants.</div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="big-btn" id="draw-btn">🎴 Draw a Card</button>
+    <button type="button" class="big-btn" id="end-btn">✅ End Week</button>
+  </div>
+
+  <div id="end-screen">
+    <div id="end-text"></div>
+    <button type="button" id="new-month-btn">🔄 Play a New Month</button>
+  </div>
+
+  <p class="stats" id="stats-line">🏆 Wins: 0 · 🔥 Streak: 0 · ⭐ Best streak: 0</p>
+</div>
+
+<script>
+"use strict";
+var INCOME = 160, GOAL = 50, WEEKS = 8, STEP = 5;
+
+var CARDS = [
+  { kind: "need", amt: 25, title: "🏠 Rent for Your Fort", text: "Rent is due: $25 goes to Needs.", lesson: "Needs are things we must pay for first — like a home." },
+  { kind: "need", amt: 20, title: "🛒 Grocery Day", text: "Groceries cost $20. Add it to your Needs bill.", lesson: "Food is a need — it always comes before treats." },
+  { kind: "need", amt: 15, title: "💡 Light Bill", text: "The electricity bill is $15 for Needs.", lesson: "Bills arrive every month, so smart savers plan for them." },
+  { kind: "need", amt: 10, title: "🧸 Broken Toy Repair", text: "Uh oh! A favorite toy broke. Repair costs $10 (a need).", lesson: "Surprise expenses happen — that's why we keep money ready." },
+  { kind: "need", amt: 10, title: "🚌 Bus Pass", text: "Your bus pass costs $10. Add it to Needs.", lesson: "Getting to school and work is a need, not a want." },
+  { kind: "want", amt: 15, title: "🎮 New Game Skin", text: "A cool game skin costs $15. If you want it, pay from your Wants jar when you end the week — or skip it!", lesson: "Wants are fun, but they wait until needs and savings are covered." },
+  { kind: "want", amt: 10, title: "🍦 Ice Cream Trip", text: "Ice cream with friends costs $10 from Wants — or skip it and save more!", lesson: "Skipping a small want now grows your savings faster." },
+  { kind: "want", amt: 20, title: "🪀 Toy Sale", text: "A toy you love is on sale for $20 from Wants. Your choice!", lesson: "A sale is only a good deal if you can afford it after needs and savings." },
+  { kind: "income", amt: 10, title: "🌻 Helped a Neighbor", text: "You helped a neighbor with yard work and earned $10! It lands in your wallet.", lesson: "Earning extra money helps every jar grow." },
+  { kind: "income", amt: 15, title: "🎂 Birthday Money", text: "Birthday money! +$15 in your wallet.", lesson: "Windfalls are a great chance to boost savings first." },
+  { kind: "income", amt: 5, title: "🪙 Found Coins", text: "You found $5 in coins. Into the wallet it goes!", lesson: "Even $5 counts — small savings add up to big goals." },
+  { kind: "save", amt: 0, title: "🐷 Piggy Bank Pep Talk", text: "No bill this time! A perfect week to move extra money into Savings.", lesson: "Pay yourself first: savings before wants, every time." }
+];
+
+var stats = { wins: 0, played: 0, streak: 0, best: 0 };
+try { var s = JSON.parse(localStorage.getItem("kh_money_stats") || "null"); if (s && typeof s.wins === "number") stats = s; } catch (e) {}
+function saveStats() { try { localStorage.setItem("kh_money_stats", JSON.stringify(stats)); } catch (e) {} }
+
+var game = null;
+function newGame() {
+  game = { wallet: INCOME, jars: { needs: 0, wants: 0, savings: 0 }, needsDue: 0, wantDue: 0,
+           round: 1, drawn: false, over: false, strikes: 0, seed: Math.floor(Math.random() * 100000) };
+  document.getElementById("end-screen").classList.remove("show");
+  setCard("🎴 A New Month!", "You earned $" + INCOME + " of play money. Sort it into the jars, then draw a card for Week 1.",
+          "💡 Needs first, then savings, then wants — that's the winning order!");
+  render();
+}
+function setCard(title, text, lesson) {
+  document.getElementById("card-title").textContent = title;
+  document.getElementById("card-text").textContent = text;
+  document.getElementById("card-lesson").textContent = lesson;
+}
+/* deterministic-ish draw from round + seed so a week has one card */
+function drawCard() {
+  if (!game || game.over || game.drawn) return;
+  var idx = (game.seed + game.round * 7) % CARDS.length;
+  var c = CARDS[idx];
+  game.drawn = true;
+  if (c.kind === "need") game.needsDue += c.amt;
+  if (c.kind === "want") game.wantDue += c.amt;
+  if (c.kind === "income") game.wallet += c.amt;
+  setCard(c.title, c.text, "💡 " + c.lesson);
+  render();
+}
+function endWeek() {
+  if (!game || game.over) return;
+  var msgs = [];
+  /* NEEDS: must be paid from the Needs jar; wallet can cover the rest */
+  if (game.needsDue > 0) {
+    var fromJar = Math.min(game.jars.needs, game.needsDue);
+    game.jars.needs -= fromJar; game.needsDue -= fromJar;
+    if (game.needsDue > 0) {
+      var fromWallet = Math.min(game.wallet, game.needsDue);
+      game.wallet -= fromWallet; game.needsDue -= fromWallet;
+      if (fromWallet > 0) msgs.push("Your wallet covered the rest of the needs bill.");
+    }
+    if (game.needsDue > 0) {
+      game.strikes++;
+      msgs.push("⚠️ Needs bill unpaid: $" + game.needsDue + " still due! Needs come first — move money to the Needs jar.");
+    } else {
+      msgs.push("✅ Needs bill paid in full. Great job!");
+    }
+  } else {
+    msgs.push("✅ No needs bills this week.");
+  }
+  /* WANTS: optional — paid only if the Wants jar covers it */
+  if (game.wantDue > 0) {
+    if (game.jars.wants >= game.wantDue) {
+      game.jars.wants -= game.wantDue;
+      msgs.push("🎉 You bought the fun thing for $" + game.wantDue + " from Wants!");
+    } else {
+      msgs.push("🌟 You skipped the want this week — your savings thank you!");
+    }
+    game.wantDue = 0;
+  }
+  game.drawn = false;
+  if (game.round >= WEEKS) { finish(msgs); return; }
+  game.round++;
+  setCard("📅 Week " + game.round + " begins", msgs.join(" ") + " Draw a new card when you're ready.",
+          "💡 Remember: needs first, then savings, then wants.");
+  render();
+}
+function finish(msgs) {
+  game.over = true;
+  var savedGoal = game.jars.savings >= GOAL;
+  var needsOk = game.needsDue <= 0 && game.strikes === 0;
+  var win = savedGoal && needsOk;
+  stats.played++;
+  if (win) { stats.wins++; stats.streak++; if (stats.streak > stats.best) stats.best = stats.streak; }
+  else { stats.streak = 0; }
+  saveStats();
+  var txt;
+  if (win) {
+    txt = "🏆 YOU WIN! You saved $" + game.jars.savings + " (goal $" + GOAL + ") and every need was paid. You're a Money Master! 🎉";
+  } else {
+    var why = [];
+    if (!savedGoal) why.push("savings reached $" + game.jars.savings + " of the $" + GOAL + " goal");
+    if (!needsOk) why.push("some needs bills went unpaid");
+    txt = "🌱 So close! This month " + why.join(" and ") + ". Remember: needs first, then savings, then wants — try a new month!";
+  }
+  document.getElementById("end-text").textContent = txt;
+  document.getElementById("end-screen").classList.add("show");
+  setCard("🌙 Month Over!", msgs.join(" "), win ? "💡 You did it — needs paid, savings goal smashed!" : "💡 Every month is a new chance to practice.");
+  render();
+}
+
+document.querySelector(".jars").addEventListener("click", function (ev) {
+  var b = ev.target.closest("button[data-jar]");
+  if (!b || !game || game.over) return;
+  var jar = b.getAttribute("data-jar"), dir = parseInt(b.getAttribute("data-dir"), 10);
+  if (dir > 0) {
+    if (game.wallet >= STEP) { game.wallet -= STEP; game.jars[jar] += STEP; }
+  } else {
+    if (game.jars[jar] >= STEP) { game.jars[jar] -= STEP; game.wallet += STEP; }
+  }
+  render();
+});
+document.getElementById("draw-btn").addEventListener("click", drawCard);
+document.getElementById("end-btn").addEventListener("click", endWeek);
+document.getElementById("new-month-btn").addEventListener("click", newGame);
+
+function render() {
+  document.getElementById("wallet").textContent = game.wallet;
+  document.getElementById("jar-needs").textContent = game.jars.needs;
+  document.getElementById("jar-wants").textContent = game.jars.wants;
+  document.getElementById("jar-savings").textContent = game.jars.savings;
+  document.getElementById("round-label").textContent = game.over ? "🌙 Month finished!" : "Week " + game.round + " of " + WEEKS;
+  document.getElementById("goal-line").textContent = "🎯 Savings goal: $" + GOAL + " — you have $" + game.jars.savings + " saved" + (game.jars.savings >= GOAL ? " ✅ GOAL REACHED!" : "");
+  var due = document.getElementById("needs-due");
+  if (game.needsDue > 0) { due.textContent = "🧾 Needs bill due: $" + game.needsDue + " — pay it from the Needs jar!"; due.classList.remove("ok"); }
+  else { due.textContent = "✅ No needs bills due right now"; due.classList.add("ok"); }
+  document.getElementById("draw-btn").disabled = game.over || game.drawn;
+  document.getElementById("end-btn").disabled = game.over;
+  document.getElementById("stats-line").textContent = "🏆 Wins: " + stats.wins + " · 🔥 Streak: " + stats.streak + " · ⭐ Best streak: " + stats.best;
+}
+newGame();
+</script>
+</body>
+</html>

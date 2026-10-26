@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>🗺️ Quest of the Week — KidHub</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; min-height: 100vh; padding: 14px 12px 30px;
+    background: #070b16 radial-gradient(circle at 50% 0%, #12233f 0%, #070b16 70%);
+    color: #f2f6ff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    text-align: center;
+  }
+  .wrap { max-width: 430px; margin: 0 auto; }
+  a.back { display: inline-block; color: #7fd8ff; text-decoration: none; font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+  h1 { margin: 4px 0 2px; font-size: 1.7rem; letter-spacing: .5px; }
+  .week { color: #ffd75e; font-weight: 700; margin: 2px 0 12px; }
+  .quest-name {
+    background: linear-gradient(135deg, #173a5e, #241a4d);
+    border: 2px solid #ffd75e; border-radius: 16px; padding: 12px;
+    font-size: 1.25rem; font-weight: 800; margin-bottom: 14px;
+    box-shadow: 0 0 18px rgba(255,215,94,.25);
+  }
+  .bar-outer { background: #1b2740; border-radius: 999px; height: 26px; overflow: hidden; border: 1px solid #33456e; }
+  #progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #29e07c, #7fd8ff); transition: width .4s ease; }
+  #progress-text { font-weight: 800; margin: 8px 0 16px; font-size: 1.05rem; }
+  .mission {
+    background: rgba(17, 28, 51, .92); border: 2px solid #33456e; border-radius: 16px;
+    padding: 14px; margin-bottom: 12px; text-align: left;
+    display: flex; gap: 12px; align-items: center;
+  }
+  .mission.done { border-color: #29e07c; opacity: .85; }
+  .mission .emoji { font-size: 2.2rem; line-height: 1; }
+  .mission .info { flex: 1; min-width: 0; }
+  .mission .game { font-weight: 800; font-size: 1.05rem; }
+  .mission .task { color: #c9d8f5; font-size: .95rem; margin-top: 2px; }
+  .mission .task.done-task { text-decoration: line-through; }
+  .play { display: inline-block; margin-top: 8px; background: #2456a6; color: #fff; text-decoration: none;
+         font-weight: 800; padding: 8px 14px; border-radius: 999px; font-size: .9rem; }
+  .done-btn {
+    border: none; border-radius: 999px; padding: 12px 14px; font-size: 1rem; font-weight: 900;
+    background: #2a3a5f; color: #f2f6ff; cursor: pointer; min-width: 92px;
+  }
+  .done-btn.on { background: #29e07c; color: #06280f; }
+  #celebrate {
+    display: none; margin-top: 16px; padding: 18px; border-radius: 16px;
+    background: linear-gradient(135deg, #3d2b00, #173a5e); border: 2px solid #ffd75e;
+    font-size: 1.15rem; font-weight: 800;
+  }
+  #celebrate.show { display: block; animation: pop .5s ease; }
+  @keyframes pop { from { transform: scale(.8); } to { transform: scale(1); } }
+  .confetti { font-size: 1.8rem; letter-spacing: 6px; }
+  .total { margin-top: 14px; color: #9fb6dd; font-weight: 700; }
+  .hint { color: #7e93bd; font-size: .85rem; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">⬅️ Back to KidHub</a>
+  <h1>🗺️ Quest of the Week</h1>
+  <p class="week" id="week-label">This week's quest</p>
+  <div class="quest-name" id="quest-name">Loading quest…</div>
+
+  <div class="bar-outer"><div id="progress-fill"></div></div>
+  <p id="progress-text">0 of 3 missions done</p>
+
+  <div id="mission-list"></div>
+
+  <div id="celebrate">
+    <div class="confetti">🎉 ⭐ 🏆 ⭐ 🎉</div>
+    <div>QUEST COMPLETE! You finished all 3 missions this week — you're a true KidHub hero!</div>
+    <div style="margin-top:6px">Come back next week for a brand-new quest! 🗺️</div>
+  </div>
+
+  <p class="total" id="total-line">🏆 Quests completed: 0</p>
+  <p class="hint">Tap ▶️ Play to open a game, do the mission, then come back and tap Done!</p>
+</div>
+
+<script>
+"use strict";
+/* Quest pool — every game below is a real KidHub game from games/games.json */
+var GAMES = {
+  "puddlewick-isle":      { emoji: "🏝️", title: "Puddlewick Isle" },
+  "popstorm":             { emoji: "🌟", title: "PopStorm: Glow Guardians" },
+  "neon-pong":            { emoji: "🏓", title: "Neon Pong" },
+  "combat-cars":          { emoji: "🏎️", title: "Combat Cars" },
+  "shadow-defense":       { emoji: "🥋", title: "Shadow Defense" },
+  "miyagi-throw":         { emoji: "🥷", title: "Miyagi Throw!" },
+  "n8-shift":             { emoji: "⚡", title: "N8 SHIFT" },
+  "ninja-sandbox":        { emoji: "🌀", title: "Ninja Sandbox" },
+  "shipment-8bit":        { emoji: "👾", title: "Shipment 8-Bit" },
+  "blob-bash-royale":     { emoji: "🟣", title: "Blob Bash Royale" },
+  "panther-arena":        { emoji: "🐆", title: "Panther Arena" },
+  "qamelot-conquest":     { emoji: "🏰", title: "Qamelot Conquest" },
+  "qamelot-tower-defense":{ emoji: "🗼", title: "Qamelot Tower Defense" },
+  "stix-stax-stonz":      { emoji: "❌", title: "Stix Stax Stonz" },
+  "neuropulse":           { emoji: "⚡", title: "NeuroPulse Cyberdeck" },
+  "shadow-chassis":       { emoji: "🤖", title: "Project: Shadow Chassis" }
+};
+
+var QUESTS = [
+  { name: "🌊 The Island Explorer Quest", missions: [
+    { slug: "puddlewick-isle", task: "Explore Puddlewick Isle and catch 3 fish." },
+    { slug: "neon-pong", task: "Play Neon Pong and score 5 points." },
+    { slug: "stix-stax-stonz", task: "Win a game of Stix Stax Stonz." }
+  ]},
+  { name: "🌟 The Glow Guardian Quest", missions: [
+    { slug: "popstorm", task: "Play PopStorm and pop 20 Gloomies." },
+    { slug: "shadow-defense", task: "Block 10 attacks in Shadow Defense." },
+    { slug: "miyagi-throw", task: "Hit 8 targets in Miyagi Throw!" }
+  ]},
+  { name: "🏁 The Speed Racer Quest", missions: [
+    { slug: "combat-cars", task: "Finish a race in Combat Cars." },
+    { slug: "n8-shift", task: "Beat 3 hazards in N8 SHIFT." },
+    { slug: "panther-arena", task: "Find 5 gold in Panther Arena." }
+  ]},
+  { name: "🏰 The Qamelot Quest", missions: [
+    { slug: "qamelot-conquest", task: "Storm the castle in Qamelot Conquest." },
+    { slug: "qamelot-tower-defense", task: "Stop 2 waves in Qamelot Tower Defense." },
+    { slug: "blob-bash-royale", task: "Bounce into a match of Blob Bash Royale and land 5 hits." }
+  ]},
+  { name: "🥷 The Ninja Training Quest", missions: [
+    { slug: "ninja-sandbox", task: "Jump and run through Ninja Sandbox for 2 minutes." },
+    { slug: "shadow-chassis", task: "Take down 3 enemies in Project: Shadow Chassis." },
+    { slug: "shipment-8bit", task: "Clear a room in Shipment 8-Bit." }
+  ]},
+  { name: "🎵 The Cyber Sound Quest", missions: [
+    { slug: "neuropulse", task: "Build a 16-step beat in NeuroPulse Cyberdeck." },
+    { slug: "popstorm", task: "Beat a boss in PopStorm: Glow Guardians." },
+    { slug: "neon-pong", task: "Win a match of Neon Pong." }
+  ]},
+  { name: "🐆 The Wild Adventure Quest", missions: [
+    { slug: "panther-arena", task: "Win a showdown in Panther Arena." },
+    { slug: "puddlewick-isle", task: "Make a new friend on Puddlewick Isle." },
+    { slug: "combat-cars", task: "Win a race in Combat Cars." }
+  ]},
+  { name: "🟣 The Bouncy Battle Quest", missions: [
+    { slug: "blob-bash-royale", task: "Win a round of Blob Bash Royale." },
+    { slug: "miyagi-throw", task: "Get a bullseye in Miyagi Throw!" },
+    { slug: "qamelot-tower-defense", task: "Build 4 towers in Qamelot Tower Defense." }
+  ]}
+];
+
+/* ISO week key, e.g. "2026-W44" — a new week means a new quest */
+function weekKey(d) {
+  d = d || new Date();
+  var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  var dayNum = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - dayNum + 3);
+  var firstThu = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
+  var fDay = (firstThu.getUTCDay() + 6) % 7;
+  firstThu.setUTCDate(firstThu.getUTCDate() - fDay + 3);
+  var week = 1 + Math.round((date - firstThu) / (7 * 864e5));
+  return date.getUTCFullYear() + "-W" + String(week).padStart(2, "0");
+}
+function hashCode(s) { var h = 0; for (var i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; } return h; }
+
+var WK = weekKey();
+var quest = QUESTS[hashCode(WK) % QUESTS.length];
+
+var LS_KEY = "kh_quest_of_week";
+var TOTAL_KEY = "kh_quest_total_completed";
+var state = null;
+try { state = JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch (e) { state = null; }
+if (!state || state.week !== WK || !Array.isArray(state.done) || state.done.length !== 3) {
+  state = { week: WK, done: [false, false, false], counted: false };
+  save();
+}
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+function totalCompleted() { var n = parseInt(localStorage.getItem(TOTAL_KEY) || "0", 10); return isNaN(n) ? 0 : n; }
+
+var listEl = document.getElementById("mission-list");
+document.getElementById("quest-name").textContent = quest.name;
+document.getElementById("week-label").textContent = "📅 Week " + WK.split("-W")[1] + " of " + WK.split("-")[0] + " — a new quest every week!";
+
+quest.missions.forEach(function (m, i) {
+  var g = GAMES[m.slug];
+  var card = document.createElement("div");
+  card.className = "mission"; card.id = "mission-" + i;
+  card.innerHTML =
+    '<div class="emoji">' + g.emoji + '</div>' +
+    '<div class="info"><div class="game">' + g.title + '</div>' +
+    '<div class="task" id="task-' + i + '">' + m.task + '</div>' +
+    '<a class="play" href="' + m.slug + '.html">▶️ Play</a></div>' +
+    '<button type="button" class="done-btn" id="done-' + i + '" data-i="' + i + '">Done!</button>';
+  listEl.appendChild(card);
+});
+listEl.addEventListener("click", function (ev) {
+  var btn = ev.target.closest(".done-btn");
+  if (!btn) return;
+  var i = parseInt(btn.getAttribute("data-i"), 10);
+  state.done[i] = !state.done[i];
+  save(); render();
+});
+
+function render() {
+  var n = 0;
+  state.done.forEach(function (d, i) {
+    if (d) n++;
+    document.getElementById("mission-" + i).classList.toggle("done", d);
+    document.getElementById("task-" + i).classList.toggle("done-task", d);
+    var b = document.getElementById("done-" + i);
+    b.classList.toggle("on", d);
+    b.textContent = d ? "✅ Done" : "Done!";
+  });
+  document.getElementById("progress-fill").style.width = Math.round(n / 3 * 100) + "%";
+  document.getElementById("progress-text").textContent = n + " of 3 missions done" + (n === 3 ? " — ALL DONE! 🎉" : "");
+  var all = n === 3;
+  document.getElementById("celebrate").classList.toggle("show", all);
+  if (all && !state.counted) {
+    state.counted = true; save();
+    try { localStorage.setItem(TOTAL_KEY, String(totalCompleted() + 1)); } catch (e) {}
+  }
+  document.getElementById("total-line").textContent = "🏆 Quests completed: " + totalCompleted();
+}
+render();
+</script>
+</body>
+</html>

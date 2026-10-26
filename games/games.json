@@ -1,5 +1,17 @@
 [
     {
+        "slug": "quest-of-the-week",
+        "emoji": "🗺️",
+        "title": "Quest of the Week",
+        "blurb": "NEW! A fresh 3-game mission quest every week — check them all off!"
+    },
+    {
+        "slug": "money-game-night",
+        "emoji": "💰",
+        "title": "Family Money Game Night",
+        "blurb": "NEW! Budget play money into Needs, Wants & Savings jars and hit the goal!"
+    },
+    {
         "slug": "puddlewick-isle",
         "emoji": "\ud83c\udfdd\ufe0f",
         "title": "Puddlewick Isle",
