@@ -73,6 +73,19 @@ input,select{font:inherit;color:inherit}
 @keyframes dlgIn{from{opacity:0;transform:translateY(10px) scale(.98)}}
 @keyframes panelFade{from{opacity:0}}
 @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(4px)}}
+@keyframes hudIn{from{opacity:0;transform:translateY(-8px)}}
+@keyframes dockIn{from{opacity:0;transform:translateY(8px)}}
+@keyframes hintIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}}
+.pill{animation:hudIn .32s cubic-bezier(.2,1.2,.4,1) backwards}
+#hud .tl .pill:nth-child(2),#hud .tr .pill:nth-child(2){animation-delay:.05s}
+#hud .tl .pill:nth-child(3),#hud .tr .pill:nth-child(3){animation-delay:.1s}
+#hud .tl .pill:nth-child(4),#hud .tr .pill:nth-child(4){animation-delay:.15s}
+#dock .round{animation:dockIn .32s cubic-bezier(.2,1.2,.4,1) backwards}
+#dock .round:nth-child(2){animation-delay:.05s}
+#dock .round:nth-child(3){animation-delay:.1s}
+#dock .round:nth-child(4){animation-delay:.15s}
+#dock .round:nth-child(5){animation-delay:.2s}
+#hint{animation:hintIn .32s ease backwards}
 #panel{animation:panelFade .18s ease backwards}
 .slot,.app{animation:popIn .3s cubic-bezier(.2,1.2,.4,1) backwards}
 .grid .slot:nth-child(2),.apps .app:nth-child(2){animation-delay:.02s}
@@ -111,10 +124,11 @@ input,select{font:inherit;color:inherit}
 #pBody p{margin:6px 0}
 .mute{color:var(--ink2);font-weight:600}
 #pBody output{min-width:3.2em;font-variant-numeric:tabular-nums;color:var(--ink2)}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.tabs button{background:var(--paper2);border-radius:999px;padding:6px 14px;min-height:44px;transition:transform .12s ease,background-color .15s ease,box-shadow .12s ease}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:8px;border-radius:18px;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.45)}
+.tabs button{background:linear-gradient(180deg,#fffdf7,var(--paper2));border-radius:999px;padding:6px 14px;min-height:44px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.55),0 1px 2px rgba(90,60,30,.08);transition:transform .12s ease,background-color .15s ease,box-shadow .12s ease}
 .tabs button:hover{transform:translateY(-1px)}
-.tabs button.on{background:var(--acc);color:#fff;box-shadow:0 2px 0 rgba(120,70,20,.35),inset 0 1px 0 rgba(255,255,255,.35);text-shadow:0 1px 1px rgba(90,50,10,.35)}
+.tabs button:active{transform:translateY(1px)}
+.tabs button.on{background:linear-gradient(180deg,#ffc85e,var(--acc) 60%,#e8940f);color:#fff;box-shadow:0 2px 0 rgba(120,70,20,.35),inset 0 0 0 1px rgba(255,255,255,.45),inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 0 rgba(120,70,0,.22);text-shadow:0 1px 1px rgba(90,50,10,.35)}
 .btn{background:var(--leaf);color:#fff;border-radius:999px;padding:8px 18px;box-shadow:0 3px 0 var(--leafd);display:inline-flex;gap:6px;align-items:center;min-height:44px;justify-content:center;box-sizing:border-box}
 .btn{transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}
 .btn:hover{transform:translateY(-1px)}
@@ -166,7 +180,10 @@ input[type=text],input[type=number],select{background:#fff;border:2px solid var(
 input[type=range]{accent-color:var(--leaf)}
 .sw{display:flex;gap:8px;flex-wrap:wrap}
 #title form .sw{background:rgba(255,255,255,.55);border-radius:16px;padding:8px;box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.45)}
-#title form label{letter-spacing:.01em}
+#title form label{letter-spacing:.01em;color:var(--ink)}
+#title form input[type=text],#title form select{background:linear-gradient(180deg,#fffdf7 0%,var(--paper) 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),inset 0 2px 5px rgba(90,60,30,.07);transition:border-color .15s ease,box-shadow .15s ease}
+#title form input[type=text]::placeholder{color:#b8a888;font-weight:600}
+#title form input[type=text]:focus,#title form select:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(63,159,210,.24),inset 0 1px 0 #fff;outline:none}
 #title form .sw .hchip{background:#fffdf7;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(90,60,30,.12)}
 #title form .sw .hchip.on{background:#dff2fd}
 .hchip{font:inherit;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;border:2px solid rgba(90,60,30,.35);background:#fff8ec;color:#5a4028;cursor:pointer;min-height:40px;box-sizing:border-box}
@@ -209,6 +226,9 @@ input[type=range]{accent-color:var(--leaf)}
 .ward-hair .btn{border-radius:999px;min-height:40px;padding:8px 14px;font-size:13px}
 .ward-hair .btn:not(.alt){background:#dff2fd;color:#23465c;box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--sea),0 2px 0 rgba(63,159,210,.35)}
 .ward-hair .btn.alt{background:#fffdf7;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(90,60,30,.12)}
+.ward-count{display:inline-block;margin:2px 0 8px;padding:5px 11px;border-radius:999px;background:linear-gradient(180deg,#fffdf7,var(--paper2));color:var(--ink);font-weight:700;font-size:13px;box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.5)}
+#pBody h3.ward-h{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:12px;background:linear-gradient(180deg,#fffdf7,var(--paper2));color:var(--sea);box-shadow:inset 0 0 0 1px var(--line),inset 3px 0 0 var(--sea),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.45);text-shadow:0 1px 0 #fff}
+.ward-empty{margin-top:10px!important;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.55);color:var(--ink2);box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff}
 
 /* ---------- touch ---------- */
 #touch{position:fixed;inset:0;z-index:20;pointer-events:none}
@@ -255,6 +275,15 @@ body.touch #dlg{bottom:calc(236px + env(safe-area-inset-bottom))}
   #dlgBox{font-size:calc(16px*var(--fs));padding:22px 20px 20px}
   #pBody{padding:14px 14px 20px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(54px,1fr))}
+}
+/* portrait phones (~412px): roomier, clearer touch controls — dock + action buttons stay full-size, stick keeps its presence */
+@media (max-width:480px){
+  body.touch #stick{width:126px;height:126px;left:calc(16px + env(safe-area-inset-left));bottom:calc(20px + env(safe-area-inset-bottom));box-shadow:inset 0 0 0 2px rgba(90,60,30,.16),inset 0 2px 0 rgba(255,255,255,.55),0 6px 18px rgba(20,40,60,.32)}
+  body.touch #knob{width:56px;height:56px;margin:-28px 0 0 -28px}
+  body.touch #tbtns{grid-template-columns:repeat(2,62px);gap:12px;right:calc(12px + env(safe-area-inset-right));bottom:calc(82px + env(safe-area-inset-bottom))}
+  body.touch #tbtns button{width:62px;height:62px}
+  body.touch #dock{gap:10px;right:calc(12px + env(safe-area-inset-right))}
+  body.touch .round{width:52px;height:52px;font-size:24px}
 }
 @media (max-width:400px){#clock b{font-size:calc(19px*min(var(--fs),1.1))}#clock small{font-size:calc(12.5px*min(var(--fs),1.1))}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
@@ -381,7 +410,7 @@ button{touch-action:manipulation}
 <script>
 'use strict';
 (()=>{
-const APP_VERSION='1.6.12';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
+const APP_VERSION='1.6.13';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
 /* =====================================================================
    PUDDLEWICK ISLE: a single-file cozy island life sim
    Sections: utils · data · state · time · world gen · day cycle ·
@@ -1562,7 +1591,9 @@ function drawPalm(x,y,o){const cx=(x+.5)*TS,by=(y+1)*TS-5,s=o.g>=4?1:([.35,.5,.6
   for(let k=0;k<6;k++){ctx.fillStyle=k%2?'#a7794a':'#8f6538';ell(cx+k*1.4*s+ox*k/6,by-4*s-k*6.5*s,4.4*s,3.8*s)}
   const X=cx+8*s+ox,Y=by-42*s;ctx.fillStyle=P.snow?'#5f9a6a':'#45a352';
   for(let k=0;k<7;k++){const a=k/7*6.283+.3;ctx.save();ctx.translate(X,Y);ctx.rotate(a);ctx.beginPath();ctx.ellipse(12*s,2*s,14*s,4.2*s,.25,0,6.283);ctx.fill();ctx.restore()}
-  if(o.f>0&&o.g>=4){ctx.fillStyle='#7a4f2c';circ(X-3,Y+5,3.8);if(o.f>1)circ(X+4,Y+6,3.8)}}
+  ctx.fillStyle='rgba(255,255,255,.14)';for(let k=0;k<7;k++){const a=k/7*6.283+.3;ctx.save();ctx.translate(X,Y);ctx.rotate(a);ctx.beginPath();ctx.ellipse(11*s,.4*s,10*s,1.7*s,.25,0,6.283);ctx.fill();ctx.restore()}
+  ctx.fillStyle='rgba(0,0,0,.10)';for(let k=0;k<7;k++){const a=k/7*6.283+.3;ctx.save();ctx.translate(X,Y);ctx.rotate(a);ctx.beginPath();ctx.ellipse(13*s,3.6*s,10*s,1.5*s,.25,0,6.283);ctx.fill();ctx.restore()}
+  if(o.f>0&&o.g>=4){ctx.fillStyle='#7a4f2c';circ(X-3,Y+5,3.8);if(o.f>1)circ(X+4,Y+6,3.8);ctx.fillStyle='rgba(255,255,255,.55)';circ(X-4.3,Y+3.6,1.3);if(o.f>1)circ(X+2.7,Y+4.6,1.3)}}
 function drawRock(x,y,o){const cx=(x+.5)*TS+wob(o),by=(y+1)*TS-6;ctx.fillStyle='rgba(40,40,20,.25)';ell(cx,by+1,15,5);
   ctx.fillStyle='#9d978c';ell(cx,by-9,14,11);ctx.fillStyle='#b9b3a8';ell(cx-3,by-13,9,5.5);ctx.fillStyle='#857f75';ell(cx+4,by-3,9,3);ctx.fillStyle='rgba(255,255,255,.18)';ell(cx-5,by-15,6,3);ctx.fillStyle='rgba(0,0,0,.12)';ell(cx+6,by-4,7,3);ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx+1,by-14);ctx.lineTo(cx-1,by-9);ctx.lineTo(cx+3,by-5);ctx.stroke();if(P.snow){ctx.fillStyle='#fff';ell(cx-1,by-18,8,3)}}
 function drawFlower(x,y,o){const cx=(x+.5)*TS,cy=(y+.6)*TS;
@@ -1877,6 +1908,8 @@ function drawPerson(g,x,y,look,fx,fy,step,moving,o={}){
   g.strokeStyle='rgba(255,255,255,.16)';g.lineWidth=.8;g.beginPath();g.moveTo(x-2,ty+2);g.lineTo(x-2.4,ty+11);g.moveTo(x+2,ty+2);g.lineTo(x+2.4,ty+11);g.stroke();
   if(brA>0){g.fillStyle='rgba(255,255,255,'+(0.05+brA*.05).toFixed(3)+')';g.fillRect(x-5.5,ty+2.4-brA,11,1.6)}
   if(wk&&wk.s)wearBody(g,wk,x,ty,side,up);
+  g.fillStyle='rgba(255,255,255,.16)';E(x-3.5,ty+3.5,3.2,2);
+  g.fillStyle='rgba(0,0,0,.13)';E(x+4,ty+10,3.5,1.6);
   g.fillStyle='rgba(0,0,0,.08)';E(x,ty+1.2,6.5,1.6);
   g.strokeStyle='rgba(0,0,0,.07)';g.lineWidth=1;g.lineCap='round';g.beginPath();g.moveTo(x-4.5,ty+5);g.quadraticCurveTo(x-4,ty+8,x-4.6,ty+11);g.moveTo(x+4.5,ty+5);g.quadraticCurveTo(x+4,ty+8,x+4.6,ty+11);g.stroke();
   g.fillStyle='rgba(255,255,255,.10)';g.fillRect(x-7,ty+10.4,14,1);g.fillStyle='rgba(0,0,0,.12)';g.fillRect(x-7.5,ty+11.5,15,1.5);
@@ -2408,6 +2441,8 @@ function drawNpc(a){
   ctx.fillStyle=furL;E(hx,hy2,10.5,10);
   ctx.fillStyle='rgba(255,255,255,.20)';E(hx-2.8,hy2-4.6,5.2,3);
   ctx.fillStyle='rgba(60,35,15,.14)';E(hx,hy2+7,6.5,2.4);
+  // cheek blush (style cycle 29): soft rose cheeks on front view give species heads warmth + face volume, matching player face treatment
+  if(!up2&&!side){ctx.fillStyle='rgba(255,138,128,.38)';E(hx-6.7,hy2+3.4,2,1.25);E(hx+6.7,hy2+3.4,2,1.25)}
   if(SP==='🐸'){ctx.fillStyle=furL;E(hx-5,hy2-9,3.4,3);E(hx+5,hy2-9,3.4,3)}
   if(!up2){
     if(SP==='🐸'){
@@ -3418,11 +3453,11 @@ function renderStorage(){let h=`<div class="row" style="margin-bottom:8px"><butt
   return h+(S.stor.length?'':'<p class="mute">Empty.</p>')+'</div>'}
 function openStorage(){openPanel('📦','Storage',renderStorage,{kind:'stor'})}
 // Wardrobe: closet (S.closet ids) + worn items (S.wear); every move keeps the pockets+closet+wear total unchanged
-function renderWardrobe(){PAN.after=drawMirror;const w=S.wear;let h=`<div class="row ward-top" style="align-items:flex-start;gap:12px"><canvas id="mirror" width="96" height="128" role="img" aria-label="Wardrobe mirror preview" title="Tap to rotate the view"></canvas><div class="grow"><p class="mute">Closet: ${S.closet.length}/${CLOSET_MAX}</p><div class="row"><button class="btn" data-a="rndfit" ${S.closet.length?'':'disabled'}><span aria-hidden="true">🎲</span> Random outfit</button><button class="btn alt" data-a="hang" ${S.inv.some(x=>x&&IT[x.id].c==='cloth')?'':'disabled'}>Hang up pocket clothes</button></div></div></div><h3>Hairstyle</h3><div class="row ward-hair">${HAIRSTYLES.map(([id,n])=>`<button class="btn${(S.look.hairStyle||'swept')===id?'':' alt'}" data-a="hair" data-j="${id}">${n}</button>`).join('')}</div><h3>Wearing</h3><div class="list">`;
+function renderWardrobe(){PAN.after=drawMirror;const w=S.wear;let h=`<div class="row ward-top" style="align-items:flex-start;gap:12px"><canvas id="mirror" width="96" height="128" role="img" aria-label="Wardrobe mirror preview" title="Tap to rotate the view"></canvas><div class="grow"><p class="ward-count">👗 Closet: ${S.closet.length}/${CLOSET_MAX}</p><div class="row"><button class="btn" data-a="rndfit" ${S.closet.length?'':'disabled'}><span aria-hidden="true">🎲</span> Random outfit</button><button class="btn alt" data-a="hang" ${S.inv.some(x=>x&&IT[x.id].c==='cloth')?'':'disabled'}>Hang up pocket clothes</button></div></div></div><h3 class="ward-h">Hairstyle</h3><div class="row ward-hair">${HAIRSTYLES.map(([id,n])=>`<button class="btn${(S.look.hairStyle||'swept')===id?'':' alt'}" data-a="hair" data-j="${id}">${n}</button>`).join('')}</div><h3 class="ward-h">Wearing</h3><div class="list">`;
   for(const sl of WEAR_SLOTS){const id=w[sl],it=id&&IT[id];h+=li(it?it.e:'▫️',SLOT_NAME[sl],it?esc(it.n):'Nothing',it?`<button class="btn alt" data-a="takeoff" data-s="${sl}" aria-label="Take off ${esc(it.n)}">Take off</button>`:'')}
   h+='</div>';for(const sl of WEAR_SLOTS){const L=[];S.closet.forEach((id,j)=>{if(IT[id].slot===sl)L.push(j)});if(!L.length)continue;
-    h+=`<h3>${SLOT_NAME[sl]} (${L.length})</h3><div class="list">`+L.map(j=>{const it=IT[S.closet[j]];return li(it.e,esc(it.n),'',`<button class="btn" data-a="wearc" data-j="${j}" aria-label="Wear ${esc(it.n)}">Wear</button><button class="btn alt" data-a="cout" data-j="${j}" aria-label="Move ${esc(it.n)} to pockets" title="To pockets"><span aria-hidden="true">🎒</span></button>`)}).join('')+'</div>'}
-  return h+(S.closet.length?'':'<p class="mute">Your closet is empty. Buy clothes at Wren\'s Rack in Bramble\'s store, then hang them up here.</p>')}
+    h+=`<h3 class="ward-h">${SLOT_NAME[sl]} (${L.length})</h3><div class="list">`+L.map(j=>{const it=IT[S.closet[j]];return li(it.e,esc(it.n),'',`<button class="btn" data-a="wearc" data-j="${j}" aria-label="Wear ${esc(it.n)}">Wear</button><button class="btn alt" data-a="cout" data-j="${j}" aria-label="Move ${esc(it.n)} to pockets" title="To pockets"><span aria-hidden="true">🎒</span></button>`)}).join('')+'</div>'}
+  return h+(S.closet.length?'':'<p class="ward-empty">Your closet is empty. Buy clothes at Wren\'s Rack in Bramble\'s store, then hang them up here.</p>')}
 function drawMirror(){const c=$('mirror');if(!c)return;const g=c.getContext('2d');
   const DIRS=[[0,1],[1,0],[0,-1],[-1,0]],d=DIRS[G.mirrorDir=(G.mirrorDir||0)%4];
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);g.setTransform(2,0,0,2,0,0);
