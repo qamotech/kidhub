@@ -55,6 +55,7 @@ input,select{font:inherit;color:inherit}
 #durbar{width:42px;height:6px;border-radius:9px;background:#eadbb8;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(74,58,40,.18),inset 0 1px 2px rgba(74,58,40,.22)}
 #durbar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf) 0%,var(--leafd) 100%);border-radius:9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45);transition:width .25s ease}
 #evt{animation:evtIn .36s cubic-bezier(.2,1.2,.4,1) backwards;background:linear-gradient(180deg,#fff6d9 0%,#fff0c8 55%,#f7df9e 100%);border-radius:14px;padding:5px 12px 5px 14px;box-shadow:var(--lift),inset 0 0 0 1px rgba(245,201,90,.65),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(245,169,36,.28),inset 4px 0 0 var(--acc);font-size:13px;line-height:1.35;max-width:56vw;white-space:normal}
+#bless{background:linear-gradient(180deg,#fff8ec 0%,#ffe7c4 55%,#ffdca6 100%);box-shadow:var(--lift),inset 0 0 0 1px rgba(226,160,70,.6),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(226,160,70,.28);color:#7c5410;font-weight:700}
 #hint{position:absolute;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,253,246,.97),rgba(246,236,212,.94));border-radius:999px;padding:7px 16px;box-shadow:var(--lift),inset 0 0 0 1px rgba(234,219,184,.8),inset 0 1px 0 #fff;font-size:calc(14px*var(--fs));white-space:nowrap;max-width:calc(100vw - 24px);overflow:hidden;text-overflow:ellipsis;transition:opacity .2s}
 #hint kbd{background:var(--ink);color:var(--paper);border-radius:7px;padding:1px 7px;margin-right:6px;font:800 12px var(--font);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 0 rgba(0,0,0,.35),0 1px 0 rgba(74,58,40,.25)}
 #toasts{position:absolute;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);display:flex;flex-direction:column;gap:6px;align-items:center;width:min(92vw,460px)}
@@ -228,8 +229,9 @@ input[type=range]{accent-color:var(--leaf)}
 .sw button.on{box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--sea),inset 0 -3px 0 rgba(0,0,0,.15)}
 .sw button.hchip.on{box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--sea)}
 .sw button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-#title form .sw button:not(.hchip){box-shadow:0 0 0 2px rgba(255,255,255,.85),0 2px 5px rgba(90,60,30,.22),inset 0 3px 0 rgba(255,255,255,.38),inset 0 -3px 0 rgba(0,0,0,.15)}
+#title form .sw button:not(.hchip){position:relative;box-shadow:0 0 0 2px rgba(255,255,255,.85),0 2px 5px rgba(90,60,30,.22),inset 0 3px 0 rgba(255,255,255,.38),inset 0 -3px 0 rgba(0,0,0,.15)}
 #title form .sw button:not(.hchip).on{box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--sea),0 2px 5px rgba(90,60,30,.22),inset 0 3px 0 rgba(255,255,255,.38),inset 0 -3px 0 rgba(0,0,0,.15)}
+#title form .sw button:not(.hchip).on::after{content:"✓";position:absolute;right:-4px;bottom:-4px;width:16px;height:16px;border-radius:50%;background:var(--sea);color:#fff;font-size:11px;font-weight:800;line-height:1;display:grid;place-items:center;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(30,90,120,.35)}
 #title form .sw .hchip{background:linear-gradient(180deg,#fffdf7,#ffefd2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.55),0 1px 2px rgba(90,60,30,.12)}
 #title form .sw .hchip.on{background:linear-gradient(180deg,#eef8ff,#cfeeff);box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--sea),inset 0 1px 0 #fff}
 .map{width:100%;height:auto;border-radius:18px;image-rendering:pixelated;background:#3f9fd2}
@@ -242,7 +244,7 @@ input[type=range]{accent-color:var(--leaf)}
 #dock button.on{background:var(--leaf);color:#fff}
 
 /* ---------- title ---------- */
-#title{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(55% 38% at 50% 0%,rgba(255,244,190,.55),rgba(255,244,190,0) 70%),radial-gradient(120% 90% at 50% 10%,#bfe6f7 0%,#7cc6e8 45%,#3f9fd2 100%);overflow:auto;padding:16px}
+#title{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(55% 38% at 50% 0%,rgba(255,244,190,.55),rgba(255,244,190,0) 70%),radial-gradient(34% 15% at 13% 15%,rgba(255,255,255,.50),rgba(255,255,255,0) 70%),radial-gradient(27% 12% at 87% 23%,rgba(255,255,255,.40),rgba(255,255,255,0) 70%),radial-gradient(95% 24% at 50% 109%,rgba(241,223,166,.55),rgba(241,223,166,0) 70%),radial-gradient(120% 90% at 50% 10%,#bfe6f7 0%,#7cc6e8 45%,#3f9fd2 100%);overflow:auto;padding:16px}
 #title .card{width:min(94vw,520px);background:linear-gradient(180deg,#fffdf7 0%,var(--paper) 55%,#fff3d6 100%);border-radius:32px;border-top:6px solid var(--acc);border-bottom:6px solid var(--sea);box-shadow:var(--deep),inset 0 0 0 2px rgba(255,255,255,.55),inset 0 -10px 18px -12px rgba(63,159,210,.35);padding:26px 26px 22px;text-align:center;animation:titleIn .38s cubic-bezier(.2,1.2,.4,1) both}
 #title .card form,#title .card .opts,#title .card .foot{animation:riseIn .34s ease backwards}
 #title .card form{animation-delay:.07s}
@@ -493,7 +495,7 @@ button{touch-action:manipulation}
 <script>
 'use strict';
 (()=>{
-const APP_VERSION='1.6.16';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
+const APP_VERSION='1.6.17';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
 /* =====================================================================
    PUDDLEWICK ISLE: a single-file cozy island life sim
    Sections: utils · data · state · time · world gen · day cycle ·
@@ -1637,6 +1639,17 @@ function waterFx(x0,x1,y0,y1){ctx.strokeStyle='rgba(255,255,255,.38)';ctx.lineWi
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const t=W.ter[y*W.W+x];if(!isWaterT(t))continue;const h=(x*73856093^y*19349663)>>>0;if(h%3)continue;
     const ph=(G.t*.6+(h%100)/100)%1,X=x*TS+(h>>4)%22+4+Math.sin(G.t+h)*2,Y=y*TS+(h>>9)%22+6;if(ph>.6)continue;const w=4+ph*6;ctx.moveTo(X-w,Y);ctx.quadraticCurveTo(X,Y-3,X+w,Y)}
   ctx.stroke();
+  // shore foam (style cycle 80): a soft pulsing foam lip hugs each water edge where it meets land, giving the sea, rivers and ponds a finished shoreline
+  if(!calm()){ctx.lineWidth=1.8;ctx.lineCap='round';
+    for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){if(!isWaterT(W.ter[y*W.W+x]))continue;const X=x*TS,Y=y*TS,pu=.5+.5*Math.sin(G.t*1.2+x*1.15+y*.75);
+      const land=(dx,dy)=>{const nx=x+dx,ny=y+dy;return nx<0||ny<0||nx>=W.W||ny>=W.H||!isWaterT(W.ter[ny*W.W+nx])};
+      if(!(land(0,-1)||land(0,1)||land(-1,0)||land(1,0)))continue;
+      ctx.strokeStyle=`rgba(255,255,255,${.20+.18*pu})`;ctx.beginPath();
+      if(land(0,-1)){ctx.moveTo(X+5,Y+2.5);ctx.quadraticCurveTo(X+TS/2,Y+5.5,X+TS-5,Y+2.5)}
+      if(land(0,1)){ctx.moveTo(X+5,Y+TS-2.5);ctx.quadraticCurveTo(X+TS/2,Y+TS-5.5,X+TS-5,Y+TS-2.5)}
+      if(land(-1,0)){ctx.moveTo(X+2.5,Y+5);ctx.quadraticCurveTo(X+5.5,Y+TS/2,X+2.5,Y+TS-5)}
+      if(land(1,0)){ctx.moveTo(X+TS-2.5,Y+5);ctx.quadraticCurveTo(X+TS-5.5,Y+TS/2,X+TS-2.5,Y+TS-5)}
+      ctx.stroke()}}
   const hr=clk().h;if(!calm()&&hr>=7&&hr<18){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){if(!isWaterT(W.ter[y*W.W+x]))continue;const h=(x*73856093^y*19349663^0x5bd1)>>>0;if(h%7)continue;
     const tw=(Math.sin(G.t*2.4+h)+1)/2;if(tw<.3)continue;const X=x*TS+6+(h>>5)%20,Y=y*TS+6+(h>>11)%20,r=1+tw*2.4;
     ctx.strokeStyle=`rgba(255,255,235,${.22+tw*.5})`;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(X-r,Y);ctx.lineTo(X+r,Y);ctx.moveTo(X,Y-r);ctx.lineTo(X,Y+r);ctx.stroke()}}
@@ -2371,7 +2384,11 @@ function wearHead(g,k,x,hy,side,up){
       g.beginPath();g.moveTo(x-6.6+ex,hy+.4);g.lineTo(x-9.6+ex,hy-.1);g.moveTo(x+6.6+ex,hy+.4);g.lineTo(x+9.6+ex,hy-.1);g.stroke()}
     g.fillStyle='rgba(255,255,255,.22)';E(x-4.4+ex,hy+0.2,.55,.55);E(x+2.8+ex,hy+0.2,.55,.55);
     if(as==='glasses'){g.strokeStyle='rgba(255,255,255,.45)';g.lineWidth=.55;g.lineCap='round';g.beginPath();
-      g.moveTo(x-5.4+ex,hy-.4);g.lineTo(x-2.4+ex,hy+2.2);g.stroke()}}
+      g.moveTo(x-5.4+ex,hy-.4);g.lineTo(x-2.4+ex,hy+2.2);g.stroke();
+      // glasses refinement (style cycle 78): matching diagonal glint on the right lens (front view) + a soft top-edge sheen line on each lens gives the glass balanced depth
+      if(!side){g.beginPath();g.moveTo(x+1.6+ex,hy-.4);g.lineTo(x+4.6+ex,hy+2.2);g.stroke()}
+      g.strokeStyle='rgba(255,255,255,.30)';g.beginPath();
+      if(side){g.moveTo(x+ex-2.4,hy-1);g.lineTo(x+ex+2.4,hy-1)}else{g.moveTo(x-5.6+ex,hy-1);g.lineTo(x-.8+ex,hy-1);g.moveTo(x+.8+ex,hy-1);g.lineTo(x+5.6+ex,hy-1)}g.stroke()}}
   if(hs==='cap'){g.fillStyle=k.hatC;g.beginPath();g.ellipse(x,hy-5,11,7.5,0,Math.PI,0);g.fill();E(x,hy-12.3,1.4,1);
     if(!up){g.fillStyle=k.hatD;if(side)E(x+side*8,hy-5,7,2);else E(x,hy-4.5,11.5,2.4)}}
   else if(hs==='beanie'){g.fillStyle=k.hatC;g.beginPath();g.ellipse(x,hy-4,11.6,9.5,0,Math.PI,0);g.fill();g.fillStyle=k.hatD;g.fillRect(x-11.6,hy-6,23.2,3);g.fillStyle='#f7f3ea';E(x,hy-14,3,3)}
@@ -2561,6 +2578,7 @@ function drawNpc(a){
     if(SP==='🐸'){
       ctx.fillStyle='#26221f';E(hx-5+ex,hy2-9.2,1.5,1.7);E(hx+5+ex,hy2-9.2,1.5,1.7);
       ctx.fillStyle='#fff';E(hx-5.5+ex,hy2-9.8,.5,.55);E(hx+4.5+ex,hy2-9.8,.5,.55);
+      ctx.fillStyle='rgba(255,255,255,.85)';E(hx-4.4+ex,hy2-8.5,.22,.26);E(hx+5.6+ex,hy2-8.5,.22,.26);
       ctx.strokeStyle='#3f7031';ctx.lineWidth=1;ctx.lineCap='round';ctx.beginPath();ctx.arc(hx+ex,hy2+1.5,5.5,Math.PI*.2,Math.PI*.8);ctx.stroke();
     }else{
       ctx.fillStyle='#26221f';
@@ -2569,6 +2587,10 @@ function drawNpc(a){
       ctx.fillStyle='#fff';
       if(side)E(hx+ex+side*2.2+.4,hy2-0.1,.45,.5);
       else{E(hx-3.9+ex,hy2-0.1,.45,.5);E(hx+3.3+ex,hy2-0.1,.45,.5)}
+      // eye catchlight coherence (style cycle 79): a tiny second sparkle low-right in every pupil matches the main glint across all species (frog handled in its branch above)
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      if(side)E(hx+ex+side*2.75,hy2+1.05,.22,.26);
+      else{E(hx-3.05+ex,hy2+1.05,.22,.26);E(hx+4.15+ex,hy2+1.05,.22,.26)}
       // muzzle/beak/snout volume (style cycle 69): soft top-left sheen over each muzzle type gives faces the same lit volume as head/ears
       if(SP==='🐧'||SP==='🪶'){
         ctx.fillStyle='#f39c3a';ctx.beginPath();ctx.moveTo(hx+ex-2.1,hy2+2.6);ctx.lineTo(hx+ex+2.1,hy2+2.6);ctx.lineTo(hx+ex,hy2+4.8);ctx.closePath();ctx.fill();
