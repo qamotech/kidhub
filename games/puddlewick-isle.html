@@ -253,7 +253,8 @@ input[type=range]{accent-color:var(--leaf)}
 #title h1{margin:0;font-size:clamp(34px,8vw,50px);letter-spacing:-.02em;color:var(--leafd);line-height:1;text-shadow:0 2px 0 rgba(255,224,138,.65),0 5px 12px rgba(27,84,28,.20)}
 #title h1 small{display:block;width:fit-content;margin:0 auto 9px;padding:5px 14px 5px 17px;font-size:12px;font-weight:800;letter-spacing:.3em;color:#fff;background:linear-gradient(180deg,#67b9e6,var(--sea));border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(20,80,120,.28),0 2px 6px rgba(30,90,120,.25);text-shadow:0 1px 1px rgba(20,70,110,.45)}
 #title .isle{font-size:56px;width:96px;height:96px;margin:6px auto 4px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.9),rgba(191,230,247,.5) 58%,rgba(191,230,247,0) 72%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.65),0 8px 18px -8px rgba(30,90,120,.45);animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 6px rgba(30,90,120,.35))}
-#title form{display:grid;gap:10px;text-align:left;margin-top:14px;background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,248,236,.48));border-radius:20px;padding:14px;box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.45),0 2px 8px rgba(90,60,30,.08)}
+#title form{display:block;text-align:left;margin-top:14px;background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,248,236,.48));border-radius:20px;padding:14px;box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.45),0 2px 8px rgba(90,60,30,.08)}
+#title form>*+*{margin-top:10px}
 #title label{display:grid;gap:4px;font-size:13px;color:var(--ink2)}
 #title .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #title .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
@@ -271,8 +272,8 @@ input[type=range]{accent-color:var(--leaf)}
 #title .acts .btn:not(.alt){background:linear-gradient(180deg,#8ad87c 0%,var(--leaf) 55%,var(--leafd) 100%);box-shadow:0 4px 0 var(--leafd),inset 0 0 0 1px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(20,70,15,.22);text-shadow:0 1px 1px rgba(25,70,20,.4)}
 #title .acts .btn:not(.alt):hover{filter:brightness(1.06)}
 #title .acts .btn:not(.alt):active{box-shadow:0 1px 0 var(--leafd),inset 0 0 0 1px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.5)}
-#preview{width:126px;height:144px;margin:0 auto;display:block;border-radius:20px;background:radial-gradient(70% 42% at 50% 0%,rgba(255,244,190,.75),rgba(255,244,190,0) 70%),linear-gradient(180deg,#bfe6f7 0%,#dff3e2 62%,#f7e3ae 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),inset 0 0 0 4px rgba(63,159,210,.22),inset 0 -10px 0 rgba(90,60,30,.08),0 6px 14px rgba(90,60,30,.20),0 0 0 3px rgba(63,159,210,.18);transition:transform .15s ease,box-shadow .15s ease}
-#preview:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px rgba(255,255,255,.85),inset 0 0 0 4px rgba(63,159,210,.30),inset 0 -10px 0 rgba(90,60,30,.08),0 8px 18px rgba(90,60,30,.24),0 0 0 4px rgba(63,159,210,.24)}
+#preview{width:126px;height:144px;margin:0 auto;display:block;position:sticky;top:8px;z-index:6;border-radius:20px;background:radial-gradient(70% 42% at 50% 0%,rgba(255,244,190,.75),rgba(255,244,190,0) 70%),linear-gradient(180deg,#bfe6f7 0%,#dff3e2 62%,#f7e3ae 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),inset 0 0 0 4px rgba(63,159,210,.22),inset 0 -10px 0 rgba(90,60,30,.08),0 0 0 3px rgba(63,159,210,.18),0 0 0 9px rgba(255,250,238,.96),0 10px 22px rgba(90,60,30,.20);transition:transform .15s ease,box-shadow .15s ease}
+#preview:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px rgba(255,255,255,.85),inset 0 0 0 4px rgba(63,159,210,.30),inset 0 -10px 0 rgba(90,60,30,.08),0 0 0 4px rgba(63,159,210,.24),0 0 0 10px rgba(255,250,238,.96),0 12px 24px rgba(90,60,30,.24)}
 #mirror{width:96px;height:128px;flex:none;border-radius:18px;background:radial-gradient(70% 42% at 50% 0%,rgba(255,244,190,.75),rgba(255,244,190,0) 70%),linear-gradient(180deg,#bfe6f7 0%,#dff3e2 62%,#f7e3ae 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),inset 0 0 0 4px rgba(63,159,210,.22),inset 0 -10px 0 rgba(90,60,30,.08),0 6px 14px rgba(90,60,30,.20),0 0 0 3px rgba(63,159,210,.18);transition:transform .15s ease,box-shadow .15s ease}
 #mirror:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px rgba(255,255,255,.85),inset 0 0 0 4px rgba(63,159,210,.30),inset 0 -10px 0 rgba(90,60,30,.08),0 8px 18px rgba(90,60,30,.24),0 0 0 4px rgba(63,159,210,.24)}
 .ward-top{background:linear-gradient(180deg,rgba(255,255,255,.68),rgba(255,248,236,.55));border-radius:20px;padding:10px;box-shadow:inset 0 0 0 1px var(--line),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.45),0 2px 8px rgba(90,60,30,.08)}
@@ -364,7 +365,9 @@ body.touch #dlg{bottom:calc(236px + env(safe-area-inset-bottom))}
   #title .card{padding:24px 18px 20px}
   #title .acts .btn{min-height:52px;padding:13px 26px;font-size:18px;flex:1 1 140px}
   #title .opts .btn{min-height:48px;padding:11px 6px}
-  #title form{gap:12px}
+  #title form{padding:12px 14px}
+  #title form>*+*{margin-top:9px}
+  #title label{gap:3px}
   #title form input[type=text],#title form select{min-height:48px;font-size:16px;padding:10px 12px}
   #title form .sw{gap:10px;padding:10px}
   #title form .sw button:not(.hchip){width:44px;height:44px}
@@ -468,8 +471,11 @@ button{touch-action:manipulation}
       </div>
       <label><span class="lbl">Hemisphere (sets the seasons)</span><select id="fHemi"><option value="N">Northern</option><option value="S">Southern</option></select></label>
       <label><span class="lbl">Skin</span><div class="sw" id="swSkin"></div></label>
+      <label><span class="lbl">Eyes</span><div class="sw" id="swEyes"></div></label>
       <label><span class="lbl">Hair</span><div class="sw" id="swHair"></div></label>
       <label><span class="lbl">Hairstyle</span><div class="sw" id="swStyle"></div></label>
+      <label><span class="lbl">Glasses</span><div class="sw" id="swGlass"></div></label>
+      <label><span class="lbl">Hats</span><div class="sw" id="swHat"></div></label>
       <label><span class="lbl">Shirt</span><div class="sw" id="swShirt"></div></label>
       <div class="acts"><button class="btn" type="submit" id="btnNew"><span aria-hidden="true">🏝️</span> Start a new island</button><button class="btn alt" type="button" id="btnImport">Import save</button></div>
     </form>
@@ -495,7 +501,7 @@ button{touch-action:manipulation}
 <script>
 'use strict';
 (()=>{
-const APP_VERSION='1.7.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
+const APP_VERSION='1.8.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
 /* =====================================================================
    PUDDLEWICK ISLE: a single-file cozy island life sim
    Sections: utils · data · state · time · world gen · day cycle ·
@@ -1312,6 +1318,7 @@ function loadFrom(json){
   if(!okSave(s))throw new Error('Not a Puddlewick Isle save');
   const base=newState({name:s.name,island:s.island,hemi:s.hemi,look:s.look});
   for(const k in base)if(!(k in s))s[k]=base[k];
+  const LKD={glasses:'round',hat:'none',eyes:'brown'};if(!s.look||typeof s.look!=='object')s.look={skin:'#7d5236',hair:'#3b2a1e',shirt:'#3f9fd2',hairStyle:'swept'};for(const k in LKD)if(!(k in s.look))s.look[k]=LKD[k];
   const dd=s.derby=Object.assign({},base.derby,s.derby);dd.best=Object.assign({fish:0,bug:0},dd.best);dd.last=Object.assign({fish:-1,bug:-1},dd.last);s.arcade=(s.arcade&&typeof s.arcade==='object')?s.arcade:{plays:{fish:0,bike:0},best:{fish:0,bike:0},bonus:{fish:-1,bike:-1},trophies:{}};for(const k of['plays','best','bonus'])if(!s.arcade[k]||typeof s.arcade[k]!=='object')s.arcade[k]=k==='bonus'?{fish:-1,bike:-1}:{fish:0,bike:0};if(!s.arcade.trophies||typeof s.arcade.trophies!=='object')s.arcade.trophies={};s.bloom=Object.assign({},base.bloom,s.bloom);s.gig=Object.assign({},base.gig,s.gig);s.musRw=Object.assign({},base.musRw,s.musRw&&typeof s.musRw==='object'?s.musRw:{});for(const k in base.musRw)s.musRw[k]=clamp(s.musRw[k]|0,0,4);if(!s.gig.heard||typeof s.gig.heard!=='object')s.gig.heard={};const rr=s.rec=Object.assign({},base.rec,s.rec&&typeof s.rec==='object'&&!Array.isArray(s.rec)?s.rec:{});for(const k of ['fish','bug'])if(!rr[k]||typeof rr[k]!=='object'||Array.isArray(rr[k]))rr[k]={};rr.tro=Math.max(0,rr.tro|0);rr.ms=clamp(rr.ms|0,0,REC_MS.length);s.set=Object.assign({},base.set,s.set||{});if(![0,1,2,3].includes(s.set.ts))s.set.ts=1;if(!FS_STEPS.includes(s.set.fs))s.set.fs=1;
   for(const k of ['cat','catSets','flags'])if(!s[k]||typeof s[k]!=='object'||Array.isArray(s[k]))s[k]={};s.orders=Array.isArray(s.orders)?s.orders.filter(id=>IT[id]):[];
   s.inv=s.inv.map(x=>x&&IT[x.id]?x:null);while(s.inv.length<s.invSize)s.inv.push(null);
@@ -2304,6 +2311,129 @@ function drawPerson(g,x,y,look,fx,fy,step,moving,o={}){
         g.strokeStyle=HD;g.lineWidth=1.2;g.lineCap='round';g.beginPath();g.moveTo(x+sd*12.5,hy+0.6);g.quadraticCurveTo(x+sd*13.1,hy+5.6,x+sd*12.5,hy+10.2);g.stroke()}
       chunk(x-3.5,hy-7.8,4.6,1.3,HD);chunk(x+4.6,hy-6,3.8,1.2,HD);chunk(x+0.3,hy-9.6,4.4,1.1,HL);
     }
+  }else if(HS==='sidepart'){
+    if(up){
+      g.fillStyle=HC;E(x,hy-0.5,11.2,10.6);
+      g.beginPath();g.moveTo(x-11.4,hy+7.4);
+      for(let i=0;i<4;i++){const bx=x-11.4+i*5.7;g.lineTo(bx+2.8,hy+10.2);g.lineTo(bx+5.7,hy+7.4)}
+      g.closePath();g.fill();
+      g.strokeStyle=look.skin;g.lineWidth=1.3;g.lineCap='round';g.beginPath();g.moveTo(x+4.2,hy-10.4);g.quadraticCurveTo(x+4.9,hy-5,x+3.6,hy+0.5);g.stroke();
+      chunk(x-3.5,hy-5,5,1.4,HD);chunk(x+1,hy-8.3,4.6,1.1,HL);chunk(x-5,hy+0.5,4.2,1.4,HD);
+    }else if(side){
+      g.fillStyle=HC;g.beginPath();
+      g.moveTo(x-side*10.8,hy+3);
+      g.quadraticCurveTo(x-side*11.5,hy-5,x-side*5,hy-10.5);
+      g.quadraticCurveTo(x+side*1,hy-13,x+side*7,hy-11);
+      g.quadraticCurveTo(x+side*11.3,hy-8,x+side*10.9,hy-2.5);
+      g.lineTo(x+side*8.6,hy-0.6);g.lineTo(x+side*9.4,hy+2.2);
+      g.lineTo(x+side*5.5,hy+0.2);g.lineTo(x+side*2,hy+2.4);g.lineTo(x-side*1.5,hy+0.4);
+      g.lineTo(x-side*5,hy+2.6);g.lineTo(x-side*7.5,hy-0.4);g.lineTo(x-side*10.2,hy+1.6);
+      g.quadraticCurveTo(x-side*11,hy+2.4,x-side*10.8,hy+3);
+      g.closePath();g.fill();
+      g.strokeStyle=look.skin;g.lineWidth=1.2;g.lineCap='round';g.beginPath();g.moveTo(x-side*4.6,hy-11);g.quadraticCurveTo(x-side*5.6,hy-6,x-side*4.2,hy-1);g.stroke();
+      chunk(x-side*2,hy-8,4.8,1.4,HD);chunk(x+side*1,hy-10.2,4.4,1.1,HL);
+      g.fillStyle=HC;E(x-side*9.6,hy+1.1,2.1,3.3);
+    }else{
+      g.fillStyle=HC;g.beginPath();
+      g.moveTo(x-10.8,hy+2.5);
+      g.quadraticCurveTo(x-11.5,hy-6,x-6,hy-10.2);
+      g.quadraticCurveTo(x-1,hy-13.4,x+5,hy-12.4);
+      g.quadraticCurveTo(x+10.6,hy-11.2,x+11,hy-4);
+      g.quadraticCurveTo(x+11.2,hy-0.5,x+9.6,hy+0.8);
+      g.lineTo(x+7.8,hy-2.4);g.lineTo(x+5.2,hy-0.2);g.lineTo(x+2.4,hy-2.8);g.lineTo(x-0.6,hy-0.4);g.lineTo(x-3.4,hy-2.6);g.lineTo(x-6.2,hy-0.8);g.lineTo(x-8.6,hy-2);
+      g.quadraticCurveTo(x-10.2,hy-0.6,x-10.8,hy+2.5);
+      g.closePath();g.fill();
+      g.strokeStyle=look.skin;g.lineWidth=1.3;g.lineCap='round';g.beginPath();g.moveTo(x+4.6,hy-11.4);g.quadraticCurveTo(x+5.3,hy-6,x+3.9,hy-1.4);g.stroke();
+      chunk(x-3.8,hy-7.6,4.6,1.3,HD);chunk(x-0.5,hy-10.4,5,1.1,HL);chunk(x+6.5,hy-5.5,3.4,1.2,HD);
+      g.fillStyle=HC;E(x-10.4,hy-0.2,2.6,3.2);E(x+10.4,hy-0.2,2.6,3.2);
+    }
+  }else if(HS==='locs'){
+    const loc=(lx,top,len)=>{const n=Math.max(2,Math.round(len/3.4));for(let i=0;i<n;i++){const yy=top+i*3.3+1.6;g.fillStyle=HC;E(lx+(i%2?.35:-.35),yy,1.7,2.1);if(i<n-1){g.strokeStyle=HD;g.lineWidth=.9;g.beginPath();g.moveTo(lx-1.2,yy+1.7);g.lineTo(lx+1.2,yy+1.7);g.stroke()}}};
+    if(up){
+      g.fillStyle=HC;E(x,hy-0.4,11.4,10.6);
+      for(const dx of[-8,-4,0,4,8])loc(x+dx,hy+2.5,11);
+      chunk(x-4.5,hy-4.5,4.4,1.4,HD);chunk(x+4.5,hy-4.5,4.4,1.4,HD);chunk(x-0.5,hy-7.6,4.4,1.1,HL);
+    }else if(side){
+      g.fillStyle=HC;E(x,hy-1.4,11.2,9.7);
+      g.fillStyle=look.skin;E(x+side*1.4,hy+2.3,10,8);
+      loc(x-side*10.6,hy-1,13);loc(x+side*10.7,hy-2,11);
+      chunk(x-side*3,hy-7.4,4.6,1.3,HD);chunk(x-0.5,hy-9.6,4.4,1.1,HL);
+    }else{
+      g.fillStyle=HC;E(x,hy-1.4,11.3,9.8);
+      g.fillStyle=look.skin;E(x,hy+2.3,10.4,8);
+      loc(x-10.9,hy-1,13);loc(x+10.9,hy-1,13);
+      chunk(x-3.5,hy-7.8,4.6,1.3,HD);chunk(x+4.6,hy-6,3.8,1.2,HD);chunk(x+0.3,hy-9.6,4.4,1.1,HL);
+    }
+  }else if(HS==='spacebuns'){
+    if(up){
+      g.fillStyle=HC;E(x,hy-0.5,11.3,10.5);
+      for(const sd of[-1,1]){g.fillStyle=HC;E(x+sd*8.8,hy-11,3.5,3.3);
+        g.strokeStyle=HD;g.lineWidth=1;g.lineCap='round';g.beginPath();g.arc(x+sd*8.8,hy-11.2,2.4,Math.PI*.3,Math.PI*.9);g.stroke();
+        g.fillStyle=HL;E(x+sd*7.8,hy-12.3,1,.85)}
+      chunk(x-4,hy-4.5,4.8,1.4,HD);chunk(x+4.5,hy-3,4.2,1.3,HD);chunk(x-0.5,hy-7.8,4.6,1.1,HL);
+    }else if(side){
+      g.fillStyle=HC;E(x,hy-1.6,11.1,9.5);
+      g.fillStyle=look.skin;E(x+side*1.3,hy+2.1,10,8);
+      g.fillStyle=shade(HC,-25);E(x+side*5.2,hy-10.4,2.7,2.5);
+      g.fillStyle=HC;E(x-side*3.4,hy-11.6,3.5,3.3);
+      g.strokeStyle=HD;g.lineWidth=1;g.lineCap='round';g.beginPath();g.arc(x-side*3.4,hy-11.8,2.4,Math.PI*.3,Math.PI*.9);g.stroke();
+      g.fillStyle=HL;E(x-side*4.4,hy-12.9,1,.85);
+      chunk(x-side*3,hy-7.6,4.6,1.3,HD);chunk(x-0.5,hy-9.6,4.4,1.1,HL);
+    }else{
+      g.fillStyle=HC;E(x,hy-1.6,11.2,9.6);
+      g.fillStyle=look.skin;E(x,hy+2.1,10.4,8.1);
+      for(const sd of[-1,1]){g.fillStyle=HC;E(x+sd*8.8,hy-11.8,3.5,3.4);
+        g.strokeStyle=HD;g.lineWidth=1;g.lineCap='round';g.beginPath();g.arc(x+sd*8.8,hy-12,2.4,Math.PI*.3,Math.PI*.9);g.stroke();
+        g.fillStyle=HL;E(x+sd*7.8,hy-13.1,1,.85)}
+      chunk(x-3.5,hy-7.8,5,1.3,HD);chunk(x+1,hy-9.4,5.5,1.1,HL);
+    }
+  }else if(HS==='waves'){
+    if(up){
+      g.fillStyle=HC;E(x,hy+1,11.4,12);
+      for(const dx of[-8.2,-4.1,0,4.1,8.2])E(x+dx,hy+12.4,2.7,2.3);
+      g.strokeStyle=HD;g.lineWidth=1.2;g.lineCap='round';g.beginPath();
+      g.moveTo(x-6,hy-2);g.quadraticCurveTo(x-7.6,hy+4,x-6,hy+10);
+      g.moveTo(x+6,hy-2);g.quadraticCurveTo(x+7.6,hy+4,x+6,hy+10);g.stroke();
+      chunk(x-4.5,hy-3.5,4.8,1.5,HD);chunk(x+4.5,hy-3.5,4.8,1.5,HD);chunk(x-0.5,hy-7.6,4.6,1.2,HL);
+      g.strokeStyle=HD;g.lineWidth=1.1;g.beginPath();g.moveTo(x,hy-9.6);g.lineTo(x,hy-4.5);g.stroke();
+    }else if(side){
+      g.fillStyle=HC;g.beginPath();
+      g.moveTo(x-side*11,hy+12.4);
+      g.quadraticCurveTo(x-side*11.8,hy+2,x-side*10.4,hy-5);
+      g.quadraticCurveTo(x-side*6,hy-10.6,x,hy-11.4);
+      g.quadraticCurveTo(x+side*8,hy-11,x+side*10.6,hy-4.5);
+      g.quadraticCurveTo(x+side*11.2,hy+2,x+side*10.6,hy+10.6);
+      g.quadraticCurveTo(x+side*9.4,hy+12.6,x+side*8.2,hy+10.8);
+      g.quadraticCurveTo(x+side*8.6,hy+2,x+side*7.6,hy-1.5);
+      g.lineTo(x+side*4.6,hy-0.2);g.lineTo(x+side*1.8,hy-2);g.lineTo(x-side*2.2,hy-0.6);
+      g.lineTo(x-side*5.6,hy-1.8);g.lineTo(x-side*7.8,hy+0.4);
+      g.quadraticCurveTo(x-side*8.6,hy+6,x-side*8.2,hy+11);
+      g.quadraticCurveTo(x-side*9.4,hy+13.4,x-side*11,hy+12.4);
+      g.closePath();g.fill();
+      g.fillStyle=HC;E(x-side*10.2,hy+12.6,2.5,2.1);E(x-side*7.2,hy+13.2,2.3,2);
+      chunk(x-side*3,hy-7.6,4.6,1.4,HD);chunk(x-0.5,hy-9.8,4.4,1.1,HL);
+      g.strokeStyle=HD;g.lineWidth=1.2;g.lineCap='round';g.beginPath();g.moveTo(x-side*9.6,hy-1);g.quadraticCurveTo(x-side*11,hy+4,x-side*9.8,hy+8);g.quadraticCurveTo(x-side*9,hy+10.6,x-side*10,hy+12);g.stroke();
+    }else{
+      g.fillStyle=HC;g.beginPath();
+      g.moveTo(x-9.8,hy+0.8);
+      g.quadraticCurveTo(x-11.3,hy-5,x-6,hy-10);
+      g.quadraticCurveTo(x-1,hy-12.8,x+4.5,hy-11.8);
+      g.quadraticCurveTo(x+10.4,hy-10.6,x+11,hy-3.6);
+      g.quadraticCurveTo(x+11.2,hy-0.4,x+9.8,hy+0.8);
+      g.lineTo(x+5.2,hy-2.4);g.lineTo(x+0.9,hy-3.4);g.lineTo(x-0.9,hy-3.4);g.lineTo(x-5.2,hy-2.4);
+      g.quadraticCurveTo(x-8.6,hy-1.2,x-9.8,hy+0.8);
+      g.closePath();g.fill();
+      for(const sd of[-1,1]){g.beginPath();
+        g.moveTo(x+sd*8.4,hy-1.5);
+        g.quadraticCurveTo(x+sd*11.8,hy+3,x+sd*11.4,hy+9.4);
+        g.quadraticCurveTo(x+sd*10.4,hy+11.9,x+sd*9.7,hy+10);
+        g.quadraticCurveTo(x+sd*9.1,hy+11.9,x+sd*8.6,hy+9.8);
+        g.quadraticCurveTo(x+sd*7.9,hy+6,x+sd*8.4,hy-1.5);
+        g.closePath();g.fill();
+        g.strokeStyle=HD;g.lineWidth=1.2;g.lineCap='round';g.beginPath();
+        g.moveTo(x+sd*9.9,hy+0.5);g.quadraticCurveTo(x+sd*11.2,hy+4,x+sd*9.9,hy+7.5);g.quadraticCurveTo(x+sd*9.3,hy+9.6,x+sd*10,hy+10.8);g.stroke()}
+      chunk(x-3.5,hy-8,4.8,1.4,HD);chunk(x+4.6,hy-6.2,3.8,1.3,HD);chunk(x+0.3,hy-9.8,4.4,1.1,HL);
+    }
   }else{
   if(up){
     g.fillStyle=HC;E(x,hy-0.5,11.2,10.6);
@@ -2376,9 +2506,14 @@ function drawPerson(g,x,y,look,fx,fy,step,moving,o={}){
         g.moveTo(x+2.1,hy+1.5);g.quadraticCurveTo(x+3.7,hy+2.5,x+5.3,hy+1.5)}
       g.stroke();
     }else{
-      g.fillStyle='#26221f';
+      // eye color (batch 2): iris in the look color, darker pupil center, same white catchlight and geometry
+      const EC=EYE_COL[look.eyes]||'#4a2e1c';
+      g.fillStyle=EC;
       if(side)E(eyeX,hy+1.7,1.4,1.95);
       else{E(x-3.7,hy+1.7,1.5,2.05);E(x+3.7,hy+1.7,1.5,2.05)}
+      g.fillStyle=shade(EC,-62);
+      if(side)E(eyeX+side*.2,hy+1.8,.72,1.02);
+      else{E(x-3.7,hy+1.8,.78,1.08);E(x+3.7,hy+1.8,.78,1.08)}
       g.fillStyle='#fff';
       if(side)E(eyeX+side*.4,hy+1,0.5,0.6);
       else{E(x-3.9,hy+1,0.55,0.65);E(x+3.5,hy+1,0.55,0.65)}
@@ -2394,6 +2529,11 @@ function drawPerson(g,x,y,look,fx,fy,step,moving,o={}){
   }
   if(wk&&wk.hatS&&!up){g.fillStyle='rgba(40,25,15,.16)';g.beginPath();
     g.ellipse(x-side*1,hy-4.6,8.4,2.4,0,0,Math.PI);g.fill()}
+  // look accessories (batch 2): worn clothing wins — clothing glasses/shades suppress look glasses, a clothing hat suppresses the look hat
+  const LK_G=look.glasses||'round',LK_H=look.hat||'none',wornGlasses=as==='glasses'||as==='shades',wornHat=!!(wk&&wk.hatS);
+  if(!wornGlasses&&LK_G!=='none')drawLookGlasses(g,LK_G,x,hy,side,up);
+  if(!wornHat&&LK_H!=='none'){if(!up){g.fillStyle='rgba(40,25,15,.16)';g.beginPath();g.ellipse(x-side*1,hy-4.6,8.4,2.4,0,0,Math.PI);g.fill()}
+    drawLookHat(g,LK_H,x,hy,side,up)}
   if(wk&&(wk.hatS||as))wearHead(g,wk,x,hy,side,up);
 }
 // worn clothing cache: colors/shapes resolved only when S.wear changes, so drawPerson allocates nothing per frame
@@ -2604,6 +2744,77 @@ function wearHead(g,k,x,hy,side,up){
     g.strokeStyle=k.hatD;g.lineWidth=1;g.lineCap='round';g.beginPath();
     g.moveTo(x,hy-13);g.quadraticCurveTo(x+side*3,hy-9,x+side*6,hy-11);g.stroke();
     g.fillStyle='#e8c66a';E(x+side*6,hy-10.6,1.3,1.3)}
+}
+// look-picked glasses (batch 2): drawn when no clothing glasses/shades are worn; lens tint + glint match the clothing pair
+function drawLookGlasses(g,st,x,hy,side,up){
+  const E=(a,b,rx,ry)=>{g.beginPath();g.ellipse(a,b,rx,ry,0,0,6.2832);g.fill()},
+   FC={round:'#2b2b2b',square:'#6b4229',star:'#d9a441',heart:'#ef5da8',aviator:'#b9c2cc',cateye:'#7a4a9e',shades:'#20242a',rimless:'#b9c2cc'}[st]||'#2b2b2b',
+   HW={round:3,square:3,star:4.4,heart:3.9,aviator:3.3,cateye:3.3,shades:3.2,rimless:3}[st]||3,
+   lens=(cx,s)=>{const cy=hy+1;g.beginPath();
+     if(st==='star'){for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?1.9:4.4,px=cx+Math.cos(a)*r,py=cy+Math.sin(a)*r*.92;i?g.lineTo(px,py):g.moveTo(px,py)}g.closePath()}
+     else if(st==='heart'){g.moveTo(cx,cy+3.9);g.bezierCurveTo(cx-4.6,cy+.6,cx-3.4,cy-3.4,cx-1.4,cy-3.2);g.quadraticCurveTo(cx,cy-2.2,cx,cy-1.2);g.quadraticCurveTo(cx,cy-2.2,cx+1.4,cy-3.2);g.bezierCurveTo(cx+3.4,cy-3.4,cx+4.6,cy+.6,cx,cy+3.9)}
+     else if(st==='aviator'){g.moveTo(cx-3.1,hy-1.5);g.quadraticCurveTo(cx,hy-2.1,cx+3.1,hy-1.5);g.quadraticCurveTo(cx+3.4,hy+1,cx+1.7,hy+3.9);g.quadraticCurveTo(cx,hy+4.6,cx-1.7,hy+3.9);g.quadraticCurveTo(cx-3.4,hy+1,cx-3.1,hy-1.5)}
+     else if(st==='cateye'){const o=s*3.3,inn=-s*3.1;g.moveTo(cx+inn,hy-1.1);g.lineTo(cx+o,hy-2.7);g.quadraticCurveTo(cx+o+s*.5,hy-.4,cx+o-s*.7,hy+2.7);g.quadraticCurveTo(cx,hy+3.9,cx+inn+s*.4,hy+2.9);g.quadraticCurveTo(cx+inn-s*.3,hy,cx+inn,hy-1.1)}
+     else if(g.roundRect)g.roundRect(cx-HW,hy-1.5,HW*2,5,st==='round'?2.4:st==='shades'?2.1:.7);
+     else g.rect(cx-HW,hy-1.5,HW*2,5)};
+  if(up){g.fillStyle=FC;g.fillRect(x-11.3,hy+.3,2.5,1.2);g.fillRect(x+8.8,hy+.3,2.5,1.2);return}
+  if(side){const cx=x+side*3.9;lens(cx,side);
+    g.fillStyle=st==='shades'?'rgba(18,20,28,.88)':'rgba(190,220,245,.13)';g.fill();
+    if(st==='rimless'){g.strokeStyle='rgba(185,194,204,.85)';g.lineWidth=.65;g.beginPath();g.moveTo(cx-HW,hy-1.5);g.lineTo(cx+HW,hy-1.5);g.stroke()}
+    else{g.strokeStyle=FC;g.lineWidth=1.05;g.stroke()}
+    g.strokeStyle=FC;g.lineWidth=1.05;g.lineCap='round';g.beginPath();g.moveTo(cx-side*(HW-.4),hy+.2);g.lineTo(x-side*5.5,hy-.2);g.stroke();
+    g.fillStyle='rgba(255,255,255,.5)';E(cx-side*.8,hy+.1,.5,.55);return}
+  for(const i of[-1,1]){const cx=x+i*3.6;lens(cx,i);
+    g.fillStyle=st==='shades'?'rgba(18,20,28,.88)':'rgba(190,220,245,.13)';g.fill();
+    if(st!=='rimless'){g.strokeStyle=FC;g.lineWidth=1.05;g.stroke()}
+    g.fillStyle='rgba(255,255,255,.22)';E(cx-.8,hy+.2,.55,.55);
+    if(st==='shades'){g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=.6;g.lineCap='round';g.beginPath();g.moveTo(cx-1.9,hy-.7);g.lineTo(cx+.4,hy+2.1);g.stroke()}}
+  g.strokeStyle=FC;g.lineWidth=1.05;g.lineCap='round';
+  g.beginPath();g.moveTo(x-.9,hy+.55);g.lineTo(x+.9,hy+.55);g.stroke();
+  if(st==='aviator'){g.beginPath();g.moveTo(x-1.1,hy-.75);g.lineTo(x+1.1,hy-.75);g.stroke()}
+  for(const i of[-1,1]){g.beginPath();g.moveTo(x+i*(3.6+HW-.3),hy+.35);g.lineTo(x+i*9.7,hy-.15);g.stroke()}
+  if(st==='rimless'){g.strokeStyle='rgba(185,194,204,.85)';g.lineWidth=.65;g.beginPath();g.moveTo(x-6.6,hy-1.5);g.lineTo(x+6.6,hy-1.5);g.stroke()}
+  else if(st!=='shades'){g.strokeStyle='rgba(255,255,255,.45)';g.lineWidth=.55;g.beginPath();
+    g.moveTo(x-5.4,hy-.5);g.lineTo(x-2.5,hy+2.2);g.moveTo(x+2.5,hy-.5);g.lineTo(x+5.4,hy+2.2);g.stroke();
+    g.strokeStyle='rgba(255,255,255,.30)';g.beginPath();g.moveTo(x-5.6,hy-1.1);g.lineTo(x-.9,hy-1.1);g.moveTo(x+.9,hy-1.1);g.lineTo(x+5.6,hy-1.1);g.stroke()}
+}
+// look-picked hats (batch 2): drawn after hair in every view when no clothing hat is worn
+function drawLookHat(g,st,x,hy,side,up){
+  const E=(a,b,rx,ry)=>{g.beginPath();g.ellipse(a,b,rx,ry,0,0,6.2832);g.fill()},
+   B={cap:'#d9534f',sunhat:'#e8c66a',beanie:'#2a9d8f',tophat:'#2b2b33',beret:'#8e2f38',cowboy:'#b08954'}[st];
+  if(st==='cap'){g.fillStyle=B;g.beginPath();g.ellipse(x,hy-5,11,7.5,0,Math.PI,0);g.fill();E(x,hy-12.3,1.4,1);
+    g.fillStyle=shade(B,-45);
+    if(up)g.fillRect(x-6,hy-6.8,12,2.2);
+    else if(side)E(x+side*8,hy-5,7,2);
+    else E(x,hy-4.5,11.5,2.4);
+    g.fillStyle=shade(B,42);E(x-3.5,hy-9.5,3.4,1.6)}
+  else if(st==='sunhat'){g.fillStyle=B;E(x,hy-6,up?15:17,4.5);g.beginPath();g.ellipse(x,hy-7,9,7,0,Math.PI,0);g.fill();
+    g.fillStyle=shade(B,-45);g.fillRect(x-9,hy-9,18,2);g.fillStyle=shade(B,38);E(x-3,hy-10.5,3,1.6)}
+  else if(st==='beanie'){g.fillStyle=B;g.beginPath();g.ellipse(x,hy-4,11.6,9.5,0,Math.PI,0);g.fill();g.fillStyle=shade(B,-40);g.fillRect(x-11.6,hy-6,23.2,3);
+    g.strokeStyle=shade(B,-55);g.lineWidth=.7;g.beginPath();for(let i=-4;i<=4;i++){g.moveTo(x+i*2.6,hy-6);g.lineTo(x+i*2.6,hy-3)}g.stroke();
+    g.fillStyle='#f7f3ea';E(x,hy-14,3,3);g.fillStyle=shade(B,35);E(x-4,hy-9.5,3.6,1.8)}
+  else if(st==='tophat'){g.fillStyle=B;E(x,hy-5,up?12:14,4);g.fillRect(x-7.5,hy-17.5,15,12.5);
+    g.fillStyle='#6e1f2a';g.fillRect(x-7.5,hy-9,15,3.4);g.fillStyle=shade(B,42);g.fillRect(x-7.5,hy-17.5,15,1.6)}
+  else if(st==='flowercrown'){for(let i=0;i<7;i++){const a=Math.PI+i*Math.PI/6,px=x+Math.cos(a)*10,py=hy-4+Math.sin(a)*6;
+      g.fillStyle=i&1?'#fff6d6':'#f5a9c4';for(let k=0;k<5;k++){const pa=k*1.2566;E(px+Math.cos(pa)*1.25,py+Math.sin(pa)*1.25,1.1,1.1)}
+      g.fillStyle='#ffd25e';E(px,py,.85,.85)}}
+  else if(st==='beret'){const off=side*2;g.fillStyle=B;g.beginPath();g.ellipse(x+off,hy-8,12,5.5,side?-side*.12:-.1,Math.PI,0);g.fill();
+    g.fillStyle=shade(B,-42);g.fillRect(x-8+off,hy-8.5,16,2);
+    g.strokeStyle=shade(B,-30);g.lineWidth=1.2;g.lineCap='round';g.beginPath();g.moveTo(x+off-6,hy-11);g.quadraticCurveTo(x+off,hy-12.5,x+off+6,hy-11);g.stroke();
+    g.fillStyle=shade(B,-45);E(x+off,hy-13.5,1.5,1.8)}
+  else if(st==='cowboy'){g.fillStyle=B;g.beginPath();g.ellipse(x,hy-5,11.5,6.5,0,Math.PI,0);g.fill();
+    E(x,hy-5,up?12:14.5,3.4);
+    for(const sd of[-1,1]){g.save();g.translate(x+sd*13.2,hy-6.2);g.rotate(-sd*.38);E(0,0,3.4,1.7);g.restore()}
+    g.beginPath();g.ellipse(x,hy-8,7,6,0,Math.PI,0);g.fill();
+    g.fillStyle=shade(B,-45);g.fillRect(x-7,hy-9.5,14,1.8);
+    g.strokeStyle=shade(B,-40);g.lineWidth=.9;g.lineCap='round';g.beginPath();g.moveTo(x-3.5,hy-13.5);g.quadraticCurveTo(x,hy-11.5,x+3.5,hy-13.5);g.stroke()}
+  else if(st==='party'){g.fillStyle='#ef5da8';g.beginPath();g.moveTo(x-7,hy-4.6);g.lineTo(x+7,hy-4.6);g.lineTo(x,hy-14.8);g.closePath();g.fill();
+    g.save();g.beginPath();g.moveTo(x-7,hy-4.6);g.lineTo(x+7,hy-4.6);g.lineTo(x,hy-14.8);g.closePath();g.clip();
+    g.strokeStyle='#ffd25e';g.lineWidth=2.4;g.beginPath();g.moveTo(x-5,hy-7.8);g.lineTo(x+5,hy-7.8);g.stroke();
+    g.strokeStyle='#4fb6c9';g.beginPath();g.moveTo(x-3.2,hy-10.6);g.lineTo(x+3.2,hy-10.6);g.stroke();
+    g.strokeStyle='#ffd25e';g.beginPath();g.moveTo(x-1.5,hy-13);g.lineTo(x+1.5,hy-13);g.stroke();g.restore();
+    g.fillStyle='#7a4a9e';g.fillRect(x-7,hy-5.9,14,1.9);
+    g.fillStyle='#ffd25e';E(x,hy-15.6,2,2);g.fillStyle='rgba(255,255,255,.5)';E(x-.7,hy-16.3,.7,.7)}
 }
 function drawPlayer(){
   const tool=eqTool(),t=tool?IT[tool.id].tool:null,sw=G.swing>0;
@@ -3527,7 +3738,7 @@ const PA={
   // wardrobe
   dress:d=>{if(dressSlot(+d.i))PAN.sel=-1},
   ward:()=>{openWardrobe();return false},
-  wearc:d=>{wearCloset(+d.j)},takeoff:d=>{takeOff(d.s)},cout:d=>{closetOut(+d.j)},hang:()=>{hangAll()},rndfit:()=>{randomOutfit()},hair:d=>{S.look.hairStyle=d.j},
+  wearc:d=>{wearCloset(+d.j)},takeoff:d=>{takeOff(d.s)},cout:d=>{closetOut(+d.j)},hang:()=>{hangAll()},rndfit:()=>{randomOutfit()},hair:d=>{S.look.hairStyle=d.j},glass:d=>{S.look.glasses=d.j},hat:d=>{S.look.hat=d.j},eyes:d=>{S.look.eyes=d.j},
   // shop
   order:d=>{orderCat(d.id)},
   buy:d=>{const id=d.id,pr=+d.p;if(d.rc){if(S.coins<pr){toast('You don\'t have enough chimes.');return}S.coins-=pr;S.dly.shop.bought[d.k]=1;learn(d.rc);sfx('coins');return}
@@ -3711,7 +3922,7 @@ function renderStorage(){let h=`<div class="row" style="margin-bottom:8px"><butt
   return h+(S.stor.length?'':'<p class="mute">Empty.</p>')+'</div>'}
 function openStorage(){openPanel('📦','Storage',renderStorage,{kind:'stor'})}
 // Wardrobe: closet (S.closet ids) + worn items (S.wear); every move keeps the pockets+closet+wear total unchanged
-function renderWardrobe(){PAN.after=drawMirror;const w=S.wear;let h=`<div class="row ward-top" style="align-items:flex-start;gap:12px"><canvas id="mirror" width="96" height="128" role="img" aria-label="Wardrobe mirror preview" title="Tap to rotate the view"></canvas><div class="grow"><p class="ward-count">👗 Closet: ${S.closet.length}/${CLOSET_MAX}</p><div class="row"><button class="btn" data-a="rndfit" ${S.closet.length?'':'disabled'}><span aria-hidden="true">🎲</span> Random outfit</button><button class="btn alt" data-a="hang" ${S.inv.some(x=>x&&IT[x.id].c==='cloth')?'':'disabled'}>Hang up pocket clothes</button></div></div></div><h3 class="ward-h">Hairstyle</h3><div class="row ward-hair">${HAIRSTYLES.map(([id,n])=>`<button class="btn${(S.look.hairStyle||'swept')===id?'':' alt'}" data-a="hair" data-j="${id}">${n}</button>`).join('')}</div><h3 class="ward-h">Wearing</h3><div class="list ward-list ward-worn">`;
+function renderWardrobe(){PAN.after=drawMirror;const w=S.wear;let h=`<div class="row ward-top" style="align-items:flex-start;gap:12px"><canvas id="mirror" width="96" height="128" role="img" aria-label="Wardrobe mirror preview" title="Tap to rotate the view"></canvas><div class="grow"><p class="ward-count">👗 Closet: ${S.closet.length}/${CLOSET_MAX}</p><div class="row"><button class="btn" data-a="rndfit" ${S.closet.length?'':'disabled'}><span aria-hidden="true">🎲</span> Random outfit</button><button class="btn alt" data-a="hang" ${S.inv.some(x=>x&&IT[x.id].c==='cloth')?'':'disabled'}>Hang up pocket clothes</button></div></div></div><h3 class="ward-h">Hairstyle</h3><div class="row ward-hair">${HAIRSTYLES.map(([id,n])=>`<button class="btn${(S.look.hairStyle||'swept')===id?'':' alt'}" data-a="hair" data-j="${id}">${n}</button>`).join('')}</div><h3 class="ward-h">Glasses</h3><div class="row ward-hair">${[['none','🚫 None'],...GLASSES].map(([id,n])=>`<button class="btn${(S.look.glasses||'round')===id?'':' alt'}" data-a="glass" data-j="${id}">${n}</button>`).join('')}</div><h3 class="ward-h">Hats</h3><div class="row ward-hair">${[['none','🚫 No Hat'],...HATS].map(([id,n])=>`<button class="btn${(S.look.hat||'none')===id?'':' alt'}" data-a="hat" data-j="${id}">${n}</button>`).join('')}</div><h3 class="ward-h">Eyes</h3><div class="row ward-hair">${EYES.map(([id,n])=>`<button class="btn${(S.look.eyes||'brown')===id?'':' alt'}" data-a="eyes" data-j="${id}">${n}</button>`).join('')}</div><h3 class="ward-h">Wearing</h3><div class="list ward-list ward-worn">`;
   for(const sl of WEAR_SLOTS){const id=w[sl],it=id&&IT[id];h+=li(it?it.e:'▫️',SLOT_NAME[sl],it?esc(it.n):'Nothing',it?`<button class="btn alt" data-a="takeoff" data-s="${sl}" aria-label="Take off ${esc(it.n)}">Take off</button>`:'')}
   h+='</div>';for(const sl of WEAR_SLOTS){const L=[];S.closet.forEach((id,j)=>{if(IT[id].slot===sl)L.push(j)});if(!L.length)continue;
     h+=`<h3 class="ward-h">${SLOT_NAME[sl]} (${L.length})</h3><div class="list ward-list">`+L.map(j=>{const it=IT[S.closet[j]];return li(it.e,esc(it.n),'',`<button class="btn" data-a="wearc" data-j="${j}" aria-label="Wear ${esc(it.n)}">Wear</button><button class="btn alt" data-a="cout" data-j="${j}" aria-label="Move ${esc(it.n)} to pockets" title="To pockets"><span aria-hidden="true">🎒</span></button>`)}).join('')+'</div>'}
@@ -4152,16 +4363,30 @@ function notes(){
 }
 
 /* =============================== TITLE / BOOT =============================== */
-const HAIRSTYLES=[['swept','💇 Swept'],['spiky','⚡ Spiky · boy'],['crop','✂️ Short Crop · boy'],['long','🌺 Long · girl'],['ponytail','🎀 Ponytail · girl'],['fade','💈 Fade · boy'],['curly','🌀 Curly Top · boy'],['mohawk','🦔 Mohawk · boy'],['braids','🪢 Braids · girl'],['bun','🍩 Top Bun · girl'],['twintails','🎎 Twin Tails · girl']];
-const look={skin:SKINS[4],hair:HAIRS[0],shirt:SHIRTS[4],hairStyle:'swept'};
+const HAIRSTYLES=[['swept','💇 Swept'],['spiky','⚡ Spiky · boy'],['crop','✂️ Short Crop · boy'],['long','🌺 Long · girl'],['ponytail','🎀 Ponytail · girl'],['fade','💈 Fade · boy'],['curly','🌀 Curly Top · boy'],['mohawk','🦔 Mohawk · boy'],['braids','🪢 Braids · girl'],['bun','🍩 Top Bun · girl'],['twintails','🎎 Twin Tails · girl'],['sidepart','💇 Side Part · boy'],['locs','🧶 Locs'],['spacebuns','🐻 Space Buns · girl'],['waves','🌊 Wavy Long · girl']];
+// customization batch 2 (2026-10-30): look-selectable glasses, hats and eye colors (worn clothing still wins in drawPerson)
+const GLASSES=[['round','👓 Round'],['square','🟦 Square'],['star','⭐ Star'],['heart','💗 Heart'],['aviator','🛩️ Aviator'],['cateye','🐱 Cat-Eye'],['shades','🕶️ Shades'],['rimless','💎 Rimless']];
+const HATS=[['cap','🧢 Cap'],['sunhat','👒 Sun Hat'],['beanie','🧶 Beanie'],['tophat','🎩 Top Hat'],['flowercrown','🌸 Flower Crown'],['beret','🎨 Beret'],['cowboy','🤠 Cowboy'],['party','🎉 Party Hat']];
+const EYES=[['brown','Brown','#4a2e1c'],['hazel','Hazel','#8a6d2f'],['green','Green','#2e7d4f'],['blue','Blue','#2f5d8a'],['gray','Gray','#6b7280']];
+const EYE_COL={};EYES.forEach(([id,,c])=>EYE_COL[id]=c);
+const look={skin:SKINS[4],hair:HAIRS[0],shirt:SHIRTS[4],hairStyle:'swept',glasses:'round',hat:'none',eyes:'brown'};
 function styleChips(){const el=$('swStyle');if(!el)return;el.innerHTML=HAIRSTYLES.map(([id,n])=>`<button type="button" class="hchip${look.hairStyle===id?' on':''}" data-hs="${id}">${n}</button>`).join('');
   el.onclick=e=>{const b=e.target.closest('button[data-hs]');if(!b)return;look.hairStyle=b.dataset.hs;[...el.children].forEach(x=>x.classList.toggle('on',x===b));drawPreview()}}
+function glassChips(){const el=$('swGlass');if(!el)return;const cur=look.glasses||'round';el.innerHTML=[['none','🚫 None'],...GLASSES].map(([id,n])=>`<button type="button" class="hchip${cur===id?' on':''}" data-g="${id}">${n}</button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button[data-g]');if(!b)return;look.glasses=b.dataset.g;[...el.children].forEach(x=>x.classList.toggle('on',x===b));drawPreview()}}
+function hatChips(){const el=$('swHat');if(!el)return;const cur=look.hat||'none';el.innerHTML=[['none','🚫 No Hat'],...HATS].map(([id,n])=>`<button type="button" class="hchip${cur===id?' on':''}" data-ht="${id}">${n}</button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button[data-ht]');if(!b)return;look.hat=b.dataset.ht;[...el.children].forEach(x=>x.classList.toggle('on',x===b));drawPreview()}}
+function eyeSwatches(){const el=$('swEyes');if(!el)return;const cur=look.eyes||'brown';el.innerHTML=EYES.map(([id,n,c])=>`<button type="button" style="--c:${c}" data-e="${id}" aria-label="Eyes: ${n}" class="${cur===id?'on':''}"></button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button[data-e]');if(!b)return;look.eyes=b.dataset.e;[...el.children].forEach(x=>x.classList.toggle('on',x===b));drawPreview()}}
 function swatches(id,list,key){const el=$(id);el.innerHTML=list.map(c=>`<button type="button" style="--c:${c}" data-c="${c}" aria-label="${key} color ${c}" class="${look[key]===c?'on':''}"></button>`).join('');
   el.onclick=e=>{const b=e.target.closest('button');if(!b)return;look[key]=b.dataset.c;[...el.children].forEach(x=>x.classList.toggle('on',x===b));drawPreview()}}
 function defWk(){const w={hat:null,top:'cl_flannelblue',bot:'cl_pantschestnut',shoe:'cl_sneakblack',acc:'cl_glassround'},k={s:0};
   for(const sl of WEAR_SLOTS){const id=w[sl],it=id&&(IT[id]||IT['cl_'+id]);k[sl]=id||null;k[sl+'C']=it?it.col:null;k[sl+'D']=it?shade(it.col,-45):null;k[sl+'S']=it?it.shape:null}
   k.topC=look.shirt;k.topD=shade(look.shirt,-45);return k}
-function drawPreview(){const c=$('preview'),g=c.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);g.setTransform(3,0,0,3,0,0);drawPerson(g,21,46,look,0,1,0,false,{wk:S?wearK():defWk()})}
+function drawPreview(){const c=$('preview'),g=c.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);g.setTransform(3,0,0,3,0,0);
+  // creator preview: the default outfit's glasses step aside so the Glasses chips show — exactly one pair, never two
+  let w;if(S)w=wearK();else{w=defWk();if(w.accS==='glasses'||w.accS==='shades'){w.acc=null;w.accC=null;w.accD=null;w.accS=null}}
+  drawPerson(g,21,46,look,0,1,0,false,{wk:w})}
 function startGame(isNew){
   // Apply title-screen options to game settings
   try{
@@ -4191,8 +4416,8 @@ let FOOT0=null;
 function boot(){
   {const ft=document.querySelector('#title .foot');if(FOOT0==null)FOOT0=ft.innerHTML;ft.style.color='';
     ft.innerHTML=isTouch?'<span id="tVer"></span>Drag the stick to move (push gently to tiptoe) · 🏃 to run · A button for action · 🔧 button to switch tools · 🎒 for pockets · 📱 for phone<br>Original fan-made game inspired by cozy island life sims. Progress saves in this browser.':FOOT0}
-  $('tVer').textContent=`v${APP_VERSION} · `;swatches('swSkin',SKINS,'skin');swatches('swHair',HAIRS,'hair');swatches('swShirt',SHIRTS,'shirt');styleChips();drawPreview();
-window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches('swSkin',SKINS,'skin');if(!$('swHair').children.length)swatches('swHair',HAIRS,'hair');if(!$('swShirt').children.length)swatches('swShirt',SHIRTS,'shirt');if(!$('swStyle').children.length)styleChips();drawPreview()}catch(e){}});resize();
+  $('tVer').textContent=`v${APP_VERSION} · `;swatches('swSkin',SKINS,'skin');swatches('swHair',HAIRS,'hair');swatches('swShirt',SHIRTS,'shirt');styleChips();glassChips();hatChips();eyeSwatches();drawPreview();
+window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches('swSkin',SKINS,'skin');if(!$('swHair').children.length)swatches('swHair',HAIRS,'hair');if(!$('swShirt').children.length)swatches('swShirt',SHIRTS,'shirt');if(!$('swStyle').children.length)styleChips();if(!$('swGlass').children.length)glassChips();if(!$('swHat').children.length)hatChips();if(!$('swEyes').children.length)eyeSwatches();drawPreview()}catch(e){}});resize();
   // rawSaved keeps the stored string even when it is damaged, so New Game still asks twice before overwriting it
   let rawSaved=null,saved=null,bak=null;try{rawSaved=localStorage.getItem(SAVE_KEY);bak=localStorage.getItem(BAK_KEY)}catch(e){}
   $('tContinue').hidden=true;$('tDmg').hidden=true;delete $('newForm').dataset.ok;$('btnNew').textContent='🏝️ Start a new island';
