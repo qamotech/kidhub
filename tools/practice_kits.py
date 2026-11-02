@@ -24,7 +24,8 @@ GOALS={
 'bike-blitz':['Start with Joy Ride and learn the steering on an easy trail.','Try a Time Trial and watch where you lose speed.','In Trick Park, land one trick cleanly three times in a row.'],
 'fishing-derby':['Learn how casting and reeling work at your first spot.','Catch fish at two different spots and compare what bites.','In the tournament, plan which spot to fish before the clock runs out.'],
 'mecha-strike':['Learn how transforming changes your movement and attacks.','Practice dodging a boss attack pattern before fighting back.','Compare two levels and describe how the enemies changed.'],
-'n8-strike':['Survive the first wave and learn the enemy patterns.','Pick an upgrade and describe how it changed your mech.','Record the highest wave you reached and one tactic that helped.']}
+'n8-strike':['Survive the first wave and learn the enemy patterns.','Pick an upgrade and describe how it changed your mech.','Record the highest wave you reached and one tactic that helped.'],
+'1poly':['Learn what a full set of matching properties lets you build.','Make one trade and describe what each player gained.','Compare the Classic board and Cards mode: which moved faster, and why?']}
 COMPANIONS={1:('KidsBeat',['Build a short beat with two contrasting sounds.','Change the tempo and compare the groove.','Record a pattern or describe how to recreate it.']),2:('Qamo Mathcore',['Draw a math diagram with a pen, shape, or text tool.','Compare a mirrored sketch or a second notebook page.','Export the drawing and explain your reasoning.']),3:('Stix Stax Stonz',['Find a possible winning line.','Block an immediate threat.','Describe a move that sets up your next turn.'])}
 def tag(id,title,goals,src):
  attrs={'src':src,'data-activity':id,'data-title':title,'data-goals':json.dumps(goals,ensure_ascii=False)}

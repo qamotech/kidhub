@@ -6,6 +6,12 @@
   "blurb": "NEW! A fresh 3-game mission quest every week — check them all off!"
  },
  {
+  "slug": "1poly",
+  "emoji": "🎲",
+  "title": "1poly",
+  "blurb": "NEW! The family property-trading game — classic board with multiplayer room codes, or fast Cards mode. (Live online game — needs internet.)"
+ },
+ {
   "slug": "money-game-night",
   "emoji": "💰",
   "title": "Family Money Game Night",
