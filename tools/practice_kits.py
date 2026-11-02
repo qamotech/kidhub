@@ -17,7 +17,14 @@ GOALS={
 'qamelot-tower-defense':['Inspect paths before placing a tower.','Compare tower coverage from two positions.','Explain one upgrade or placement choice after a wave.'],
 'stix-stax-stonz':['Identify every line that could win.','Block an immediate threat before planning your own line.','Describe a move that creates two threats.'],
 'shadow-chassis':['Learn the Shinobi controls in a quiet corner before engaging.','Compare how the Shinobi and the Cruiser handle the same group of enemies.','Describe the pattern you used to survive one boss attack.'],
-'neuropulse':['Explore two synthesizer presets and compare their timbre and modulation.','Program a 16-step melody and adjust tempo or swing to change the groove.','Experiment with different 3D hologram visualizer modes and record a session.']}
+'neuropulse':['Explore two synthesizer presets and compare their timbre and modulation.','Program a 16-step melody and adjust tempo or swing to change the groove.','Experiment with different 3D hologram visualizer modes and record a session.'],
+'quest-of-the-week':['Read this week\'s three mission games before starting.','Check off each game as you finish it.','Describe which mission game was your favorite and why.'],
+'money-game-night':['Learn how money is earned and spent in the game.','Set a savings goal before you start playing.','Compare two choices: one that spends now and one that saves for later.'],
+'puddlewick-isle':['Explore the island and meet three characters.','Try one mini-game and describe how it works.','Customize your character and take a tour of a new area.'],
+'bike-blitz':['Start with Joy Ride and learn the steering on an easy trail.','Try a Time Trial and watch where you lose speed.','In Trick Park, land one trick cleanly three times in a row.'],
+'fishing-derby':['Learn how casting and reeling work at your first spot.','Catch fish at two different spots and compare what bites.','In the tournament, plan which spot to fish before the clock runs out.'],
+'mecha-strike':['Learn how transforming changes your movement and attacks.','Practice dodging a boss attack pattern before fighting back.','Compare two levels and describe how the enemies changed.'],
+'n8-strike':['Survive the first wave and learn the enemy patterns.','Pick an upgrade and describe how it changed your mech.','Record the highest wave you reached and one tactic that helped.']}
 COMPANIONS={1:('KidsBeat',['Build a short beat with two contrasting sounds.','Change the tempo and compare the groove.','Record a pattern or describe how to recreate it.']),2:('Qamo Mathcore',['Draw a math diagram with a pen, shape, or text tool.','Compare a mirrored sketch or a second notebook page.','Export the drawing and explain your reasoning.']),3:('Stix Stax Stonz',['Find a possible winning line.','Block an immediate threat.','Describe a move that sets up your next turn.'])}
 def tag(id,title,goals,src):
  attrs={'src':src,'data-activity':id,'data-title':title,'data-goals':json.dumps(goals,ensure_ascii=False)}

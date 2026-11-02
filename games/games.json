@@ -1,110 +1,134 @@
 [
-    {
-        "slug": "quest-of-the-week",
-        "emoji": "🗺️",
-        "title": "Quest of the Week",
-        "blurb": "NEW! A fresh 3-game mission quest every week — check them all off!"
-    },
-    {
-        "slug": "money-game-night",
-        "emoji": "💰",
-        "title": "Family Money Game Night",
-        "blurb": "NEW! Budget play money into Needs, Wants & Savings jars and hit the goal!"
-    },
-    {
-        "slug": "puddlewick-isle",
-        "emoji": "\ud83c\udfdd\ufe0f",
-        "title": "Puddlewick Isle",
-        "blurb": "NEW! Cozy island life sim \u2014 fish, explore, befriend neighbors."
-    },
-    {
-        "slug": "popstorm",
-        "emoji": "\ud83c\udf1f",
-        "title": "PopStorm: Glow Guardians",
-        "blurb": "NEW! Pop Gloomies, build wild power-ups, beat 3 bosses."
-    },
-    {
-        "slug": "neon-pong",
-        "emoji": "\ud83c\udfd3",
-        "title": "Neon Pong",
-        "blurb": "Classic paddle battle with glowing neon."
-    },
-    {
-        "slug": "combat-cars",
-        "emoji": "\ud83c\udfce\ufe0f",
-        "title": "Combat Cars",
-        "blurb": "Retro arena racing, 16-bit style."
-    },
-    {
-        "slug": "shadow-defense",
-        "emoji": "\ud83e\udd4b",
-        "title": "Shadow Defense",
-        "blurb": "Block and defend like a dojo master."
-    },
-    {
-        "slug": "miyagi-throw",
-        "emoji": "\ud83e\udd77",
-        "title": "Miyagi Throw!",
-        "blurb": "Aim and throw to hit every target."
-    },
-    {
-        "slug": "n8-shift",
-        "emoji": "\u26a1",
-        "title": "N8 SHIFT",
-        "blurb": "Shift Racer, Jet & Titan to beat every hazard!"
-    },
-    {
-        "slug": "ninja-sandbox",
-        "emoji": "\ud83c\udf00",
-        "title": "Ninja Sandbox",
-        "blurb": "Run, jump and transform in a ninja playground."
-    },
-    {
-        "slug": "shipment-8bit",
-        "emoji": "\ud83d\udc7e",
-        "title": "Shipment 8-Bit",
-        "blurb": "Pixel-art arena adventure."
-    },
-    {
-        "slug": "blob-bash-royale",
-        "emoji": "\ud83d\udfe3",
-        "title": "Blob Bash Royale",
-        "blurb": "Bouncy blob platform brawler."
-    },
-    {
-        "slug": "panther-arena",
-        "emoji": "\ud83d\udc06",
-        "title": "Panther Arena",
-        "blurb": "Gold-hunting panther showdown."
-    },
-    {
-        "slug": "qamelot-conquest",
-        "emoji": "\ud83c\udff0",
-        "title": "Qamelot Conquest",
-        "blurb": "Castle-storming arcade quest."
-    },
-    {
-        "slug": "qamelot-tower-defense",
-        "emoji": "\ud83d\uddfc",
-        "title": "Qamelot Tower Defense",
-        "blurb": "Build towers, stop the waves."
-    },
-    {
-        "slug": "stix-stax-stonz",
-        "emoji": "\u274c",
-        "title": "Stix Stax Stonz",
-        "blurb": "Tic-tac-toe with a cyber twist."
-    },
-    {
-        "slug": "neuropulse",
-        "emoji": "\u26a1",
-        "title": "NeuroPulse Cyberdeck",
-        "blurb": "Cybernetic audio-visual synth, 16-step sequencer & 3D holo-deck."
-    },
-    {
-        "slug": "shadow-chassis",
-        "emoji": "\ud83e\udd16",
-        "title": "Project: Shadow Chassis",
-        "blurb": "Midnight-mecha action: swap Shinobi and Cruiser rigs and take down Goliath-01."
-    }
+ {
+  "slug": "quest-of-the-week",
+  "emoji": "🗺️",
+  "title": "Quest of the Week",
+  "blurb": "NEW! A fresh 3-game mission quest every week — check them all off!"
+ },
+ {
+  "slug": "money-game-night",
+  "emoji": "💰",
+  "title": "Family Money Game Night",
+  "blurb": "NEW! Budget play money into Needs, Wants & Savings jars and hit the goal!"
+ },
+ {
+  "slug": "puddlewick-isle",
+  "emoji": "🏝️",
+  "title": "Puddlewick Isle",
+  "blurb": "NEW! Cozy island life sim — fish, explore, befriend neighbors."
+ },
+ {
+  "slug": "popstorm",
+  "emoji": "🌟",
+  "title": "PopStorm: Glow Guardians",
+  "blurb": "NEW! Pop Gloomies, build wild power-ups, beat 3 bosses."
+ },
+ {
+  "slug": "neon-pong",
+  "emoji": "🏓",
+  "title": "Neon Pong",
+  "blurb": "Classic paddle battle with glowing neon."
+ },
+ {
+  "slug": "combat-cars",
+  "emoji": "🏎️",
+  "title": "Combat Cars",
+  "blurb": "Retro arena racing, 16-bit style."
+ },
+ {
+  "slug": "shadow-defense",
+  "emoji": "🥋",
+  "title": "Shadow Defense",
+  "blurb": "Block and defend like a dojo master."
+ },
+ {
+  "slug": "miyagi-throw",
+  "emoji": "🥷",
+  "title": "Miyagi Throw!",
+  "blurb": "Aim and throw to hit every target."
+ },
+ {
+  "slug": "n8-shift",
+  "emoji": "⚡",
+  "title": "N8 SHIFT",
+  "blurb": "Shift Racer, Jet & Titan to beat every hazard!"
+ },
+ {
+  "slug": "ninja-sandbox",
+  "emoji": "🌀",
+  "title": "Ninja Sandbox",
+  "blurb": "Run, jump and transform in a ninja playground."
+ },
+ {
+  "slug": "shipment-8bit",
+  "emoji": "👾",
+  "title": "Shipment 8-Bit",
+  "blurb": "Pixel-art arena adventure."
+ },
+ {
+  "slug": "blob-bash-royale",
+  "emoji": "🟣",
+  "title": "Blob Bash Royale",
+  "blurb": "Bouncy blob platform brawler."
+ },
+ {
+  "slug": "panther-arena",
+  "emoji": "🐆",
+  "title": "Panther Arena",
+  "blurb": "Gold-hunting panther showdown."
+ },
+ {
+  "slug": "qamelot-conquest",
+  "emoji": "🏰",
+  "title": "Qamelot Conquest",
+  "blurb": "Castle-storming arcade quest."
+ },
+ {
+  "slug": "qamelot-tower-defense",
+  "emoji": "🗼",
+  "title": "Qamelot Tower Defense",
+  "blurb": "Build towers, stop the waves."
+ },
+ {
+  "slug": "stix-stax-stonz",
+  "emoji": "❌",
+  "title": "Stix Stax Stonz",
+  "blurb": "Tic-tac-toe with a cyber twist."
+ },
+ {
+  "slug": "neuropulse",
+  "emoji": "⚡",
+  "title": "NeuroPulse Cyberdeck",
+  "blurb": "Cybernetic audio-visual synth, 16-step sequencer & 3D holo-deck."
+ },
+ {
+  "slug": "shadow-chassis",
+  "emoji": "🤖",
+  "title": "Project: Shadow Chassis",
+  "blurb": "Midnight-mecha action: swap Shinobi and Cruiser rigs and take down Goliath-01."
+ },
+ {
+  "slug": "bike-blitz",
+  "emoji": "🚴",
+  "title": "Bike Blitz",
+  "blurb": "A Puddlewick Isle mini-game: Joy Ride, Time Trials and Trick Park on the Spoke Island trails."
+ },
+ {
+  "slug": "fishing-derby",
+  "emoji": "🎣",
+  "title": "Marlowe's Fishing Derby",
+  "blurb": "A Puddlewick Isle mini-game: 24 fish species, 4 fishing spots, and a 3-minute tournament."
+ },
+ {
+  "slug": "mecha-strike",
+  "emoji": "🤖",
+  "title": "Mecha Strike",
+  "blurb": "Transformer Protocol v5: transform, battle through the levels, and take down the bosses."
+ },
+ {
+  "slug": "n8-strike",
+  "emoji": "⚡",
+  "title": "N8 Strike",
+  "blurb": "Mecha wave battles: blast bosses, grab upgrades, and outlast the swarm."
+ }
 ]
