@@ -501,7 +501,7 @@ button{touch-action:manipulation}
 <script>
 'use strict';
 (()=>{
-const APP_VERSION='1.8.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
+const APP_VERSION='1.8.1';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
 /* =====================================================================
    PUDDLEWICK ISLE: a single-file cozy island life sim
    Sections: utils · data · state · time · world gen · day cycle ·
@@ -2110,12 +2110,28 @@ function drawPerson(g,x,y,look,fx,fy,step,moving,o={}){
   const HC=look.hair,HD='rgba(0,0,0,.19)',HL='rgba(255,255,255,.24)';
   const HS=look.hairStyle||'swept';
   if(HS==='crop'){
+    // full-coverage short cut (2026-11-01 redesign: the old skin cut erased all but a thin high strip -> read as bald)
     g.fillStyle=HC;E(x,hy-1.2,11.2,9.6);
-    g.fillStyle=look.skin;E(x,hy+(up?3:1.5),10.5,up?7.6:8.9);
-    chunk(x-3,hy-6.5,5,1.3,HL);chunk(x+3.5,hy-4.5,4.4,1.2,HD);
-    g.fillStyle=HC;
-    if(side)E(x+side*10.1,hy+0.6,1.3,2.4);
-    else if(!up){E(x-10.3,hy+0.4,1.3,2.4);E(x+10.3,hy+0.4,1.3,2.4)}
+    if(up){
+      // back: full coverage down to a tapered nape line (higher behind the ears), erase clipped to the head so nothing paints outside it
+      g.save();g.beginPath();g.ellipse(x,hy,10.5,10.2,0,0,6.2832);g.clip();
+      g.fillStyle=look.skin;g.beginPath();
+      g.moveTo(x-11.8,hy+11);g.lineTo(x-11.8,hy+3.4);
+      g.quadraticCurveTo(x,hy+8.6,x+11.8,hy+3.4);
+      g.lineTo(x+11.8,hy+11);g.closePath();g.fill();g.restore();
+      g.strokeStyle='rgba(0,0,0,.30)';g.lineWidth=1;g.beginPath();
+      g.moveTo(x-11.4,hy+3.4);g.quadraticCurveTo(x,hy+8.6,x+11.4,hy+3.4);g.stroke();
+      chunk(x-3.5,hy-4.5,4.8,1.3,HL);chunk(x+3.5,hy-2,4.2,1.1,HD);
+    }else{
+      // front/side: low squared shape-up hairline (~hy-2.2, vs the old hy-7.4 strip and fade's blended hy-5) + crisp edge line
+      g.fillStyle=look.skin;E(x,hy+3.6,10.4,5.8);
+      g.strokeStyle='rgba(0,0,0,.30)';g.lineWidth=1;g.beginPath();
+      g.ellipse(x,hy+3.6,10.4,5.8,0,Math.PI*1.07,Math.PI*1.93);g.stroke();
+      chunk(x-3,hy-7.4,4.8,1.3,HL);chunk(x+3.5,hy-5.8,4.2,1.1,HD);chunk(x-6.4,hy-3.6,3.2,1,HD);
+      g.fillStyle=HC;
+      if(side)E(x+side*10.2,hy+0.9,1.4,2.7);
+      else{E(x-10.4,hy+0.7,1.4,2.7);E(x+10.4,hy+0.7,1.4,2.7)}
+    }
   }else if(HS==='spiky'){
     if(up){
       g.fillStyle=HC;E(x,hy-0.5,11.2,10.4);
