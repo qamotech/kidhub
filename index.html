@@ -297,7 +297,7 @@
 <style>
 @media(max-width:600px){header{padding:8px;gap:8px;flex-wrap:wrap}.controls{gap:6px;flex-wrap:wrap}.logo{font-size:1rem}footer{padding:6px;font-size:11px}.status-badge{display:none}}
 </style><style>@media(max-width:700px){.main-container{flex-direction:column;min-height:0}.sidebar{width:100%;min-width:0;padding:6px;display:flex;flex-direction:row;gap:6px;overflow-x:auto;flex-shrink:0;border-right:0;border-bottom:1px solid var(--border-color)}.sidebar h3,.sidebar h4,.sidebar .nav-title{display:none}.sidebar .nav-btn{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px;font-size:12px;margin:0}.content-area{width:100%;flex:1;min-height:0}footer .footer-links{display:none}}</style><link rel="stylesheet" href="portal.css"><style>
-#dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
+#dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}.header-actions button{min-height:40px;padding:8px 12px;border-radius:999px;font-weight:800;white-space:nowrap;line-height:1}#kh-home-btn{background:#25304a;color:#fff;border-color:#25304a}#kh-home-btn:hover{background:#36265f;color:#fff;border-color:#ff6580}@media(max-width:600px){.header-actions{order:-1}.header-actions button{padding:8px 10px;font-size:.9rem}}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
 @media(max-width:700px){.sidebar{max-height:70px}.sidebar>div{display:none}.sidebar>div.nav-recent{display:contents}.nav-recent-empty{display:none}.nav-recent .nav-btn{order:5;max-width:150px}.nav-recent .nav-btn::before{content:"🕘";font-size:11px;margin-right:2px}#active-app-label{display:none}.footer-links{display:flex!important}footer{gap:8px;flex-wrap:wrap}.kh-portal{padding:16px}}
 </style><script defer src="offline.js"></script>
   <style id="continuum-a11y-tokens">
@@ -310,6 +310,10 @@
         <div class="logo"><span id="logo-emoji">🚀</span> KidHub <span style="font-size:0.85rem;opacity:0.7;font-weight:normal;" id="active-app-label">KidHub</span></div>
         <div class="controls">
             <div class="status-badge">🟢 <span id="status-text">System Online</span></div>
+            <div class="header-actions" aria-label="KidHub and display actions">
+                <button id="kh-home-btn" type="button" title="Go to KidHub home">🏠 KidHub</button>
+                <button id="fullscreen-btn" type="button" title="Toggle Fullscreen">⛶ Fullscreen</button>
+            </div>
             <select id="theme-selector" title="Select Theme">
                 <option value="light">☀️ Light Mode</option>
                 <option value="dark">🌙 Dark Mode</option>
@@ -319,7 +323,6 @@
                 <option value="thanksgiving">🦃 Thanksgiving</option>
                 <option value="christmas">🎄 Christmas</option>
             </select>
-            <button id="fullscreen-btn" title="Toggle Fullscreen">🔲 Fullscreen</button>
         </div>
     </header>
     <div class="main-container">
@@ -7156,7 +7159,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;239f81c041acddbb&quot;;
+const BUILD=&quot;b37abc465c3346b3&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,
@@ -11171,36 +11174,47 @@ if(embedded){try{const P=window.parent;if(P.document.readyState!==&#x27;complete
   </script>
 
 <style id="khfab-css">
-#kh-dock{position:fixed;right:14px;bottom:96px;z-index:1200;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.kfab{display:flex;align-items:center;gap:8px;background:rgba(30,27,48,.94)!important;color:#fff!important;border:1px solid rgba(255,101,128,.6);color:#fff;font-weight:800;font-size:14px;padding:10px 14px;border-radius:999px;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.45);backdrop-filter:blur(6px);font-family:inherit}
-.kfab:active{transform:scale(.96)} #kh-dock .kfab:focus-visible{outline:3px solid #ff6580;outline-offset:2px} #kh-dock .kfab span{color:#fff}
-#kh-fab{position:fixed;right:16px;bottom:18px;z-index:1200;width:62px;height:62px;border-radius:50%;border:none;cursor:pointer;background:#1e1b30;box-shadow:0 14px 34px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:26px;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+#kh-dock{position:fixed;right:10px;bottom:66px;z-index:1200;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.kfab{display:flex;align-items:center;gap:6px;min-height:40px;height:40px;background:rgba(30,27,48,.94)!important;color:#fff!important;border:1px solid rgba(255,101,128,.55);font-weight:800;font-size:12.5px;line-height:1;padding:0 11px;border-radius:999px;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.4);backdrop-filter:blur(6px);font-family:inherit}
+.kfab .kh-ico{font-size:15px;line-height:1}
+.kfab:active{transform:scale(.97)} #kh-dock .kfab:focus-visible{outline:3px solid #ff6580;outline-offset:2px} #kh-dock .kfab span{color:#fff}
+#kh-fab{position:fixed;right:12px;bottom:12px;z-index:1200;width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;background:#1e1b30;box-shadow:0 10px 24px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:19px;transform:scale(0);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
 #kh-fab.show{transform:scale(1)}
 #kh-fab svg{position:absolute;inset:0;transform:rotate(-90deg)}
 #kh-fab circle{fill:none;stroke-width:5}
 #kh-fab .track{stroke:rgba(255,255,255,.15)}
 #kh-fab .prog{stroke:#ff6580;stroke-linecap:round}
 #kh-fab span{position:relative}
+@media(max-width:700px){#kh-dock{right:8px;bottom:64px}.kfab{font-size:12px;padding:0 10px}}
 </style>
-<nav id="kh-dock" aria-label="Quick navigation">
-<button class="kfab" type="button" data-kh="home">🏠<span>Home</span></button>
-<button class="kfab" type="button" data-kh="games">🎮<span>Games</span></button>
-<button class="kfab" type="button" data-kh="studio">🎨<span>Studio</span></button>
-<button class="kfab" type="button" data-kh="apps">🧰<span>All Apps</span></button>
-<button class="kfab" type="button" data-kh="start">📚<span>Start Here</span></button>
+<nav id="kh-dock" aria-label="Quick actions">
+<button class="kfab" type="button" data-kh="surprise" title="Open a random app, activity, tool, or game"><span class="kh-ico" aria-hidden="true">🎲</span><span>Surprise</span></button>
+<button class="kfab" type="button" data-kh="continue" title="Reopen the last app or activity you used"><span class="kh-ico" aria-hidden="true">▶️</span><span>Continue</span></button>
+<button class="kfab" type="button" data-kh="favorites" title="Show your starred favorites"><span class="kh-ico" aria-hidden="true">⭐</span><span>Favorites</span></button>
+<button class="kfab" type="button" data-kh="search" title="Search all apps and games"><span class="kh-ico" aria-hidden="true">🔎</span><span>Search</span></button>
+<button class="kfab" type="button" data-kh="draw" title="Jump straight to Art Studio drawing"><span class="kh-ico" aria-hidden="true">🎨</span><span>Draw</span></button>
 </nav>
 <button id="kh-fab" type="button" aria-label="Back to top"><svg viewBox="0 0 74 74"><circle class="track" cx="37" cy="37" r="33"></circle><circle class="prog" id="khFabProg" cx="37" cy="37" r="33" stroke-dasharray="207.3" stroke-dashoffset="207.3"></circle></svg><span>⬆️</span></button>
 <script id="khfab-js">
-(()=>{const click=s=>{const el=document.querySelector(s);if(el)el.click()};
-const routes={home:()=>click('[data-target="app-0"]'),games:()=>click('.nav-cat[data-category="Play"]'),apps:()=>click('.nav-cat[data-category="All"]'),start:()=>click('[data-library="start"]'),studio:()=>{location.href='studio.html'}};
-document.querySelectorAll('#kh-dock .kfab').forEach(b=>b.addEventListener('click',()=>routes[b.dataset.kh]&&routes[b.dataset.kh]()));
+(()=>{const $=s=>document.querySelector(s);
+const toast=t=>{if(window.showToast)window.showToast(t)};
+const openApps=after=>{if(window.KidHubShell)window.KidHubShell.openLibrary('applications',true,{category:'All'});else{const b=$('.nav-cat[data-category="All"]');if(b)b.click()}if(after)setTimeout(after,80)};
+const actions={
+surprise:()=>{const cat=window.KidHubCatalog||[];if(window.KidHubPortal&&cat.length){const a=cat[Math.floor(Math.random()*cat.length)];window.KidHubPortal.launch(a.id);toast('🎲 Surprise: '+a.title)}else openApps(()=>{const b=document.getElementById('app-random');if(b)b.click()})},
+continue:()=>{const recent=window.KidHubPortal&&window.KidHubPortal.recent?window.KidHubPortal.recent():[];const id=recent.find(x=>x!=='suite-0');if(id&&window.KidHubPortal)window.KidHubPortal.launch(id);else{toast('▶️ Open an app once, then Continue brings it back.');openApps()}},
+favorites:()=>openApps(()=>{const panel=document.getElementById('dashboard-panel');if(panel)panel.scrollTo({top:0,behavior:'smooth'});const fav=document.getElementById('app-favorites');if(fav){if(!fav.checked){fav.checked=true;fav.dispatchEvent(new Event('change',{bubbles:true}))}fav.focus({preventScroll:true})}}),
+search:()=>openApps(()=>{const panel=document.getElementById('dashboard-panel');if(panel)panel.scrollTo({top:0,behavior:'smooth'});const inp=document.getElementById('app-search');if(inp){inp.focus();if(inp.select)inp.select()}}),
+draw:()=>{if(window.KidHubShell)window.KidHubShell.launch({frame:0,screen:'draw'});else location.href='studio.html#draw'}
+};
+document.querySelectorAll('#kh-dock .kfab').forEach(b=>b.addEventListener('click',()=>actions[b.dataset.kh]&&actions[b.dataset.kh]()));
 const mb=document.getElementById('nav-more-btn'),more=document.getElementById('nav-more'),arrow=document.getElementById('nav-more-arrow');
 if(mb&&more){mb.addEventListener('click',()=>{const open=more.hidden;more.hidden=!open;mb.setAttribute('aria-expanded',String(open));if(arrow)arrow.textContent=open?'▴':'▾'})}
 const fab=document.getElementById('kh-fab'),prog=document.getElementById('khFabProg'),C=207.3;
-const scroller=()=>document.querySelector('.content-area');
-function onScroll(){const ca=scroller();const y=Math.max(window.scrollY||0,ca?ca.scrollTop:0);const max=Math.max(document.documentElement.scrollHeight-innerHeight,ca?ca.scrollHeight-ca.clientHeight:0);const p=max>0?Math.min(1,y/max):0;if(prog)prog.style.strokeDashoffset=String(C*(1-p));fab.classList.toggle('show',y>300)}
-addEventListener('scroll',onScroll,{passive:true});const ca=scroller();if(ca)ca.addEventListener('scroll',onScroll,{passive:true});onScroll();
-fab.addEventListener('click',()=>{scrollTo({top:0,behavior:'smooth'});const c=scroller();if(c)c.scrollTo({top:0,behavior:'smooth'})});
+const scrollers=()=>[document.getElementById('dashboard-panel'),document.querySelector('.content-area'),document.scrollingElement].filter(Boolean);
+function metrics(){let y=window.scrollY||0,max=Math.max(document.documentElement.scrollHeight-innerHeight,0);scrollers().forEach(el=>{const t=el.scrollTop||0,h=(el.scrollHeight||0)-(el.clientHeight||0);if(t>y)y=t;if(h>max)max=h});return{y,max}}
+function onScroll(){const m=metrics();const p=m.max>0?Math.min(1,m.y/m.max):0;if(prog)prog.style.strokeDashoffset=String(C*(1-p));fab.classList.toggle('show',m.y>300)}
+addEventListener('scroll',onScroll,{passive:true});scrollers().forEach(el=>el.addEventListener('scroll',onScroll,{passive:true}));onScroll();
+fab.addEventListener('click',()=>{scrollTo({top:0,behavior:'smooth'});scrollers().forEach(el=>{if(el.scrollTo)el.scrollTo({top:0,behavior:'smooth'})})});
 })();
 </script>
 </body></html>
