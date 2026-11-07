@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <link rel="manifest" href='data:application/manifest+json,{"name":"KidHub — Creative Art Studio & Brushes","short_name":"kidhub","start_url":".","display":"standalone","background_color":"#060a17","theme_color":"#060a17","description":"KidHub — Creative Art Studio & Brushes — High-performance single-file web application."}'>
+  <link rel="manifest" href="manifest.webmanifest">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -297,7 +297,7 @@
 <style>
 @media(max-width:600px){header{padding:8px;gap:8px;flex-wrap:wrap}.controls{gap:6px;flex-wrap:wrap}.logo{font-size:1rem}footer{padding:6px;font-size:11px}.status-badge{display:none}}
 </style><style>@media(max-width:700px){.main-container{flex-direction:column;min-height:0}.sidebar{width:100%;min-width:0;padding:6px;display:flex;flex-direction:row;gap:6px;overflow-x:auto;flex-shrink:0;border-right:0;border-bottom:1px solid var(--border-color)}.sidebar h3,.sidebar h4,.sidebar .nav-title{display:none}.sidebar .nav-btn{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px;font-size:12px;margin:0}.content-area{width:100%;flex:1;min-height:0}footer .footer-links{display:none}}</style><link rel="stylesheet" href="portal.css"><style>
-#dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}.header-actions button{min-height:40px;padding:8px 12px;border-radius:999px;font-weight:800;white-space:nowrap;line-height:1}#kh-home-btn{background:#25304a;color:#fff;border-color:#25304a}#kh-home-btn:hover{background:#36265f;color:#fff;border-color:#ff6580}@media(max-width:600px){.header-actions{order:-1}.header-actions button{padding:8px 10px;font-size:.9rem}}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
+#dashboard-panel{position:absolute;inset:0;overflow:auto;background:#fff}.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}.header-actions button{min-height:40px;padding:8px 12px;border-radius:999px;font-weight:800;white-space:nowrap;line-height:1}#kh-home-btn{background:#25304a;color:#fff;border-color:#25304a}#kh-home-btn:hover{background:#36265f;color:#fff;border-color:#ff6580}#install-btn{background:#ff6580;color:#fff;border-color:#ff6580}#install-btn:hover{background:#e14b6d;color:#fff;border-color:#e14b6d}@media(max-width:600px){.header-actions{order:-1}.header-actions button{padding:8px 10px;font-size:.9rem}}#dashboard-panel[hidden]{display:none}#reload-dialog{max-width:min(520px,90vw);border:2px solid #7756bf;border-radius:18px;color:var(--text-color);background:var(--bg-color);padding:24px}#reload-dialog::backdrop{background:#17213d88}.sidebar a{text-decoration:none}.sidebar>button,.sidebar>a{flex-shrink:0}.logo{flex-wrap:wrap}.content-area{min-width:0}button:focus-visible,a:focus-visible{outline:3px solid #7756bf;outline-offset:3px}
 @media(max-width:700px){.sidebar{max-height:70px}.sidebar>div{display:none}.sidebar>div.nav-recent{display:contents}.nav-recent-empty{display:none}.nav-recent .nav-btn{order:5;max-width:150px}.nav-recent .nav-btn::before{content:"🕘";font-size:11px;margin-right:2px}#active-app-label{display:none}.footer-links{display:flex!important}footer{gap:8px;flex-wrap:wrap}.kh-portal{padding:16px}}
 </style><script defer src="offline.js"></script>
   <style id="continuum-a11y-tokens">
@@ -313,6 +313,7 @@
             <div class="header-actions" aria-label="KidHub and display actions">
                 <button id="kh-home-btn" type="button" title="Go to KidHub home">🏠 KidHub</button>
                 <button id="fullscreen-btn" type="button" title="Toggle Fullscreen">⛶ Fullscreen</button>
+                <button id="install-btn" type="button" title="Install the KidHub app" hidden>📲 Install App</button>
             </div>
             <select id="theme-selector" title="Select Theme">
                 <option value="light">☀️ Light Mode</option>
@@ -7159,7 +7160,7 @@ html[data-theme=&quot;space&quot;] .brand h1,html[data-theme=&quot;midnight&quot
 &lt;/style&gt;
 &lt;script id=&quot;polish-js&quot;&gt;
 (()=&gt;{&quot;use strict&quot;;if(typeof app===&quot;undefined&quot;)return;
-const BUILD=&quot;b37abc465c3346b3&quot;;
+const BUILD=&quot;bd39eb994d588756&quot;;
 const $=(s,r=document)=&gt;r.querySelector(s),$$=(s,r=document)=&gt;[...r.querySelectorAll(s)];
 const IMPROVEMENTS=[&quot;🎨 Themes now recolor the whole app (8 palettes)&quot;,&quot;🌙 Dark mode dims the whole page slightly&quot;,&quot;🍭 5 new themes: Candy, Forest, Sunset, Midnight, Arctic&quot;,&quot;🟣 Theme swatches in settings&quot;,&quot;🔁 Dark toggle remembers your last light &amp; dark theme&quot;,&quot;📱 Browser toolbar color follows the theme&quot;,&quot;🌑 Readable dark top bar, pills and inputs&quot;,&quot;🖥️ First visit follows your device&#x27;s dark-mode setting&quot;,&quot;🌗 Auto day/night uses your favorite light &amp; dark themes&quot;,
 &quot;🔗 Deep links for every screen (#music, #draw, #arcade…)&quot;,&quot;⬅️ Browser Back returns to the previous screen&quot;,&quot;🏷️ Tab title shows the current activity&quot;,&quot;🎯 Focus moves to each screen&#x27;s heading&quot;,&quot;📣 Screen changes are announced to screen readers&quot;,&quot;⏭️ Skip-to-content link&quot;,&quot;⎋ Esc no longer exits Art Studio, Toolbox or Cloud while closing something&quot;,&quot;🔢 Accurate activity count on the hub&quot;,&quot;⬆️ Back-to-top button on the long hub&quot;,&quot;📍 Hub scroll position restored when you come back&quot;,

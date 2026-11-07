@@ -1,7 +1,7 @@
 {
   "name": "KidHub — Play, Make & Learn",
   "short_name": "KidHub",
-  "start_url": "./studio.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F3E8FF",

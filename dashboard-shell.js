@@ -17,4 +17,11 @@ addEventListener('kidhub:recent',e=>{const f=document.activeElement&&document.ac
 function counts(){const c=window.KidHubCatalog;if(!Array.isArray(c))return;document.querySelectorAll('.nav-count[data-count]').forEach(s=>{const k=s.dataset.count;s.textContent=String(k==='All'?c.length:c.filter(a=>a.category===k).length)})}
 if(window.KidHubCatalog)counts();else addEventListener('DOMContentLoaded',counts,{once:true});
 function connection(){$('status-text').textContent=navigator.onLine?'Browser online':'Browser offline'}connection();addEventListener('online',connection);addEventListener('offline',connection);$('year').textContent=new Date().getFullYear();frames.forEach((f,i)=>f.title=names[i]+' application');addEventListener('popstate',parse);addEventListener('DOMContentLoaded',parse,{once:true});if(document.readyState!=='loading')parse();
+/* PWA appify: the dashboard page itself registers sw.js and offers a real install path */
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+const installBtn=$('install-btn');let deferredInstall=null;const khStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;if(installBtn&&!khStandalone)installBtn.hidden=false});
+addEventListener('appinstalled',()=>{deferredInstall=null;if(installBtn)installBtn.hidden=true;say('KidHub app installed! 🎉')});
+if(installBtn&&!khStandalone){if(/iphone|ipad|ipod/i.test(navigator.userAgent))installBtn.hidden=false;
+installBtn.onclick=async()=>{if(deferredInstall){const p=deferredInstall;deferredInstall=null;installBtn.hidden=true;try{p.prompt();const c=await p.userChoice;if(c&&c.outcome==='accepted')say('Installing KidHub… 🎉');else installBtn.hidden=false}catch(e){installBtn.hidden=false}}else say('To install: tap Share ⬆️ then “Add to Home Screen” 📲')}}
 })();
