@@ -24,4 +24,15 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;
 addEventListener('appinstalled',()=>{deferredInstall=null;if(installBtn)installBtn.hidden=true;say('KidHub app installed! 🎉')});
 if(installBtn&&!khStandalone){if(/iphone|ipad|ipod/i.test(navigator.userAgent))installBtn.hidden=false;
 installBtn.onclick=async()=>{if(deferredInstall){const p=deferredInstall;deferredInstall=null;installBtn.hidden=true;try{p.prompt();const c=await p.userChoice;if(c&&c.outcome==='accepted')say('Installing KidHub… 🎉');else installBtn.hidden=false}catch(e){installBtn.hidden=false}}else say('To install: tap Share ⬆️ then “Add to Home Screen” 📲')}}
+/* Play-time cap (#57): parent setting in the header dialog. Local only, off by default; arcade games enforce it via activity-kit.js (keys kidhubPlayCapV1 / kidhubPlayTimeV1). */
+const pcKey='kidhubPlayCapV1',ptKey='kidhubPlayTimeV1';const pcLoad=()=>{try{const s=JSON.parse(localStorage.getItem(pcKey)||'null');if(s&&typeof s.enabled==='boolean'&&[10,15,20,30,45,60].includes(s.minutes))return s}catch(e){}return{enabled:false,minutes:20}};
+const pcToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const pcBtn=$('playcap-btn'),pcDlg=$('playcap-dialog');
+if(pcBtn&&pcDlg){const pcOn=$('playcap-enabled'),pcMin=$('playcap-minutes'),pcUse=$('playcap-usage');const pcSave=()=>{try{localStorage.setItem(pcKey,JSON.stringify({enabled:pcOn.checked,minutes:Number(pcMin.value)}))}catch(e){}};
+const pcRender=()=>{const s=pcLoad();pcOn.checked=s.enabled;pcMin.value=String(s.minutes);let t=null;try{t=JSON.parse(localStorage.getItem(ptKey)||'null')}catch(e){}
+const rows=t&&t.date===pcToday()&&t.totals?Object.entries(t.totals).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]):[];
+pcUse.innerHTML=rows.length?rows.map(([slug,sec])=>{const a=(window.KidHubCatalog||[]).find(x=>x.id==='game-'+slug);const b=document.createElement('p');b.textContent=(a?a.emoji+' '+a.title:'🎮 '+slug)+' — '+Math.floor(sec/60)+' min played today';return b.outerHTML}).join(''):'<p>No arcade games played yet today.</p>'};
+pcBtn.onclick=()=>{pcRender();pcDlg.showModal()};pcOn.onchange=pcSave;pcMin.onchange=pcSave;
+$('playcap-close').onclick=()=>pcDlg.close();
+$('playcap-reset').onclick=()=>{try{localStorage.removeItem(ptKey)}catch(e){}pcRender();say('Today’s play times reset ⏱️')}}
 })();

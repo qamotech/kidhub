@@ -11,7 +11,7 @@ def build():
  bank=s[s.index('const T=['):s.index('const TOOL=Object.fromEntries')]
  tools=re.findall(r'^\["([\w-]+)","([^"]+)","([^"]+)","([^"]+)"',bank,re.M);assert len(tools)==80,len(tools)
  for id,emoji,title,cat in tools:records.append({'id':'tool-'+id,'title':title,'emoji':emoji,'kind':'Toolbox','category':cats[cat],'description':f'{title}: an interactive tool with its own experiment trail and journal.','frame':0,'tool':id,'href':'studio.html#tool='+id})
- for g in json.loads((ROOT/'games/games.json').read_text(encoding='utf-8')):records.append({'id':'game-'+g['slug'],'title':g['title'],'emoji':g['emoji'],'kind':'Arcade','category':'Play','description':g['blurb'],'href':'games/'+g['slug']+'.html'})
+ for g in json.loads((ROOT/'games/games.json').read_text(encoding='utf-8')):records.append({'id':'game-'+g['slug'],'title':g['title'],'emoji':g['emoji'],'kind':'Arcade','category':'Play','description':g['blurb'],'href':'games/'+g['slug']+'.html',**({'added':g['added']} if g.get('added') else {})})
  assert len({r['id'] for r in records})==len(records)
  (ROOT/'portal-data.js').write_text('window.KidHubCatalog='+json.dumps(records,ensure_ascii=False,separators=(',',':'))+';\n',encoding='utf-8')
  print('Application catalog:',len(records),'verified entries')

@@ -17,6 +17,7 @@
 <script id="arcade-js">
 (()=>{"use strict";
 const GAMES=/*__GAMES__*/[];
+const NOWM=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")})();
 const main=document.querySelector("main");if(!main||!GAMES.length||typeof app==="undefined")return;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const HUES=[["#ff5f7e","#ff914d"],["#20a9ec","#6d4aff"],["#2bc678","#0f9b8e"],["#8a6ee7","#ff5fa2"],["#ffb347","#ff5f7e"],["#1d1440","#6d4aff"],["#0a6fb8","#3fc1ff"]];
@@ -26,7 +27,7 @@ sec.innerHTML=`<div class="activity"><div class="act-head"><button class="back" 
 main.appendChild(sec);
 const go=slug=>{recent=[slug,...recent.filter(s=>s!==slug)].slice(0,5);try{localStorage.setItem("kidHubArcade",JSON.stringify(recent))}catch(e){}};
 const render=()=>{const q=document.getElementById("arSearch").value.trim().toLowerCase();const list=GAMES.filter(g=>!q||(g.title+" "+g.blurb).toLowerCase().includes(q)).sort((a,b)=>{const ra=recent.indexOf(a.slug),rb=recent.indexOf(b.slug);return(ra<0?99:ra)-(rb<0?99:rb)});
- document.getElementById("arGrid").innerHTML=list.map((g,i)=>{const[a,b]=HUES[GAMES.indexOf(g)%HUES.length];return`<a class="ar-tile" href="games/${esc(g.slug)}.html" target="_top" data-slug="${esc(g.slug)}" style="--a:${a};--b:${b}">${recent.includes(g.slug)?'<span class="rec">🕘 Recent</span>':""}<span class="e" aria-hidden="true">${esc(g.emoji)}</span><b>${esc(g.title)}</b><small>${esc(g.blurb)}</small><span class="go">▶️ Play</span></a>`}).join("")||'<p>😅 No games match — try another word.</p>';
+ document.getElementById("arGrid").innerHTML=list.map((g,i)=>{const[a,b]=HUES[GAMES.indexOf(g)%HUES.length];const nw=g.added&&String(g.added).slice(0,7)===NOWM;return`<a class="ar-tile" href="games/${esc(g.slug)}.html" target="_top" data-slug="${esc(g.slug)}" style="--a:${a};--b:${b}">${recent.includes(g.slug)?'<span class="rec">🕘 Recent</span>':""}${nw?'<span class="rec" style="right:auto;left:12px;background:#ff6580">✨ NEW</span>':""}<span class="e" aria-hidden="true">${esc(g.emoji)}</span><b>${esc(g.title)}</b><small>${esc(g.blurb)}</small><span class="go">▶️ Play</span></a>`}).join("")||'<p>😅 No games match — try another word.</p>';
  document.querySelectorAll("#arGrid [data-slug]").forEach(a=>a.addEventListener("click",()=>go(a.dataset.slug)))};
 document.getElementById("arSearch").addEventListener("input",render);
 document.getElementById("arRandom").onclick=()=>{const g=GAMES[Math.floor(Math.random()*GAMES.length)];go(g.slug);try{window.kidhubRecord&&window.kidhubRecord("game-"+g.slug)}catch(e){}(window.top||window).location.href=new URL(`games/${g.slug}.html`,document.baseURI).href};

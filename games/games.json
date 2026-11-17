@@ -7,6 +7,7 @@
  },
  {
   "slug": "1poly",
+  "added": "2026-11-02",
   "emoji": "🎲",
   "title": "1poly",
   "blurb": "NEW! The family property-trading game — classic board with multiplayer room codes, or fast Cards mode. (Live online game — needs internet.)"
@@ -115,24 +116,28 @@
  },
  {
   "slug": "bike-blitz",
+  "added": "2026-11-02",
   "emoji": "🚴",
   "title": "Bike Blitz",
   "blurb": "A Puddlewick Isle mini-game: Joy Ride, Time Trials and Trick Park on the Spoke Island trails."
  },
  {
   "slug": "fishing-derby",
+  "added": "2026-11-02",
   "emoji": "🎣",
   "title": "Marlowe's Fishing Derby",
   "blurb": "A Puddlewick Isle mini-game: 24 fish species, 4 fishing spots, and a 3-minute tournament."
  },
  {
   "slug": "mecha-strike",
+  "added": "2026-11-02",
   "emoji": "🤖",
   "title": "Mecha Strike",
   "blurb": "Transformer Protocol v5: transform, battle through the levels, and take down the bosses."
  },
  {
   "slug": "n8-strike",
+  "added": "2026-11-02",
   "emoji": "⚡",
   "title": "N8 Strike",
   "blurb": "Mecha wave battles: blast bosses, grab upgrades, and outlast the swarm."

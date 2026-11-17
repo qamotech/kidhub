@@ -14,3 +14,26 @@ $('[data-start]').onclick=()=>{started=Date.now();$('[data-start]').disabled=tru
 $('[data-finish]').onclick=()=>{if(!started)return;state.sessions.push({date:new Date().toISOString(),seconds:Math.round((Date.now()-started)/1000)});state.sessions=state.sessions.slice(-20);started=0;$('[data-start]').disabled=false;$('[data-finish]').disabled=true;save();render()};
 $('[data-export]').onclick=()=>{const content=JSON.stringify({activity:title,goals,progress:state},null,2),url=URL.createObjectURL(new Blob([content],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=id+'-practice.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};render();
 })();
+
+/* Gentle play-time cap (#57). Parent-set in the KidHub dashboard (⏱️ Play time),
+   stored locally only, OFF by default. When on: this game page shows a countdown
+   chip and, at the daily per-game cap, a friendly break overlay kids can snooze.
+   It is a nudge, never a lock, and nothing leaves the device. */
+(()=>{'use strict';const script=document.currentScript;const slug=script&&script.dataset?script.dataset.activity:'';if(!slug||document.getElementById('kh-cap-chip'))return;
+let cfg={enabled:false,minutes:20};try{const s=JSON.parse(localStorage.getItem('kidhubPlayCapV1')||'null');if(s&&typeof s.enabled==='boolean'&&Number.isFinite(s.minutes)&&s.minutes>0)cfg={enabled:s.enabled,minutes:s.minutes}}catch(e){}
+if(!cfg.enabled)return;const capSec=cfg.minutes*60,title=script.dataset.title||'this game';
+const dayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const TKEY='kidhubPlayTimeV1';let store={date:dayKey(),totals:{}};try{const s=JSON.parse(localStorage.getItem(TKEY)||'null');if(s&&s.date===dayKey()&&s.totals&&typeof s.totals==='object')store=s}catch(e){}
+let played=Number(store.totals[slug])||0,snoozed=false,last=Date.now(),over=null;
+const save=()=>{store.date=dayKey();store.totals[slug]=Math.round(played);try{localStorage.setItem(TKEY,JSON.stringify(store))}catch(e){}};
+const style=document.createElement('style');style.textContent='#kh-cap-chip{position:fixed;bottom:12px;right:12px;z-index:2147483640;background:#25304a;color:#fff;border:2px solid #fff;border-radius:999px;padding:8px 14px;font:700 14px system-ui;box-shadow:0 4px 16px #0006}#kh-cap-chip.warn{background:#b3261e}#kh-cap-over{position:fixed;inset:0;z-index:2147483647;background:rgba(23,33,61,.88);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}#kh-cap-over .card{background:#fff8ed;color:#25304a;border:3px solid #8a6ee7;border-radius:22px;max-width:440px;width:100%;padding:24px;text-align:center;font:16px/1.5 system-ui;box-shadow:0 12px 48px #000a;box-sizing:border-box}#kh-cap-over h2{font:800 24px system-ui;margin:6px 0}#kh-cap-over button{font:inherit;font-weight:800;min-height:48px;border-radius:12px;padding:10px 18px;margin:6px;cursor:pointer;border:2px solid #8a6ee7;background:#fff;color:#25304a}#kh-cap-over button.primary{background:#6545b5;color:#fff}#kh-cap-over button:focus-visible,#kh-cap-chip:focus-visible{outline:3px solid #ffe066;outline-offset:3px}';document.head.append(style);
+const chip=document.createElement('div');chip.id='kh-cap-chip';chip.setAttribute('role','status');document.body.append(chip);
+function showOver(){if(over||snoozed)return;over=document.createElement('div');over.id='kh-cap-over';over.innerHTML='<div class="card"><div style="font-size:44px" aria-hidden="true">🌟</div><h2>Great playing!</h2><p>Your '+cfg.minutes+' minutes of <b></b> are up for today. Breaks help your brain grow — stretch, grab some water, or pick a different adventure!</p><button type="button" class="primary" data-hub>🏠 Back to KidHub</button><button type="button" data-more>🌈 A few more minutes</button></div>';over.querySelector('b').textContent=title;over.querySelector('[data-hub]').onclick=()=>{save();location.href=new URL('index.html',script.src).href};over.querySelector('[data-more]').onclick=()=>{snoozed=true;over.remove();over=null;render()};document.body.append(over);const f=over.querySelector('[data-hub]');f&&f.focus()}
+function render(){const left=capSec-played;if(snoozed){chip.textContent='🌟 Break time — great playing!';chip.classList.remove('warn');return}
+if(left<=0){chip.textContent='🌟 Time for a break!';chip.classList.add('warn');showOver();return}
+chip.textContent='⏱️ '+Math.ceil(left/60)+' of '+cfg.minutes+' min left today';chip.classList.toggle('warn',left<=120)}
+setInterval(()=>{const now=Date.now();if(document.visibilityState==='visible'){played+=(now-last)/1000;save()}last=now;render()},5000);
+document.addEventListener('visibilitychange',()=>{last=Date.now()});
+addEventListener('pagehide',save);
+render();if(played>=capSec)setTimeout(showOver,1500);
+})();

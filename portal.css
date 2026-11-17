@@ -71,3 +71,8 @@ body.portal-page>header{position:sticky;top:0;z-index:5}html:has(body.portal-pag
 @media (prefers-contrast:more){.kh-portal{--p-line:color-mix(in srgb,var(--p-ink) 60%,var(--p-bg));--p-field:color-mix(in srgb,var(--p-ink) 75%,var(--p-bg));--p-muted:var(--p-ink)}.kh-card,.kh-portal :is(details,fieldset,.kh-note){border-width:2px}}
 /* Forced colors (Windows High Contrast): Library cards, tabs and buttons keep outlines; the current tab and focus ring use the system highlight */
 @media (forced-colors:active){.kh-card,.kh-tabs a,.kh-portal .kh-feature,.kh-portal .kh-note,.kh-portal a.primary{border:1px solid CanvasText}.kh-tabs a[aria-current=page]{forced-color-adjust:none;background:Highlight;color:HighlightText}.kh-portal :focus-visible{outline-color:Highlight}.kh-card:hover,.kh-card:focus-within{box-shadow:none}}
+/* New-this-month shelf (#56): fresh builds get a highlighted row above the catalog grid */
+.kh-newshelf{margin:6px 0 20px;padding:16px 18px;border:2px solid var(--p-accent);border-radius:var(--p-r-lg);background:linear-gradient(145deg,color-mix(in srgb,var(--p-accent) 12%,var(--p-bg)),var(--p-soft));box-shadow:var(--p-shadow-lg)}
+.kh-newshelf h2{margin:2px 0 4px}
+.kh-newshelf>p{margin:0 0 12px;color:var(--p-muted);font-weight:600}
+.kh-newbadge{color:var(--p-accent);font-weight:900;white-space:nowrap}
