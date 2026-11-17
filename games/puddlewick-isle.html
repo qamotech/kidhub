@@ -461,6 +461,7 @@ button{touch-action:manipulation}
     <div class="isle e">🏝️</div>
     <p class="mute title-lead" style="margin:4px 0 0">A slow-life island getaway. Fish, catch bugs, dig fossils, befriend neighbors and grow a home, all on your real-world clock.</p>
     <p class="arcade-note">🎮 <b>New — the Arcade!</b> Marlowe's full Fishing Derby at the Derby Dock, and Bike Blitz on Spoke Island, playable right inside your island.</p>
+    <div id="tSlots" style="margin-top:14px"><p class="lbl" style="margin:0 0 6px">💾 Save slots — tap one to pick whose island to play</p><div class="acts" id="tSlotRow"></div></div>
     <div id="tContinue" hidden class="acts" style="margin-top:14px"><button class="btn" id="btnCont">▶ Continue</button></div>
     <div id="tDmg" hidden style="margin-top:14px"><p id="tDmgT" role="alert" style="margin:0 0 8px;color:#c45656"></p><div class="acts"><button class="btn" id="btnBak" hidden>Restore backup</button></div></div>
     <form id="newForm" autocomplete="off">
@@ -501,7 +502,7 @@ button{touch-action:manipulation}
 <script>
 'use strict';
 (()=>{
-const APP_VERSION='1.10.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
+const APP_VERSION='1.11.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
 /* =====================================================================
    PUDDLEWICK ISLE: a single-file cozy island life sim
    Sections: utils · data · state · time · world gen · day cycle ·
@@ -834,7 +835,10 @@ const HAIRS=['#3b2a1e','#7a4a2a','#d9a441','#f2e3b3','#e15b4f','#5a8fe0','#9a6bd
 const SHIRTS=['#ef7b7b','#f5a524','#f5cf3b','#6dbb5a','#3f9fd2','#9a6bd1','#f39bc0','#fffaf0','#4a3a28','#2b2f62','#c0392b','#1e6b4f','#7ec8e3','#c3a6e8','#3a3f44','#ffd9e8'];
 
 /* =============================== STATE =============================== */
-const SAVE_KEY='puddlewick-isle.v1';
+const SAVE_BASE='puddlewick-isle.v1',SLOT_KEYS=[SAVE_BASE,SAVE_BASE+'.slot2',SAVE_BASE+'.slot3'],SLOTS_META_KEY='puddlewick-isle.slots';
+let slotMeta={active:0,names:['','','']};
+try{const _sm=JSON.parse(localStorage.getItem(SLOTS_META_KEY)||'null');if(_sm&&Array.isArray(_sm.names))slotMeta={active:[0,1,2].includes(_sm.active)?_sm.active:0,names:[0,1,2].map(i=>String(_sm.names[i]||'').slice(0,16))}}catch(e){}
+let SAVE_KEY=SLOT_KEYS[slotMeta.active];
 let S=null;            // persistent save state
 let ISLE=null;         // home island world
 let W=null;            // world currently shown (island or tour)
@@ -1308,7 +1312,12 @@ function serialize(){const objs=[];ISLE.obj.forEach((o,i)=>{if(o)objs.push([i,o]
   const json=JSON.stringify(S,(k,v)=>k.startsWith('_')?undefined:v);S.objs=null;return json}
 // save health lives in transient G fields (saveOk/savedAt); the first failure in a row warns once
 // backup slot SAVE_KEY+'.bak': the last good JSON, copied once per island day (processDays) and on every 10th save; dropped first if storage is full
-const BAK_KEY=SAVE_KEY+'.bak',okSave=s=>!!s&&s.v===1&&typeof s.seed==='number'&&Array.isArray(s.inv)&&Array.isArray(s.vill);
+let BAK_KEY=SAVE_KEY+'.bak';const okSave=s=>!!s&&s.v===1&&typeof s.seed==='number'&&Array.isArray(s.inv)&&Array.isArray(s.vill);
+function saveSlotMeta(){try{localStorage.setItem(SLOTS_META_KEY,JSON.stringify(slotMeta))}catch(e){}}
+function slotLabel(i){const n=(slotMeta.names[i]||'').trim();if(n)return n;try{const r=localStorage.getItem(SLOT_KEYS[i]);if(!r)return 'Empty';const sv=JSON.parse(r);if(!okSave(sv))return 'Damaged save';return (sv.name||'Wren')+' · '+(sv.island||'Puddlewick')}catch(e){return 'Empty'}}
+function setSlot(i){if(![0,1,2].includes(i)||i===slotMeta.active)return;slotMeta.active=i;saveSlotMeta();location.reload()}
+function renameSlot(i){const n=prompt('Name save slot '+(i+1)+' (e.g. a kid’s name):',slotMeta.names[i]||'');if(n==null)return;slotMeta.names[i]=String(n).trim().slice(0,16);saveSlotMeta();renderSlots()}
+function renderSlots(){const row=$('tSlotRow');if(!row)return;row.innerHTML='';SLOT_KEYS.forEach((k,i)=>{const b=document.createElement('button');b.type='button';b.className='btn'+(i===slotMeta.active?'':' alt');b.textContent=(i===slotMeta.active?'▶ ':'')+'💾 '+(i+1)+' · '+slotLabel(i);b.setAttribute('aria-label','Save slot '+(i+1)+': '+slotLabel(i));b.onclick=()=>setSlot(i);row.appendChild(b);const r=document.createElement('button');r.type='button';r.className='btn alt';r.textContent='✏️';r.title='Rename slot '+(i+1);r.setAttribute('aria-label','Rename save slot '+(i+1));r.onclick=()=>renameSlot(i);row.appendChild(r)})}
 function bakUp(j){try{if(j==null)j=localStorage.getItem(SAVE_KEY);if(!j)return false;const s=JSON.parse(j);if(!okSave(s)||(S&&s.seed!==S.seed))return false;localStorage.setItem(BAK_KEY,j);return true}catch(e){return false}}
 function save(){if(!S)return;let ok=true,j=null;S.at=Date.now();try{j=serialize();try{const prev=localStorage.getItem(SAVE_KEY);if(prev&&prev!==j)localStorage.setItem(BAK_KEY,prev)}catch(_){}localStorage.setItem(SAVE_KEY,j)}catch(e){S.objs=null;try{localStorage.removeItem(BAK_KEY);if(j==null)throw e;localStorage.setItem(SAVE_KEY,j)}catch(e2){ok=false}}G.lastSave=performance.now();
   if(ok){G.saveOk=true;G.savedAt=Date.now();G.saveWarn=0;if((G.saveN=(G.saveN|0)+1)%10===0)bakUp(j)}else{G.saveOk=false;if(!G.saveWarn){G.saveWarn=1;toast("Couldn't save in this browser. Use Settings > Export save.")}}}
@@ -4775,7 +4784,7 @@ function boot(){
 window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches('swSkin',SKINS,'skin');if(!$('swHair').children.length)swatches('swHair',HAIRS,'hair');if(!$('swShirt').children.length)swatches('swShirt',SHIRTS,'shirt');if(!$('swStyle').children.length)styleChips();if(!$('swGlass').children.length)glassChips();if(!$('swHat').children.length)hatChips();if(!$('swEyes').children.length)eyeSwatches();drawPreview()}catch(e){}});resize();
   // rawSaved keeps the stored string even when it is damaged, so New Game still asks twice before overwriting it
   let rawSaved=null,saved=null,bak=null;try{rawSaved=localStorage.getItem(SAVE_KEY);bak=localStorage.getItem(BAK_KEY)}catch(e){}
-  $('tContinue').hidden=true;$('tDmg').hidden=true;delete $('newForm').dataset.ok;$('btnNew').textContent='🏝️ Start a new island';
+  renderSlots();$('tContinue').hidden=true;$('tDmg').hidden=true;delete $('newForm').dataset.ok;$('btnNew').textContent='🏝️ Start a new island';
   const damaged=()=>{$('tContinue').hidden=true;let b=null;try{b=bak&&JSON.parse(bak);if(!okSave(b))b=null}catch(e){b=null}
     $('tDmgT').textContent=`⚠️ Your save looks damaged and can't be loaded.${b?' You can restore the backup copy':' Starting a new island will replace it'}.`;
     const bb=$('btnBak');bb.hidden=!b;if(b)bb.textContent=`↩ Restore backup (saved ${b.at?new Date(b.at).toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+hmTxt(b.at):'earlier'})`;$('tDmg').hidden=false};
@@ -4783,7 +4792,7 @@ window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches
   $('btnCont').onclick=()=>{try{loadFrom(saved);startGame(false)}catch(e){console.error(e);saved=null;damaged()}};
   $('btnBak').onclick=()=>{try{loadFrom(bak);save();startGame(false)}catch(e){console.error(e);alertBox('The backup could not be loaded either.')}};
   $('newForm').onsubmit=e=>{e.preventDefault();const name=$('fName').value.trim()||'Wren',island=$('fIsle').value.trim()||'Puddlewick';
-    if(rawSaved&&!$('newForm').dataset.ok){$('newForm').dataset.ok=1;$('btnNew').textContent='⚠️ Tap again to replace your saved island';return}
+    if(rawSaved&&!$('newForm').dataset.ok){$('newForm').dataset.ok=1;$('btnNew').textContent=`⚠️ Tap again to replace Slot ${slotMeta.active+1}’s island`;return}
     newGame({name:name.slice(0,12),island:island.slice(0,14),hemi:$('fHemi').value,look:Object.assign({},look)});startGame(true)};
   $('btnImport').onclick=()=>$('fileIn').click();
   // Title-screen options (12 buttons)
@@ -4847,7 +4856,7 @@ window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches
   // Delete save
   $('tDelete').onclick=()=>{
     if(!rawSaved){ alertBox('No save to delete.'); return }
-    if(!confirm('Delete your saved island? This cannot be undone.')) return;
+    if(!confirm(`Delete Slot ${slotMeta.active+1}’s saved island? This cannot be undone.`)) return;
     try{ localStorage.removeItem(SAVE_KEY); localStorage.removeItem(BAK_KEY); }catch(e){}
     location.reload();
   };
@@ -4862,7 +4871,7 @@ window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches
 }
 function alertBox(msg){if($('title').hidden)toast(msg);else{const p=document.querySelector('#title .foot');p.textContent=msg;p.style.color='#c45656'}}
 window.PW={get S(){return S},get W(){return W},get ISLE(){return ISLE},G,act,IT,FISH,BUGS,FOSSILS,RECIPES,stat,processDays,save,addItem,removeItem,newGame,startGame,loadFrom,openPhone,openInv,openShop,openMuseum,openHall,
-  fishes:()=>fishes,bugs:()=>bugs,spawnFishAt,spawnBug,craft,learn,timeTravel,bloomScore,updBloom,BLOOM_STARS,openMail,openBoard,frontCands,computeHint,enterHouse,exitHouse,enterVHouse,exitVHouse,indoorNow,vRoom,knock,renderHouse,HOUSE_DRAW,LIGHT_IDS,VSTYLE,startTour,returnHome,sellSlot,orderCat,isOrderable,catPrice,backfillCat,FURN_SETS,renderCatShop,renderPhone,renderShop,PAN,PA,DLG,dlgAdvance,choose,closePanel,talkTo,villActors,render,step,APP_VERSION,
+  fishes:()=>fishes,bugs:()=>bugs,spawnFishAt,spawnBug,craft,learn,timeTravel,bloomScore,updBloom,BLOOM_STARS,openMail,openBoard,frontCands,computeHint,enterHouse,exitHouse,enterVHouse,exitVHouse,indoorNow,vRoom,knock,renderHouse,HOUSE_DRAW,LIGHT_IDS,VSTYLE,startTour,returnHome,sellSlot,orderCat,isOrderable,catPrice,backfillCat,FURN_SETS,renderCatShop,renderPhone,renderShop,PAN,PA,DLG,dlgAdvance,choose,closePanel,talkTo,villActors,render,step,APP_VERSION,slots:()=>SLOT_KEYS.map((k,i)=>({slot:i+1,label:slotLabel(i),active:i===slotMeta.active,has:!!localStorage.getItem(k)})),setSlot,
   derbyKind,get tr(){return G.tr},sizeRoll,recCatch,critRoll,critDone,recCount,REC_MS,SONGS,talkBusker,songNow,get gig(){return G.gig},buskerHere,BUSKER,startDerby,events,npcs,landFish,catchBug,TOURNEY,
   hopBike,toggleBikeMount,renderRadar,drawPerson,eqTool,placeSlot,genWorld,CLOTH_RAW,WEAR_SLOTS,CL_STYLE,wearK,rack,rollRack,clothPool,dressSlot,wearCloset,takeOff,closetOut,hangAll,randomOutfit,openWardrobe,renderWardrobe,clothMatch,talkVillager,openStorage,dailyRefresh,
   isTour,isRaining,canStand,wakeUp,faint,serialize,manageFish,manageBugs,updateHUD,ask,say,toggleRadar,syncRadar,RD,tintNow,GLOW,LIGHTS:()=>LIGHTS,renderMail,renderInv,renderMuseum,musCheck,musProg,musLine,takeMail,unreadMail,openPanel,panelFocusables,
