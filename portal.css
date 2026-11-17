@@ -76,3 +76,8 @@ body.portal-page>header{position:sticky;top:0;z-index:5}html:has(body.portal-pag
 .kh-newshelf h2{margin:2px 0 4px}
 .kh-newshelf>p{margin:0 0 12px;color:var(--p-muted);font-weight:600}
 .kh-newbadge{color:var(--p-accent);font-weight:900;white-space:nowrap}
+/* Family leaderboard (#60): house records + local family board */
+.kh-lb-record{font-size:20px;font-weight:800;color:var(--p-accent)}
+.kh-lb-champs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.kh-lb-chip{padding:8px 14px;border-radius:999px;background:var(--p-soft);border:2px solid var(--p-accent);font-weight:800}
+.kh-lb-table td:first-child{width:44px;text-align:center;font-size:18px}
