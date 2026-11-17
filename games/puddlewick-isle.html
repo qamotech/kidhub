@@ -38,6 +38,9 @@ input,select{font:inherit;color:inherit}
 
 /* ---------- HUD ---------- */
 #hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+#photoBar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;display:flex;gap:8px;opacity:.88}
+#photoBar[hidden]{display:none}
+body.photo #hud,body.photo #touch,body.photo #dlg,body.photo #panel{display:none!important}
 #hud .tl{position:absolute;left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 #hud .tr{position:absolute;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 .pill{background:linear-gradient(180deg,#fffdf6 0%,var(--paper) 55%,var(--paper2) 100%);border-radius:999px;box-shadow:var(--lift),inset 0 0 0 1px rgba(234,219,184,.9),inset 0 1px 0 #fff,inset 0 -2px 0 rgba(234,219,184,.55);padding:6px 14px;display:flex;gap:10px;align-items:center;white-space:nowrap}
@@ -429,6 +432,7 @@ button{touch-action:manipulation}
     <button class="round" id="bBike" title="Ride bike (B)" aria-label="Ride bike"><span class="e" aria-hidden="true">🚲</span></button>
     <button class="round" id="bBag" title="Pockets (I)" aria-label="Pockets"><span class="e" aria-hidden="true">🎒</span></button>
     <button class="round" id="bPhone" title="ShellPhone (P)" aria-label="ShellPhone"><span class="e" aria-hidden="true">📱</span><span class="badge" id="mailB" aria-hidden="true" hidden></span><span class="badge" id="arcB" aria-hidden="true" hidden style="right:auto;left:-4px;background:#e75480" title="Arcade daily bonus waiting">🎮</span></button>
+    <button class="round" id="bPhoto" title="Photo mode (C)" aria-label="Photo mode"><span class="e" aria-hidden="true">📸</span></button>
   </div>
 </div>
 
@@ -446,6 +450,11 @@ button{touch-action:manipulation}
 <div id="dlg" hidden>
   <div id="dCh" role="listbox" aria-label="Choices"></div>
   <div id="dlgBox" role="dialog" aria-live="polite"><div id="dName"></div><div id="dText"></div><div id="dNext" aria-hidden="true">▼</div></div>
+</div>
+
+<div id="photoBar" hidden>
+  <button class="btn" id="bPhotoSave">⬇ Save photo</button>
+  <button class="btn alt" id="bPhotoExit">✕ Done</button>
 </div>
 
 <div id="panel" hidden>
@@ -502,7 +511,7 @@ button{touch-action:manipulation}
 <script>
 'use strict';
 (()=>{
-const APP_VERSION='1.11.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
+const APP_VERSION='1.12.0';   // keep in sync with VERSION in sw.js (tests/run.sh checks)
 /* =====================================================================
    PUDDLEWICK ISLE: a single-file cozy island life sim
    Sections: utils · data · state · time · world gen · day cycle ·
@@ -885,6 +894,29 @@ function derbyKind(){const c=clk();return W===ISLE&&c.dow===6&&c.h>=9&&c.h<18?de
 function buskerHere(){const c=clk();return W===ISLE&&c.dow===6&&c.h>=20}
 const derbyWeek=()=>weekOf(dayIdx())%2?'bug':'fish';
 const DERBY_N={fish:'🏆 Fishing Derby',bug:'🏆 Bug-Off'};
+/* ---- Winter Festival (Dec 20 - Jan 2): plaza skin + 3-step quest ---- */
+function festivalNow(){const c=clk();return (c.mo===12&&c.dd>=20)||(c.mo===1&&c.dd<=2)}
+function festYear(){const c=clk();return c.mo===12?c.y:c.y-1}
+function fest(){if(!S||!festivalNow())return null;const yr=festYear();if(!S.wfest||S.wfest.yr!==yr)S.wfest={yr,step:0,flakes:0,met:[],done:0};return S.wfest}
+function festFlake(){const f=fest();if(!f||f.done||f.step!==0)return;f.flakes++;if(f.flakes>=3){f.step=1;toast('❄️ Festival quest: 3 snowflakes gathered! Next: say hello to 2 neighbors.','big')}else toast(`❄️ Festival snowflake ${f.flakes}/3`);save()}
+function festTalk(p){const f=fest();if(!f||f.done||f.step!==1||f.met.includes(p))return;f.met.push(p);if(f.met.length>=2){f.step=2;toast('🎄 Festival quest: neighbors greeted! Now visit the big tree in the plaza!','big')}else toast('🎄 Festival quest: neighbor greeted (1 of 2)');save()}
+function festTick(){const f=fest();if(!f||f.done||f.step!==2||G.scene!=='island'||!ISLE.plaza)return;const[tx,ty]=playerTile();if(Math.hypot(tx-ISLE.plaza.x,ty-ISLE.plaza.y)>2.5)return;f.done=1;f.step=3;S.coins+=500;giveOrDrop('fu_snowcandle',1);toast('🎆 Festival quest complete! +500 chimes and a Snow candle! Happy Winter Festival!','big');sfx('learn');save()}
+function drawFestDecor(){
+  if(!festivalNow()||!ISLE||!ISLE.plaza)return;const pl=ISLE.plaza,cx=(pl.x+.5)*TS,gy=(pl.y+1)*TS,h=clk().h;
+  if(h>=16||h<7){const gr=ctx.createRadialGradient(cx,gy-44,6,cx,gy-44,86);gr.addColorStop(0,'rgba(255,190,90,.20)');gr.addColorStop(1,'rgba(255,190,90,0)');ctx.fillStyle=gr;ctx.fillRect(cx-86,gy-130,172,172)}
+  const cols=['#ef7b7b','#f5cf3b','#6dbb5a','#5bbfe6','#f39bc0'],tw=calm()?0:1;
+  for(const sy of[(pl.y-2.1)*TS,(pl.y+3.6)*TS]){const x0=(pl.x-3.4)*TS,x1=(pl.x+4.4)*TS;ctx.strokeStyle='rgba(60,50,30,.55)';ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<=16;i++){const t=i/16,x=x0+(x1-x0)*t,y=sy+Math.sin(Math.PI*t)*13;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
+    for(let i=0;i<9;i++){const t=(i+.5)/9,x=x0+(x1-x0)*t,y=sy+Math.sin(Math.PI*t)*13+3;ctx.globalAlpha=tw?.65+.35*Math.sin(G.t*2.4+i*1.3+sy):.9;ctx.fillStyle=cols[i%5];circ(x,y,2.3)}ctx.globalAlpha=1}
+  ctx.fillStyle='#6b4a2c';ctx.fillRect(cx-3,gy-14,6,14);
+  const tiers=[[30,26,gy-12],[23,22,gy-32],[15,18,gy-49]];
+  ctx.fillStyle='#2e6b3e';for(const[w,hh,y]of tiers){ctx.beginPath();ctx.moveTo(cx-w,y);ctx.lineTo(cx+w,y);ctx.lineTo(cx,y-hh);ctx.closePath();ctx.fill()}
+  ctx.fillStyle='rgba(255,255,255,.85)';for(const[w,hh,y]of tiers){ell(cx-w*.45,y-2,w*.32,2.6);ell(cx+w*.4,y-1,w*.26,2.2)}
+  const orn=[[-14,-20],[8,-24],[0,-34],[-9,-40],[13,-44],[-4,-52],[6,-58],[0,-16]];
+  orn.forEach(([ox,oy],i)=>{ctx.fillStyle=cols[i%5];circ(cx+ox,gy+oy,2.4);ctx.fillStyle='rgba(255,255,255,.5)';circ(cx+ox-.7,gy+oy-.7,.8)});
+  drawEmo('⭐',cx,gy-72,15);
+}
+/* ---- Photo mode: hide all UI for clean screenshots ---- */
+function photoMode(on){document.body.classList.toggle('photo',!!on);const b=$('photoBar');if(b)b.hidden=!on;if(!on)toast('📸 Photo mode off')}
 function shopOpen(){const h=clk().h;return h>=8&&h<22}
 let evC=null;   // events() cache, one result per island minute (G.evK), reset on time travel / hemisphere / load
 function events(){
@@ -897,6 +929,7 @@ function events(){
   else if(c.mo===10&&c.dd>=24)out.push('🎃 Spooky Night is coming on Oct 31. Bramble sells candy.');
   if(c.mo===12&&c.dd===21)out.push('❄️ Winter Solstice: the longest night! Villagers are feeling cozy.');
   else if(c.mo===12&&c.dd>=14)out.push('❄️ Winter Solstice is coming on Dec 21. Bramble sells wintry goods.');
+  if(S&&festivalNow()){const f=fest();out.push(f&&f.done?'🎄 Winter Festival: quest complete — the plaza tree sparkles through Jan 2!':'🎄 Winter Festival quest: '+(f?['catch 3 snowflakes with your net ❄️','say hello to 2 neighbors 👋','visit the big tree in the plaza 🎄'][f.step]:'catch 3 snowflakes with your net ❄️'))}
   if(c.mo===12&&c.dd===24)out.push('🎄 Festive Eve: gifts in every mailbox!');
   if(c.mo===12&&c.dd===31)out.push('🎆 New Year\'s Eve countdown in the plaza!');
   if(c.mo===1&&c.dd===1)out.push('🎆 Tide-Over Day: the island starts the year fresh! Frosty goods at Bramble\'s.');
@@ -1238,6 +1271,7 @@ function dailyRefresh(today){
   if(c.mo===7&&c.dd===7)mail('The Skywatchers',`Winds up, ${S.name}! For the Sky-Kite Festival we\u2019re gifting you a Sky kite \u2014 fly it high over the plaza! Happy Jul 7!`,'fu_kite');
   if(c.mo===4&&c.dd===14)mail('The Egg Hunt Club',`Happy Spring Egg Hunt, ${S.name}! We hid painted eggs all over the island \u2014 here\u2019s a Painted egg basket to get you started. Happy Apr 14!`,'fu_eggbasket');
   if(c.mo===3&&c.dd===17)mail('The Clover Club',`Top o' the morning, ${S.name}! For Shamrock Day we\u2019re gifting you a Clover wreath \u2014 hang it where everyone can see. Happy Mar 17!`,'fu_cloverwreath');
+  if(c.mo===12&&c.dd===20)mail('The Winter Friends Committee',`It's festival time, ${S.name}! The big tree is lit in the plaza through Jan 2. Join the Winter Festival quest: catch 3 snowflakes, greet 2 neighbors, then visit the tree — a frosty prize awaits!`,'fu_wreath');
   if(c.mo===1&&c.dd===1)mail('The Winter Friends Committee',`New year, fresh tide, ${S.name}! To mark Tide-Over Day, here is a Frostfire sculpture \u2014 it sparkles even on the warmest beach day. Happy New Year!`,'fu_frostfire');
   if(c.mo===10&&c.dd===31)S.flags.halloween=1;
   if(c.dd>new Date(c.y,c.mo,0).getDate()-3&&S.flags.leaveNote!==mk){S.flags.leaveNote=mk;const nx=m%12+1,lv=(x,cat)=>!S.pedia[cat][x.i]&&inMonth(x.mo,m)&&!inMonth(x.mo,nx);
@@ -1291,7 +1325,7 @@ function newState(o){
     coins:1500,pts:0,bank:0,loan:0,houseLv:0,upgradeDay:null,invSize:20,inv:new Array(20).fill(null),eq:-1,stor:[],storSize:200,
     house:{wall:'wl_wcream',floor:'fl_fwood',items:[]},recipes:Object.keys(RECIPES).filter(k=>RECIPES[k].start),
     pedia:{fish:{},bug:{},fossil:{}},don:{fish:{},bug:{},fossil:{}},stats:{},ach:{},dly:null,tasks:[],lastDay:null,vill:[],mail:[],sun:null,
-    flags:{},timeOff:0,at:0,set:{music:.45,sfx:.7,rm:null,radar:0,ts:1,fs:1},wishes:0,objs:null,pos:null,moveIn:null,lastMonth:null,met:{},
+    flags:{},wfest:null,timeOff:0,at:0,set:{music:.45,sfx:.7,rm:null,radar:0,ts:1,fs:1},wishes:0,objs:null,pos:null,moveIn:null,lastMonth:null,met:{},
     derby:{best:{fish:0,bug:0},last:{fish:-1,bug:-1},rounds:0},arcade:{plays:{fish:0,bike:0},best:{fish:0,bike:0},bonus:{fish:-1,bike:-1},trophies:{}},bloom:{stars:0,best:0,score:0,day:-1},cat:{},orders:[],catSets:{},gig:{last:-1,heard:{}},musRw:{fish:0,bug:0,fossil:0},rec:{fish:{},bug:{},tro:0,ms:0},
     wear:{hat:null,top:'cl_flannelblue',bot:'cl_pantschestnut',shoe:'cl_sneakblack',acc:'cl_glassround'},closet:[]};
 }
@@ -1492,6 +1526,7 @@ function nearScarecrow(x,y,r){r=r||4;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=
 const netTip=()=>{const n=Math.hypot(G.fx,G.fy)||1;return [G.px+G.fx/n*24,G.py-14+G.fy/n*20]};
 function catchDrift(){const [tx,ty]=netTip();for(const d of drifts){if(!d.on||Math.hypot(d.x-tx,d.y-ty)>22)continue;
   d.on=false;const id=d.id,it=IT[id];if(!addItem(id,1))giveOrDrop(id,1);puff(d.x,d.y,6,id==='maple'?'#e8894a':id==='flake'?'#e8f4ff':'#f7b2c8');stat('forage');sfx('pick');floatIcon(it.e);
+  if(id==='flake')festFlake();
   if(!S.flags.tipForage){S.flags.tipForage=1;toast(`${it.e} You caught a ${it.n.toLowerCase()}! Seasonal materials craft seasonal DIY. Look for the season badge at the workbench.`)}return true}return false}
 function villActors(){
   if(!G.vact)G.vact=S.vill.map(v=>{const b=ISLE.B[v.h];return {v,P:VPOOL[v.p],x:(b.door.x+.5)*TS,y:(b.door.y+1.5)*TS,tx:0,ty:0,st:'idle',t:Math.random()*3,fx:0,fy:1,em:null,emt:0,step:0,home:false}});
@@ -3382,6 +3417,7 @@ function renderWorld(){
   tall.sort((a,b)=>a.y-b.y);
   for(const t of tall){if(t.p)drawPlayer();else if(t.a)drawNpc(t.a);else if(t.bug)drawBug(t.bug);else if(t.b)drawBld(t.b);
     else{const o=t.o;if(o.k==='tree')drawTree(t.x,t.ty,o,t.i);else if(o.k==='palm')drawPalm(t.x,t.ty,o);else if(o.k==='rock')drawRock(t.x,t.ty,o);else if(o.k==='mail')drawMail(t.x,t.ty);else if(o.k==='bikerack')drawBikeRack(t.x,t.ty);else if(o.k==='derbysign')drawDerbySign(t.x,t.ty);else if(o.k==='furn')drawOutdoorFurn(t.x,t.ty,o);else drawBoard(t.x,t.ty)}}
+  drawFestDecor();
   for(const d of drifts)if(d.on)drawEmo(IT[d.id].e,d.x,d.y,14,clamp(Math.min(d.t*2,8-d.t),0,1));
   drawFlies();drawMotes(x0,x1,y0,y1);
   for(const s of shots){ctx.fillStyle='#7a5230';circ(s.x,s.y,2.5)}
@@ -3774,6 +3810,7 @@ function talkTo(a){return convo(async()=>{
   try{if(a.derby)await talkDerby();else if(a.busker)await talkBusker();else if(a.rosie)await talkRosie();else if(a.camper)await talkCamper(a);else await talkVillager(a)}finally{a.st='idle';a.t=1.5}})}
 async function talkVillager(a){
   const v=a.v,P=a.P,d=today(),c=clk(),T=s=>fillT(s,P);
+  festTalk(v.p);
   const first=v.td!==d;if(first){v.td=d;v.fr=Math.min(255,v.fr+1);stat('talks')}
   const bday=P.bd[0]===c.mo&&P.bd[1]===c.dd;
   if(!S.met[v.p]){S.met[v.p]=1;await say(P,T(`Oh! You must be {name}! I'm ${P.n}. Welcome to the neighborhood, {cp}!`))}
@@ -4653,7 +4690,7 @@ addEventListener('keydown',e=>{
     case 'KeyQ':cycleTool(-1);break;case 'KeyR':cycleTool(1);break;
     case 'KeyF':S.eq=-1;cancelCast();uiDirty();break;
     case 'KeyI':openInv();break;case 'Tab':e.preventDefault();openInv();break;
-    case 'KeyP':openPhone();break;case 'KeyM':openPhone('map');break;case 'KeyN':toggleRadar();break;case 'KeyY':wish();break;
+    case 'KeyP':openPhone();break;case 'KeyM':openPhone('map');break;case 'KeyN':toggleRadar();break;case 'KeyY':wish();break;case 'KeyC':photoMode(!document.body.classList.contains('photo'));break;
     default:if(TOOL_KEYS[e.code]&&!G.busy){const t=TOOL_KEYS[e.code];let best=-1;S.inv.forEach((s,i)=>{if(s&&IT[s.id].tool===t&&(best<0||s.id>S.inv[best].id))best=i});
       if(best>=0){S.eq=S.eq===best?-1:best;cancelCast();sfx(t==='bike'?'bell':'tool');uiDirty()}else toast(`You don't have a ${t==='can'?'watering can':t==='sling'?'slingshot':t==='bike'?'bicycle':t}.`)}
   }
@@ -4666,6 +4703,8 @@ addEventListener('pointerdown',e=>{auInit();if(G.photo&&!e.target.closest('#pane
 $('toolchip').onclick=()=>cycleTool(1);$('bWish').onclick=wish;
 for(const [id,fn] of [['bBag',openInv],['bPhone',()=>openPhone()]])$(id).onclick=e=>{PAN.op=e.currentTarget;try{fn()}finally{PAN.op=null}};
 $('bRadar').onclick=toggleRadar;
+$('bPhoto').onclick=()=>photoMode(true);$('bPhotoExit').onclick=()=>photoMode(false);
+$('bPhotoSave').onclick=()=>{try{render();cv.toBlob(b=>{if(!b)throw 0;const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='puddlewick-photo.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)})}catch(e){toast('Could not save the photo in this browser.')}};
 $('bBike').onclick=toggleBikeMount;
 $('bikeGameClose').onclick=closeBikeGame;
 $('fishGameClose').onclick=closeFishGame;
@@ -4704,7 +4743,7 @@ function step(dt){
   if(G.shake>0)G.shake-=dt;
   if(G.tr&&!frozen&&!(G.fade>0)&&G.faint<=0&&(G.tr.t-=dt)<=0)endDerby();
   if(G.gig&&!frozen){const g=G.gig;if(!calm()&&(g.nt-=dt)<=0){g.nt=1;g.np++;const b=G.scene==='island'&&buskerHere();floatIcon(g.np%2?'🎵':'🎶',b?BUSKER.x:G.px,(b?BUSKER.y:G.py)-44)}if((g.t-=dt)<=0)endGig()}
-  acc1+=dt;if(acc1>1){acc1=0;if(!frozen){manageFish();manageBugs();manageDrifts();manageFlies()}}
+  acc1+=dt;if(acc1>1){acc1=0;if(!frozen){manageFish();manageBugs();manageDrifts();manageFlies();festTick()}}
   acc5+=dt;if(acc5>5){acc5=0;if(processDays()){toast(`☀️ A new day has begun on ${S.island}!`,'big');G.vact=null;notes()}}
   hudT-=dt;if(hudT<=0||uiD){hudT=.2;uiD=false;updateHUD()}
   updateCam(dt);
@@ -4871,7 +4910,7 @@ window.addEventListener('load',()=>{try{if(!$('swSkin').children.length)swatches
 }
 function alertBox(msg){if($('title').hidden)toast(msg);else{const p=document.querySelector('#title .foot');p.textContent=msg;p.style.color='#c45656'}}
 window.PW={get S(){return S},get W(){return W},get ISLE(){return ISLE},G,act,IT,FISH,BUGS,FOSSILS,RECIPES,stat,processDays,save,addItem,removeItem,newGame,startGame,loadFrom,openPhone,openInv,openShop,openMuseum,openHall,
-  fishes:()=>fishes,bugs:()=>bugs,spawnFishAt,spawnBug,craft,learn,timeTravel,bloomScore,updBloom,BLOOM_STARS,openMail,openBoard,frontCands,computeHint,enterHouse,exitHouse,enterVHouse,exitVHouse,indoorNow,vRoom,knock,renderHouse,HOUSE_DRAW,LIGHT_IDS,VSTYLE,startTour,returnHome,sellSlot,orderCat,isOrderable,catPrice,backfillCat,FURN_SETS,renderCatShop,renderPhone,renderShop,PAN,PA,DLG,dlgAdvance,choose,closePanel,talkTo,villActors,render,step,APP_VERSION,slots:()=>SLOT_KEYS.map((k,i)=>({slot:i+1,label:slotLabel(i),active:i===slotMeta.active,has:!!localStorage.getItem(k)})),setSlot,
+  fishes:()=>fishes,bugs:()=>bugs,spawnFishAt,spawnBug,craft,learn,timeTravel,bloomScore,updBloom,BLOOM_STARS,openMail,openBoard,frontCands,computeHint,enterHouse,exitHouse,enterVHouse,exitVHouse,indoorNow,vRoom,knock,renderHouse,HOUSE_DRAW,LIGHT_IDS,VSTYLE,startTour,returnHome,sellSlot,orderCat,isOrderable,catPrice,backfillCat,FURN_SETS,renderCatShop,renderPhone,renderShop,PAN,PA,DLG,dlgAdvance,choose,closePanel,talkTo,villActors,render,step,APP_VERSION,festivalNow,fest:()=>S?S.wfest:null,festFlake,festTalk,photoMode,slots:()=>SLOT_KEYS.map((k,i)=>({slot:i+1,label:slotLabel(i),active:i===slotMeta.active,has:!!localStorage.getItem(k)})),setSlot,
   derbyKind,get tr(){return G.tr},sizeRoll,recCatch,critRoll,critDone,recCount,REC_MS,SONGS,talkBusker,songNow,get gig(){return G.gig},buskerHere,BUSKER,startDerby,events,npcs,landFish,catchBug,TOURNEY,
   hopBike,toggleBikeMount,renderRadar,drawPerson,eqTool,placeSlot,genWorld,CLOTH_RAW,WEAR_SLOTS,CL_STYLE,wearK,rack,rollRack,clothPool,dressSlot,wearCloset,takeOff,closetOut,hangAll,randomOutfit,openWardrobe,renderWardrobe,clothMatch,talkVillager,openStorage,dailyRefresh,
   isTour,isRaining,canStand,wakeUp,faint,serialize,manageFish,manageBugs,updateHUD,ask,say,toggleRadar,syncRadar,RD,tintNow,GLOW,LIGHTS:()=>LIGHTS,renderMail,renderInv,renderMuseum,musCheck,musProg,musLine,takeMail,unreadMail,openPanel,panelFocusables,
